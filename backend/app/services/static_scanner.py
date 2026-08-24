@@ -4,7 +4,7 @@ import uuid
 from pathlib import Path
 from typing import Optional
 from app.models.quantum_risk import (
-    classify_algorithm, get_pqc_recommendation, get_classical_security_bits,
+    get_pqc_recommendation, get_classical_security_bits,
     QuantumRiskLevel, CryptoPrimitive
 )
 from app.models.scan_models import CryptoFinding, StaticScanResult

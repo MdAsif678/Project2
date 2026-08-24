@@ -3,7 +3,7 @@
 # Demonstrates NIST FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 197 (AES-256-GCM)
 # ==============================================================================
 
-import oqs
+import oqs  # type: ignore
 import os
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 import hashlib

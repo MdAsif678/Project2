@@ -2,7 +2,7 @@ import shutil
 import tempfile
 from pathlib import Path
 from typing import Optional
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException
 from pydantic import BaseModel
 from app.services.static_scanner import static_scanner
 from app.services.dynamic_scanner import dynamic_scanner

@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional, Any
+from typing import Optional
 from pydantic import BaseModel
 
 class QuantumRiskLevel(str, Enum):

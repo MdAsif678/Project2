@@ -13,7 +13,7 @@ with warnings.catch_warnings():
 
 from app.config import settings
 from app.models.scan_models import CryptoFinding, RemediationResponse
-from app.models.quantum_risk import CryptoPrimitive, get_pqc_recommendation
+from app.models.quantum_risk import CryptoPrimitive, get_pqc_recommendation, NIST_STANDARDS_MAP
 
 # Deterministic High-Fidelity PQC Templates by (Algorithm/Category, Language)
 OFFLINE_PQC_TEMPLATES = {

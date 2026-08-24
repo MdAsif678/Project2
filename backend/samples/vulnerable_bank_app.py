@@ -3,8 +3,8 @@ Vulnerable Core Banking Backend Service
 Contains multiple quantum-vulnerable and deprecated cryptographic primitives for static scan testing.
 """
 import hashlib
-from Crypto.PublicKey import RSA
-from Crypto.Cipher import AES, DES, PKCS1_OAEP
+from Crypto.PublicKey import RSA  # type: ignore
+from Crypto.Cipher import AES, DES, PKCS1_OAEP  # type: ignore
 
 class BankingAuthService:
     def __init__(self):
