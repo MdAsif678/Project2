@@ -51,3 +51,7 @@ Thumbs.db
 scratch/
 tmp/
 *.log
+
+# Private Docs / Handbook (Not pushed to GitHub)
+AEGIS_Q_INVESTIGATOR_HANDBOOK.md
+*HANDBOOK*.md
