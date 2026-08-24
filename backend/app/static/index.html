@@ -1,697 +1,1992 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Aegis-Q — Post-Quantum Cryptographic Discovery & CBOM Platform (SIH26164)</title>
-  <meta name="description" content="AI-powered cryptographic discovery, CycloneDX v1.6 CBOM generation, and NIST Post-Quantum Cryptography (PQC) automated remediation." />
+  <meta name="description" content="AI-powered cryptographic discovery, CycloneDX v1.6 CBOM generation, and NIST Post-Quantum Cryptography (PQC) automated migration." />
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            background: { primary: '#050508', secondary: '#0a0a10' },
-            risk: {
-              CRITICAL_SHOR: '#ff0040',
-              HIGH_SHOR: '#ff3366',
-              MEDIUM_GROVER: '#ffaa00',
-              LOW_CLASSICAL: '#fbbf24',
-              DEPRECATED_CLASSICAL: '#71717a',
-              QUANTUM_RESISTANT: '#00ff88',
-            }
-          },
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            heading: ['Space Grotesk', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          }
-        }
-      }
-    }
-  </script>
-
-  <!-- React & Babel for zero-build universal execution -->
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
+  <!-- GSAP, ScrollTrigger & Lenis CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  
   <style>
+    :root {
+      --bg: #030305;
+      --bg-elevated: #08080c;
+      --glass: rgba(255,255,255,0.02);
+      --glass-border: rgba(255,255,255,0.06);
+      --glass-border-hover: rgba(255,255,255,0.12);
+      --text: #ffffff;
+      --text-secondary: rgba(255,255,255,0.55);
+      --text-muted: rgba(255,255,255,0.25);
+      --accent: #6366f1;
+      --accent-2: #a855f7;
+      --accent-3: #ec4899;
+      --safe: #00ff88;
+      --warning: #ffaa00;
+      --critical: #ff0040;
+      --expo: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: auto; }
     body {
-      background-color: #050508;
-      color: #ffffff;
       font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
       overflow-x: hidden;
+      cursor: none;
+      -webkit-font-smoothing: antialiased;
     }
-    h1, h2, h3, h4, .font-heading { font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.025em; }
-    code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
-
-    .glass-panel {
-      background: rgba(255, 255, 255, 0.02);
-      backdrop-filter: blur(20px) saturate(1.2);
-      -webkit-backdrop-filter: blur(20px) saturate(1.2);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .glass-panel:hover {
-      border-color: rgba(255, 255, 255, 0.12);
-      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
-    }
-
-    .scanlines {
+    .cursor {
+      width: 10px; height: 10px;
+      background: #fff;
+      border-radius: 50%;
       position: fixed;
-      inset: 0;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0, 0, 0, 0.03) 2px,
-        rgba(0, 0, 0, 0.03) 4px
-      );
+      pointer-events: none;
+      z-index: 99999;
+      mix-blend-mode: difference;
+      transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease;
+    }
+    .cursor.expanded {
+      width: 60px; height: 60px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.5);
+      mix-blend-mode: normal;
+    }
+    .cursor-ring {
+      width: 80px; height: 80px;
+      border: 1px solid var(--accent);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 99998;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      animation: cursorPulse 2s ease-in-out infinite;
+    }
+    @keyframes cursorPulse {
+      0%, 100% { transform: scale(1); opacity: 0.3; }
+      50% { transform: scale(1.2); opacity: 0.6; }
+    }
+    .loader {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      z-index: 100000;
+      display: flex;
+      align-items: center; justify-content: center;
+      flex-direction: column;
+    }
+    .loader-ring {
+      width: 60px; height: 60px;
+      border: 2px solid var(--glass-border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loader-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-top: 1.5rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    #dotCanvas {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .scanlines {
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
       pointer-events: none;
       z-index: 9999;
     }
-
-    .gradient-text-fortify {
-      background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+    .perspective-grid {
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+      animation: gridDrift 60s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+    @keyframes gridDrift {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(80px); }
+    }
+    .glass {
+      background: var(--glass);
+      backdrop-filter: blur(20px) saturate(1.2);
+      -webkit-backdrop-filter: blur(20px) saturate(1.2);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      transition: all 0.5s var(--expo);
+    }
+    .glass:hover {
+      border-color: var(--glass-border-hover);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+    }
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 1.25rem 2.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      transition: all 0.5s var(--expo);
+    }
+    .nav.scrolled {
+      background: rgba(3,3,5,0.85);
+      backdrop-filter: blur(30px) saturate(1.2);
+      padding: 0.875rem 2.5rem;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .nav-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem; font-weight: 700;
+      letter-spacing: -0.02em; color: var(--text);
+      text-decoration: none; position: relative;
+      display: flex; align-items: center; gap: 0.5rem;
+      cursor: pointer;
+    }
+    .nav-logo::after {
+      content: ''; position: absolute;
+      bottom: -4px; left: 0; width: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width 0.4s var(--expo);
+    }
+    .nav-logo:hover::after { width: 100%; }
+    .nav-logo-badge {
+      font-size: 0.625rem; font-family: 'JetBrains Mono', monospace;
+      padding: 0.2rem 0.5rem; border-radius: 100px;
+      background: rgba(99,102,241,0.15); color: var(--accent);
+      border: 1px solid rgba(99,102,241,0.25);
+    }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      color: var(--text-secondary); text-decoration: none;
+      font-size: 0.8125rem; font-weight: 500;
+      letter-spacing: 0.04em; transition: color 0.3s ease;
+      position: relative; padding: 0.25rem 0;
+      cursor: pointer;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute;
+      bottom: 0; left: 0; width: 0; height: 1px;
+      background: var(--accent);
+      transition: width 0.4s var(--expo);
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta {
+      padding: 0.625rem 1.5rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #ffffff;
+      border: none; border-radius: 100px;
+      font-family: 'Inter', sans-serif; font-size: 0.8125rem;
+      font-weight: 600; cursor: pointer;
+      transition: all 0.4s var(--expo);
+      position: relative; overflow: hidden;
+      box-shadow: 0 0 25px rgba(99,102,241,0.35);
+    }
+    .nav-cta:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 40px rgba(99,102,241,0.6);
+    }
+    .status-orb {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--safe); position: relative;
+    }
+    .status-orb::after {
+      content: ''; position: absolute; inset: -4px;
+      border-radius: 50%; border: 1px solid var(--safe);
+      animation: orbPulse 2s ease-in-out infinite;
+    }
+    @keyframes orbPulse {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.8); opacity: 0; }
+    }
+    .hero {
+      min-height: 100vh; display: flex;
+      align-items: center; justify-content: center;
+      position: relative; padding: 0 2rem; z-index: 1;
+    }
+    .hero-content {
+      position: relative; z-index: 2;
+      text-align: center; max-width: 950px;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.5rem 1rem; background: var(--glass);
+      border: 1px solid var(--glass-border); border-radius: 100px;
+      font-size: 0.75rem; font-weight: 500;
+      color: var(--text-secondary); margin-bottom: 2rem;
+      backdrop-filter: blur(10px); font-family: 'JetBrains Mono', monospace;
+    }
+    .hero-badge-dot {
+      width: 6px; height: 6px; background: var(--safe);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,255,136,0.4); }
+      50% { opacity: 0.6; box-shadow: 0 0 0 8px rgba(0,255,136,0); }
+    }
+    .hero-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(3rem, 8vw, 6.5rem);
+      font-weight: 700; line-height: 1.05;
+      letter-spacing: -0.03em; margin-bottom: 1.5rem;
+    }
+    .hero-title .line { display: block; overflow: hidden; }
+    .hero-title .line span { display: inline-block; }
+    .gradient-text {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2), var(--accent-3));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-subtitle {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--text-secondary); line-height: 1.7;
+      max-width: 650px; margin: 0 auto 3rem; font-weight: 400;
+    }
+    .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      padding: 1rem 2.5rem; background: var(--text); color: var(--bg);
+      border: none; border-radius: 100px;
+      font-family: 'Inter', sans-serif; font-size: 0.9375rem;
+      font-weight: 600; cursor: pointer;
+      transition: all 0.4s var(--expo);
+      position: relative; overflow: hidden;
+    }
+    .btn-primary::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      opacity: 0; transition: opacity 0.4s ease;
+    }
+    .btn-primary:hover::before { opacity: 1; }
+    .btn-primary span { position: relative; z-index: 1; color: var(--bg); transition: color 0.3s; }
+    .btn-primary:hover span { color: #fff; }
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 50px rgba(99,102,241,0.35);
+    }
+    .btn-secondary {
+      padding: 1rem 2.5rem; background: transparent; color: var(--text);
+      border: 1px solid var(--glass-border); border-radius: 100px;
+      font-family: 'Inter', sans-serif; font-size: 0.9375rem;
+      font-weight: 600; cursor: pointer;
+      transition: all 0.4s var(--expo);
+      backdrop-filter: blur(10px); position: relative; overflow: hidden;
+    }
+    .btn-secondary::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(168,85,247,0.1));
+      opacity: 0; transition: opacity 0.4s ease;
+    }
+    .btn-secondary:hover::before { opacity: 1; }
+    .btn-secondary span { position: relative; z-index: 1; }
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(99,102,241,0.15);
+    }
+    .hero-scroll {
+      position: absolute; bottom: 3rem; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column;
+      align-items: center; gap: 0.5rem;
+      color: var(--text-muted); font-size: 0.6875rem;
+      letter-spacing: 0.15em; text-transform: uppercase;
+    }
+    .hero-scroll-line {
+      width: 1px; height: 50px;
+      background: linear-gradient(to bottom, var(--text-muted), transparent);
+      animation: scrollLine 2.5s ease-in-out infinite;
+    }
+    @keyframes scrollLine {
+      0% { transform: scaleY(0); transform-origin: top; }
+      50% { transform: scaleY(1); transform-origin: top; }
+      50.1% { transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+    .marquee-section {
+      padding: 3rem 0; overflow: hidden;
+      border-top: 1px solid var(--glass-border);
+      border-bottom: 1px solid var(--glass-border);
+      position: relative; z-index: 1; background: var(--bg);
+    }
+    .marquee-track {
+      display: flex; width: max-content;
+      animation: marquee 25s linear infinite;
+    }
+    .marquee-track:hover { animation-play-state: paused; }
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .marquee-item {
+      display: flex; align-items: center;
+      gap: 2.5rem; padding: 0 2.5rem; white-space: nowrap;
+    }
+    .marquee-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.25rem, 2.5vw, 2rem);
+      font-weight: 600; color: var(--text-muted);
+      transition: color 0.4s ease;
+    }
+    .marquee-item:hover .marquee-text { color: var(--text); }
+    .marquee-dot {
+      width: 6px; height: 6px;
+      background: var(--accent); border-radius: 50%;
+      flex-shrink: 0;
+      animation: dotPulse 3s ease-in-out infinite;
+    }
+    @keyframes dotPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.5); opacity: 0.5; }
     }
 
-    .glow-critical {
-      box-shadow: 0 0 20px rgba(255, 0, 64, 0.35);
-      animation: pulseCritical 2s infinite cubic-bezier(0.16, 1, 0.3, 1);
+    /* 3D Assembly Section */
+    .assembly-section {
+      min-height: 250vh;
+      position: relative; z-index: 1; background: var(--bg);
     }
-    .glow-grover { box-shadow: 0 0 20px rgba(255, 170, 0, 0.3); }
-    .glow-safe { box-shadow: 0 0 20px rgba(0, 255, 136, 0.3); }
+    .assembly-sticky {
+      position: sticky; top: 0; height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; perspective: 1200px;
+    }
+    .assembly-container {
+      position: relative;
+      width: 100%; max-width: 1000px; height: 600px;
+    }
+    .assembly-piece {
+      position: absolute; border-radius: 16px; overflow: hidden;
+      will-change: transform; box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      cursor: pointer;
+    }
+    .assembly-piece-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(168,85,247,0.3));
+      mix-blend-mode: overlay;
+    }
+    .assembly-label {
+      position: absolute; top: 2rem; left: 50%;
+      transform: translateX(-50%); z-index: 10; text-align: center;
+    }
+    .assembly-label span {
+      display: inline-block; padding: 0.5rem 1.25rem;
+      background: var(--glass); border: 1px solid var(--glass-border);
+      border-radius: 100px; font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent); backdrop-filter: blur(10px);
+      font-family: 'JetBrains Mono', monospace;
+    }
 
-    @keyframes pulseCritical {
-      0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 64, 0.35); }
-      50% { box-shadow: 0 0 35px rgba(255, 0, 64, 0.65); }
+    /* Threat Matrix */
+    .threats-section {
+      padding: 8rem 2rem;
+      position: relative; z-index: 1; background: var(--bg);
+    }
+    .threats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .threat-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 2.5rem 1.75rem;
+      transition: all 0.5s var(--expo);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+    .threat-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(500px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(99, 102, 241, 0.08), transparent 40%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .threat-card:hover::before { opacity: 1; }
+    .threat-card:hover {
+      border-color: var(--glass-border-hover);
+      transform: translateY(-6px);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    }
+    .threat-icon {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+      font-size: 1.25rem;
+      position: relative;
+      z-index: 1;
+    }
+    .threat-icon.critical { background: linear-gradient(135deg, var(--critical), #ff3366); }
+    .threat-icon.warning { background: linear-gradient(135deg, var(--warning), #fbbf24); }
+    .threat-icon.safe { background: linear-gradient(135deg, var(--safe), #22c55e); }
+    .threat-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 0.625rem;
+      position: relative;
+      z-index: 1;
+    }
+    .threat-desc {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      line-height: 1.7;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Showcase Cards */
+    .showcase-section {
+      padding: 8rem 2rem;
+      position: relative; z-index: 1; background: var(--bg);
+      overflow: hidden;
+    }
+    .showcase-bg-glow {
+      position: absolute;
+      width: 800px; height: 800px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.06) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .showcase-card {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      cursor: pointer;
+    }
+    .showcase-card:nth-child(2) { margin-top: 3rem; }
+    .showcase-card:nth-child(3) { margin-top: -3rem; }
+    .showcase-card-inner {
+      position: absolute; inset: 0;
+      transition: transform 0.7s var(--expo);
+    }
+    .showcase-card:hover .showcase-card-inner { transform: scale(1.05); }
+    .showcase-card-shine {
+      position: absolute; inset: 0;
+      background: radial-gradient(500px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.05), transparent 40%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .showcase-card:hover .showcase-card-shine { opacity: 1; }
+    .showcase-card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%);
+      opacity: 0.7;
+      transition: opacity 0.5s ease;
+      z-index: 3;
+    }
+    .showcase-card:hover .showcase-card-overlay { opacity: 1; }
+    .showcase-card-content {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 1.75rem;
+      transform: translateY(0);
+      opacity: 1;
+      transition: all 0.5s var(--expo);
+      z-index: 4;
+    }
+    .showcase-card-tag {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background: rgba(255,255,255,0.1);
+      border-radius: 100px;
+      font-size: 0.6875rem;
+      font-weight: 500;
+      margin-bottom: 0.625rem;
+      backdrop-filter: blur(10px);
+    }
+    .showcase-card-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.375rem;
+      font-weight: 600;
+      margin-bottom: 0.375rem;
+    }
+    .showcase-card-desc {
+      color: var(--text-secondary);
+      font-size: 0.8125rem;
+    }
+
+    /* Text Assembly */
+    .text-assembly {
+      min-height: 180vh;
+      position: relative;
+      z-index: 1;
+      background: var(--bg);
+    }
+    .text-assembly-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .text-assembly-content {
+      text-align: center;
+      max-width: 900px;
+      padding: 0 2rem;
+    }
+    .text-assembly-word {
+      display: inline-block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin: 0 0.25rem;
+      will-change: transform, opacity, filter;
+    }
+    .text-assembly-word.gradient {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2), var(--accent-3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .text-assembly-sub {
+      font-size: 1.0625rem;
+      color: var(--text-secondary);
+      max-width: 550px;
+      margin: 2rem auto 0;
+      line-height: 1.7;
+      will-change: transform, opacity;
+    }
+
+    /* Stats Section */
+    .stats {
+      padding: 6rem 2rem;
+      border-top: 1px solid var(--glass-border);
+      border-bottom: 1px solid var(--glass-border);
+      position: relative; z-index: 1; background: var(--bg);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .stat-item { position: relative; padding: 1.5rem; }
+    .stat-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      right: -1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1px;
+      height: 50px;
+      background: var(--glass-border);
+    }
+    .stat-number {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--text), var(--text-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* CTA Section */
+    .cta {
+      padding: 8rem 2rem;
+      position: relative;
+      z-index: 1;
+      background: var(--bg);
+      overflow: hidden;
+    }
+    .cta-container {
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .cta-orb {
+      position: absolute;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+      filter: blur(50px);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation: ctaPulse 5s ease-in-out infinite;
+    }
+    @keyframes ctaPulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+      50% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.9; }
+    }
+    .cta-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.25rem;
+    }
+    .cta-subtitle {
+      font-size: 1.0625rem;
+      color: var(--text-secondary);
+      max-width: 450px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.7;
+    }
+
+    /* Footer */
+    .footer {
+      padding: 4rem 2.5rem 2rem;
+      border-top: 1px solid var(--glass-border);
+      position: relative;
+      z-index: 1;
+      background: var(--bg);
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+      max-width: 1100px;
+      margin: 0 auto 3rem;
+    }
+    .footer-brand {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.875rem;
+    }
+    .footer-desc {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      line-height: 1.7;
+      max-width: 280px;
+    }
+    .footer-column h4 {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+      color: var(--text-muted);
+    }
+    .footer-column ul { list-style: none; }
+    .footer-column li { margin-bottom: 0.625rem; }
+    .footer-column a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.3s ease;
+    }
+    .footer-column a:hover { color: var(--text); }
+    .footer-bottom {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--glass-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-copyright {
+      color: var(--text-muted);
+      font-size: 0.8125rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Interactive Scanner Console Overlay */
+    #scanner-view {
+      display: none;
+      min-height: 100vh;
+      padding-top: 5.5rem;
+      padding-bottom: 5rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Modal styles */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(20px);
+      z-index: 10000;
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem;
+    }
+
+    @media (max-width: 1024px) {
+      .threats-grid { grid-template-columns: repeat(2, 1fr); }
+      .showcase-grid { grid-template-columns: 1fr; }
+      .showcase-card:nth-child(2), .showcase-card:nth-child(3) { margin-top: 0; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .stat-item:not(:last-child)::after { display: none; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+      .assembly-container { transform: scale(0.8); }
+    }
+    @media (max-width: 768px) {
+      .nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .threats-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+      .footer-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+      .cursor, .cursor-ring { display: none !important; }
+      body { cursor: auto; }
+      .btn-primary, .btn-secondary, .nav-cta { cursor: pointer; }
+      .assembly-container { transform: scale(0.6); }
+      .text-assembly-word { font-size: clamp(1.8rem, 8vw, 3rem); }
     }
   </style>
 </head>
-<body class="selection:bg-indigo-500/30 selection:text-white">
-  <div id="root"></div>
+<body>
+  <div class="cursor"></div>
+  <div class="cursor-ring"></div>
+  
+  <div class="loader">
+    <div class="loader-ring"></div>
+    <div class="loader-text">Initializing Aegis-Q</div>
+  </div>
 
-  <script type="text/babel">
-    const { useState, useEffect, useRef } = React;
+  <canvas id="dotCanvas"></canvas>
+  <div class="perspective-grid"></div>
+  <div class="scanlines"></div>
 
-    // Background Physics Constellation Canvas Component
-    function ConstellationCanvas() {
-      const canvasRef = useRef(null);
+  <!-- Global Nav -->
+  <nav class="nav">
+    <a onclick="showLandingView()" class="nav-logo">
+      <span style="font-size:1.6rem;">🛡️</span> AEGIS-Q
+      <span class="nav-logo-badge">SIH26164</span>
+    </a>
+    <ul class="nav-links">
+      <li><a onclick="showScannerView('code')">Codebase Scan</a></li>
+      <li><a onclick="showScannerView('url')">Live TLS Probe</a></li>
+      <li><a href="#threats" onclick="showLandingView()">Threat Matrix</a></li>
+      <li><a href="#showcase" onclick="showLandingView()">Visualizations</a></li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:1rem;">
+      <div class="status-orb"></div>
+      <button onclick="showScannerView('code')" class="nav-cta">
+        <span>⚡ Launch Scanner</span>
+      </button>
+    </div>
+  </nav>
 
-      useEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        let animationFrameId;
+  <!-- ================= VIEW 1: CINEMATIC HOMEPAGE ================= -->
+  <div id="landing-view">
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="hero-badge-dot"></span>
+          NIST FIPS 203 (ML-KEM) • FIPS 204 (ML-DSA) • FIPS 205 (SLH-DSA) Ready
+        </div>
+        <h1 class="hero-title">
+          <span class="line"><span>Discover. Analyze.</span></span>
+          <span class="line"><span class="gradient-text">Fortify.</span></span>
+        </h1>
+        <p class="hero-subtitle">
+          Post-Quantum Cryptographic Discovery &amp; Vulnerability Analysis Platform.
+          Scan codebases &amp; live TLS endpoints to generate official CycloneDX v1.6 CBOMs.
+        </p>
+        <div class="hero-buttons">
+          <button onclick="showScannerView('code')" class="btn-primary">
+            <span>⚡ Start Codebase Scan</span>
+          </button>
+          <button onclick="showScannerView('url')" class="btn-secondary">
+            <span>🌐 Probe Website Encryption</span>
+          </button>
+        </div>
+      </div>
+      <div class="hero-scroll">
+        <span>Scroll Down</span>
+        <div class="hero-scroll-line"></div>
+      </div>
+    </section>
 
-        let width = (canvas.width = window.innerWidth);
-        let height = (canvas.height = window.innerHeight);
+    <!-- Marquee -->
+    <section class="marquee-section">
+      <div class="marquee-track">
+        <div class="marquee-item">
+          <span class="marquee-text">ML-KEM-768</span><span class="marquee-dot"></span>
+          <span class="marquee-text">ML-DSA-65</span><span class="marquee-dot"></span>
+          <span class="marquee-text">SLH-DSA</span><span class="marquee-dot"></span>
+          <span class="marquee-text">CycloneDX v1.6 CBOM</span><span class="marquee-dot"></span>
+          <span class="marquee-text">Shor's Threat Factorization</span><span class="marquee-dot"></span>
+          <span class="marquee-text">Grover Quadratic Search</span><span class="marquee-dot"></span>
+          <span class="marquee-text">Harvest Now Decrypt Later (HNDL)</span><span class="marquee-dot"></span>
+          <span class="marquee-text">AES-256-GCM Resilient</span><span class="marquee-dot"></span>
+        </div>
+        <div class="marquee-item">
+          <span class="marquee-text">ML-KEM-768</span><span class="marquee-dot"></span>
+          <span class="marquee-text">ML-DSA-65</span><span class="marquee-dot"></span>
+          <span class="marquee-text">SLH-DSA</span><span class="marquee-dot"></span>
+          <span class="marquee-text">CycloneDX v1.6 CBOM</span><span class="marquee-dot"></span>
+          <span class="marquee-text">Shor's Threat Factorization</span><span class="marquee-dot"></span>
+          <span class="marquee-text">Grover Quadratic Search</span><span class="marquee-dot"></span>
+          <span class="marquee-text">Harvest Now Decrypt Later (HNDL)</span><span class="marquee-dot"></span>
+          <span class="marquee-text">AES-256-GCM Resilient</span><span class="marquee-dot"></span>
+        </div>
+      </div>
+    </section>
 
-        const handleResize = () => {
-          width = canvas.width = window.innerWidth;
-          height = canvas.height = window.innerHeight;
-        };
-        window.addEventListener('resize', handleResize);
+    <!-- 3D Discovered Assets Assembly / Disassembly -->
+    <section class="assembly-section" id="assembly">
+      <div class="assembly-sticky">
+        <div class="assembly-label"><span>Discovered Cryptographic Assets Spectrum</span></div>
+        <div class="assembly-container">
+          <div class="assembly-piece" id="asm-center" onclick="showScannerView('code')" style="width:380px;height:280px;top:160px;left:310px;">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg,#1e1b4b,#312e81);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.875rem;color:white;padding:1.5rem;text-align:center;">
+              <span style="color:#ff0040;font-weight:700;font-size:1.1rem;margin-bottom:0.25rem;">🔴 RSA-2048 Asymmetric Key</span>
+              <span style="font-size:0.75rem;color:rgba(255,255,255,0.6);">Broken by Shor's Algorithm • Target: ML-KEM-768</span>
+            </div>
+            <div class="assembly-piece-overlay"></div>
+          </div>
+          <div class="assembly-piece" id="asm-tl" onclick="showScannerView('code')" style="width:160px;height:120px;top:30px;left:90px;">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg,#4c0519,#881337);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:white;text-align:center;padding:0.5rem;">
+              <span style="color:#ff0040;font-weight:bold;">MD5 Hash</span>
+              <span style="font-size:0.6rem;color:rgba(255,255,255,0.5);">Deprecated Classical</span>
+            </div>
+            <div class="assembly-piece-overlay"></div>
+          </div>
+          <div class="assembly-piece" id="asm-tr" onclick="showScannerView('code')" style="width:140px;height:110px;top:50px;left:720px;">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg,#064e3b,#065f46);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:white;text-align:center;padding:0.5rem;">
+              <span style="color:#00ff88;font-weight:bold;">AES-256-GCM</span>
+              <span style="font-size:0.6rem;color:rgba(255,255,255,0.5);">Quantum-Resistant</span>
+            </div>
+            <div class="assembly-piece-overlay"></div>
+          </div>
+          <div class="assembly-piece" id="asm-bl" onclick="showScannerView('code')" style="width:180px;height:140px;top:460px;left:70px;">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg,#1c1917,#44403c);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:white;text-align:center;padding:0.5rem;">
+              <span style="color:#ffaa00;font-weight:bold;">DES (56-bit)</span>
+              <span style="font-size:0.6rem;color:rgba(255,255,255,0.5);">Insecure Cipher</span>
+            </div>
+            <div class="assembly-piece-overlay"></div>
+          </div>
+          <div class="assembly-piece" id="asm-br" onclick="showScannerView('code')" style="width:150px;height:120px;top:440px;left:700px;">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg,#0c4a6e,#0369a1);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:white;text-align:center;padding:0.5rem;">
+              <span style="color:#fbbf24;font-weight:bold;">SHA-1 Digest</span>
+              <span style="font-size:0.6rem;color:rgba(255,255,255,0.5);">Collision Vulnerable</span>
+            </div>
+            <div class="assembly-piece-overlay"></div>
+          </div>
+          <div class="assembly-piece" id="asm-sl" onclick="showScannerView('code')" style="width:130px;height:160px;top:220px;left:-10px;">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg,#581c87,#7c3aed);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:white;text-align:center;padding:0.5rem;">
+              <span style="color:#ff3366;font-weight:bold;">ECDSA P-256</span>
+              <span style="font-size:0.6rem;color:rgba(255,255,255,0.5);">Digital Signature</span>
+            </div>
+            <div class="assembly-piece-overlay"></div>
+          </div>
+          <div class="assembly-piece" id="asm-sr" onclick="showScannerView('code')" style="width:140px;height:140px;top:240px;left:850px;">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg,#7c2d12,#c2410c);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:white;text-align:center;padding:0.5rem;">
+              <span style="color:#ffaa00;font-weight:bold;">AES-ECB</span>
+              <span style="font-size:0.6rem;color:rgba(255,255,255,0.5);">Pattern Leakage</span>
+            </div>
+            <div class="assembly-piece-overlay"></div>
+          </div>
+          <div class="assembly-piece" id="asm-fl1" onclick="showScannerView('code')" style="width:90px;height:90px;top:90px;left:520px;">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg,#134e4a,#14b8a6);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.625rem;color:white;font-weight:bold;">ECDH</div>
+            <div class="assembly-piece-overlay"></div>
+          </div>
+          <div class="assembly-piece" id="asm-fl2" onclick="showScannerView('code')" style="width:80px;height:80px;top:400px;left:480px;">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg,#3f3f46,#71717a);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.625rem;color:white;font-weight:bold;">RC4</div>
+            <div class="assembly-piece-overlay"></div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-        const nodes = [];
-        const nodeCount = Math.min(150, Math.floor((width * height) / 12000));
-        for (let i = 0; i < nodeCount; i++) {
-          nodes.push({
-            x: Math.random() * width,
-            y: Math.random() * height,
-            vx: (Math.random() - 0.5) * 0.4,
-            vy: (Math.random() - 0.5) * 0.4,
-            radius: Math.random() * 1.5 + 0.5,
-            color: Math.random() > 0.85 ? '#ff0040' : Math.random() > 0.6 ? '#6366f1' : '#00ff88'
-          });
-        }
+    <!-- Threat Matrix -->
+    <section class="threats-section" id="threats">
+      <div class="section-header" style="text-align:center;margin-bottom:5rem;">
+        <span style="display:inline-block;padding:0.5rem 1.25rem;background:var(--glass);border:1px solid var(--glass-border);border-radius:100px;font-size:0.6875rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem;font-family:'JetBrains Mono',monospace;">Threat Taxonomy</span>
+        <h2 style="font-family:'Space Grotesk',sans-serif;font-size:clamp(2rem,5vw,3.5rem);font-weight:700;line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.25rem;">Cryptographic<br>Threat Matrix</h2>
+        <p style="font-size:1.0625rem;color:var(--text-secondary);max-width:580px;margin:0 auto;line-height:1.7;">Scientifically grounded classification of classical and quantum computing attack vectors.</p>
+      </div>
+      <div class="threats-grid">
+        <div class="threat-card">
+          <div class="threat-icon critical">🔴</div>
+          <h3 class="threat-title" style="color:var(--critical);">Shor's Algorithm</h3>
+          <p class="threat-desc">Breaks integer factorization and discrete logarithms in polynomial time $O(n^3)$. RSA, ECDSA, ECDH, and Ed25519 are completely broken.</p>
+        </div>
+        <div class="threat-card">
+          <div class="threat-icon warning">🟡</div>
+          <h3 class="threat-title" style="color:var(--warning);">Grover's Algorithm</h3>
+          <p class="threat-desc">Provides quadratic speedup for brute force key search. Halves effective key space: AES-128 reduces to ~64-bit security margin.</p>
+        </div>
+        <div class="threat-card">
+          <div class="threat-icon safe">🟢</div>
+          <h3 class="threat-title" style="color:var(--safe);">Quantum-Resistant</h3>
+          <p class="threat-desc">NIST FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), and AES-256-GCM maintain >=128-bit quantum security.</p>
+        </div>
+        <div class="threat-card">
+          <div class="threat-icon critical">⚡</div>
+          <h3 class="threat-title" style="color:var(--critical);">HNDL Attack</h3>
+          <p class="threat-desc">Harvest Now, Decrypt Later. Adversaries record encrypted TLS sessions today to retroactively decrypt when CRQC quantum hardware is online.</p>
+        </div>
+        <div class="threat-card">
+          <div class="threat-icon warning">⚠️</div>
+          <h3 class="threat-title" style="color:var(--warning);">Deprecated Classical</h3>
+          <p class="threat-desc">MD5, SHA-1, DES, and AES-ECB mode have demonstrated practical classical collision and diffusion exploits.</p>
+        </div>
+        <div class="threat-card">
+          <div class="threat-icon safe">🔒</div>
+          <h3 class="threat-title" style="color:var(--safe);">NIST PQC Migration</h3>
+          <p class="threat-desc">AI-assisted code transformations and verified deterministic patches migrating systems directly into production-grade FIPS standards.</p>
+        </div>
+      </div>
+    </section>
 
-        const render = () => {
-          ctx.clearRect(0, 0, width, height);
+    <!-- Showcase Cards -->
+    <section class="showcase-section" id="showcase">
+      <div class="showcase-bg-glow"></div>
+      <div class="section-header" style="text-align:center;margin-bottom:5rem;">
+        <span style="display:inline-block;padding:0.5rem 1.25rem;background:var(--glass);border:1px solid var(--glass-border);border-radius:100px;font-size:0.6875rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem;font-family:'JetBrains Mono',monospace;">Analysis Tools</span>
+        <h2 style="font-family:'Space Grotesk',sans-serif;font-size:clamp(2rem,5vw,3.5rem);font-weight:700;line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.25rem;">Enterprise Discovery<br>Suite</h2>
+      </div>
+      <div class="showcase-grid">
+        <div class="showcase-card" onclick="showScannerView('code')">
+          <div class="showcase-card-inner" style="background: linear-gradient(135deg, #1e1b4b, #312e81);"></div>
+          <div class="showcase-card-shine"></div>
+          <div class="showcase-card-overlay"></div>
+          <div class="showcase-card-content">
+            <span class="showcase-card-tag">CycloneDX v1.6</span>
+            <h3 class="showcase-card-title">Cryptography Bill of Materials (CBOM)</h3>
+            <p class="showcase-card-desc">Standardized cryptographic asset inventory tagging NIST security levels, OIDs, and classical strength.</p>
+          </div>
+        </div>
+        <div class="showcase-card" onclick="showScannerView('url')">
+          <div class="showcase-card-inner" style="background: linear-gradient(135deg, #4c0519, #881337);"></div>
+          <div class="showcase-card-shine"></div>
+          <div class="showcase-card-overlay"></div>
+          <div class="showcase-card-content">
+            <span class="showcase-card-tag">Dynamic TLS Socket Probe</span>
+            <h3 class="showcase-card-title">Live Handshake Inspector</h3>
+            <p class="showcase-card-desc">Non-intrusive 5-step SSL socket handshake prober assessing server certificates and key agreements.</p>
+          </div>
+        </div>
+        <div class="showcase-card" onclick="showScannerView('code')">
+          <div class="showcase-card-inner" style="background: linear-gradient(135deg, #064e3b, #065f46);"></div>
+          <div class="showcase-card-shine"></div>
+          <div class="showcase-card-overlay"></div>
+          <div class="showcase-card-content">
+            <span class="showcase-card-tag">AI Remediation</span>
+            <h3 class="showcase-card-title">Post-Quantum Code Patch Diff</h3>
+            <p class="showcase-card-desc">Side-by-side legacy vs. NIST FIPS 203/204/197 patch generation with instant copy and .patch download.</p>
+          </div>
+        </div>
+        <div class="showcase-card" onclick="showScannerView('code')">
+          <div class="showcase-card-inner" style="background: linear-gradient(135deg, #1c1917, #44403c);"></div>
+          <div class="showcase-card-shine"></div>
+          <div class="showcase-card-overlay"></div>
+          <div class="showcase-card-content">
+            <span class="showcase-card-tag">Multi-Language AST</span>
+            <h3 class="showcase-card-title">Static Source Scanner</h3>
+            <p class="showcase-card-desc">Deep AST analysis inspecting Python hashlib/PyCryptodome, Node.js crypto, Java security, and Go.</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-          for (let i = 0; i < nodes.length; i++) {
-            const node = nodes[i];
-            node.x += node.vx;
-            node.y += node.vy;
+    <!-- Text Assembly -->
+    <section class="text-assembly">
+      <div class="text-assembly-sticky">
+        <div class="text-assembly-content">
+          <div id="text-assembly-line1">
+            <span class="text-assembly-word">The</span>
+            <span class="text-assembly-word">quantum</span>
+            <span class="text-assembly-word">era</span>
+            <span class="text-assembly-word">is</span>
+          </div>
+          <div id="text-assembly-line2">
+            <span class="text-assembly-word gradient">coming</span>
+            <span class="text-assembly-word">&mdash;</span>
+            <span class="text-assembly-word">be</span>
+          </div>
+          <div id="text-assembly-line3">
+            <span class="text-assembly-word">ready</span>
+            <span class="text-assembly-word gradient">before</span>
+            <span class="text-assembly-word">it</span>
+            <span class="text-assembly-word">arrives</span>
+          </div>
+          <p class="text-assembly-sub" id="text-assembly-sub">
+            Every cryptographic primitive matters. Every migration path is intentional.
+            Proactive quantum defense engineered for SIH26164.
+          </p>
+        </div>
+      </div>
+    </section>
 
-            if (node.x < 0) node.x = width;
-            if (node.x > width) node.x = 0;
-            if (node.y < 0) node.y = height;
-            if (node.y > height) node.y = 0;
+    <!-- Stats -->
+    <section class="stats" id="stats">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number" data-target="156">0</div>
+          <div class="stat-label">Cryptographic Assets Mapped</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-target="12">0</div>
+          <div class="stat-label">Automated Test Suites</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-target="4">0</div>
+          <div class="stat-label">Languages (Python, JS, Java, Go)</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-target="100">0</div>
+          <div class="stat-label">% Free Tier Deployable</div>
+        </div>
+      </div>
+    </section>
 
-            ctx.beginPath();
-            ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
-            ctx.fillStyle = node.color;
-            ctx.fill();
+    <!-- CTA Section -->
+    <section class="cta" id="cta">
+      <div class="cta-orb"></div>
+      <div class="cta-container">
+        <h2 class="cta-title">Ready to discover your<br><span class="gradient-text">cryptographic risks?</span></h2>
+        <p class="cta-subtitle">Launch the Aegis-Q Discovery Console now to scan software packages or live HTTPS endpoints in seconds.</p>
+        <div class="cta-buttons">
+          <button onclick="showScannerView('code')" class="btn-primary">
+            <span>⚡ Launch Codebase Scanner</span>
+          </button>
+          <button onclick="showScannerView('url')" class="btn-secondary">
+            <span>🌐 Live URL Handshake Prober</span>
+          </button>
+        </div>
+      </div>
+    </section>
 
-            for (let j = i + 1; j < nodes.length; j++) {
-              const other = nodes[j];
-              const dx = other.x - node.x;
-              const dy = other.y - node.y;
-              const dist = Math.sqrt(dx * dx + dy * dy);
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">AEGIS-Q</div>
+          <p class="footer-desc">Post-Quantum Cryptographic Discovery &amp; CBOM Analysis Platform. Smart India Hackathon (SIH26164).</p>
+        </div>
+        <div class="footer-column">
+          <h4>Discovery Console</h4>
+          <ul>
+            <li><a onclick="showScannerView('code')">Codebase Scan (.ZIP)</a></li>
+            <li><a onclick="showScannerView('url')">Live TLS Handshake</a></li>
+            <li><a onclick="showScannerView('code')">CycloneDX CBOM Explorer</a></li>
+            <li><a onclick="showScannerView('code')">AI Migration Diff</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>NIST Standards</h4>
+          <ul>
+            <li><a href="https://csrc.nist.gov/pubs/fips/203/final" target="_blank">FIPS 203 (ML-KEM)</a></li>
+            <li><a href="https://csrc.nist.gov/pubs/fips/204/final" target="_blank">FIPS 204 (ML-DSA)</a></li>
+            <li><a href="https://csrc.nist.gov/pubs/fips/205/final" target="_blank">FIPS 205 (SLH-DSA)</a></li>
+            <li><a href="https://csrc.nist.gov/pubs/fips/197/final" target="_blank">FIPS 197 (AES-256)</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Repository</h4>
+          <ul>
+            <li><a href="https://github.com/MdAsif678/Project2" target="_blank">GitHub Repository</a></li>
+            <li><a href="https://cyclonedx.org" target="_blank">CycloneDX v1.6 Spec</a></li>
+            <li><a href="/health" target="_blank">API Health Status</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span class="footer-copyright">&copy; 2026 Aegis-Q &bull; Built for the Quantum Era &bull; SIH26164</span>
+        <div class="footer-social">
+          <a href="https://github.com/MdAsif678/Project2" target="_blank">GitHub Project2</a>
+        </div>
+      </div>
+    </footer>
+  </div>
 
-              if (dist < 130) {
-                ctx.beginPath();
-                ctx.moveTo(node.x, node.y);
-                ctx.lineTo(other.x, other.y);
-                ctx.strokeStyle = `rgba(255, 255, 255, ${0.08 * (1 - dist / 130)})`;
-                ctx.lineWidth = 0.5;
-                ctx.stroke();
-              }
-            }
-          }
+  <!-- ================= VIEW 2: INTERACTIVE SCANNER CONSOLE ================= -->
+  <div id="scanner-view">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 1.5rem;">
+      <!-- Console Header Bar -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <button onclick="showLandingView()" class="btn-secondary" style="padding: 0.5rem 1.25rem; font-size: 0.8125rem; display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+            <span>← Back to Overview</span>
+          </button>
+          <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 2.25rem; font-weight: 700;">
+            Cryptographic Discovery &amp; CBOM Console
+          </h1>
+          <p style="color: var(--text-secondary); font-size: 0.875rem; margin-top: 0.25rem;">
+            Target: <strong style="color: #fff;" id="current-target-name">Quantum-Vulnerable Core Banking Backend (Python)</strong>
+          </p>
+        </div>
 
-          animationFrameId = requestAnimationFrame(render);
-        };
+        <div style="display: flex; gap: 0.75rem; align-items: center;">
+          <button onclick="exportCurrentCbom()" class="btn-primary" style="padding: 0.625rem 1.5rem; font-size: 0.8125rem;">
+            <span>⬇️ Export CycloneDX v1.6 CBOM</span>
+          </button>
+        </div>
+      </div>
 
-        render();
+      <!-- Scan Hub + Live Terminal Grid -->
+      <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 1.5rem; margin-bottom: 2rem;" class="console-grid">
+        <!-- Scan Controls Card -->
+        <div class="glass" style="padding: 2rem;">
+          <!-- Tabs -->
+          <div style="display: flex; gap: 0.5rem; background: rgba(255,255,255,0.03); padding: 0.35rem; border-radius: 14px; margin-bottom: 1.5rem; border: 1px solid var(--glass-border);">
+            <button id="tab-btn-code" onclick="switchConsoleTab('code')" style="flex: 1; padding: 0.6rem; border-radius: 10px; border: none; font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600; cursor: pointer; background: #fff; color: #000; transition: all 0.3s;">
+              📁 Codebase Scan (.ZIP)
+            </button>
+            <button id="tab-btn-url" onclick="switchConsoleTab('url')" style="flex: 1; padding: 0.6rem; border-radius: 10px; border: none; font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600; cursor: pointer; background: transparent; color: var(--text-secondary); transition: all 0.3s;">
+              🌐 Live URL / TLS Prober
+            </button>
+          </div>
 
-        return () => {
-          window.removeEventListener('resize', handleResize);
-          cancelAnimationFrame(animationFrameId);
-        };
-      }, []);
-
-      return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0" />;
-    }
-
-    // Main App Component
-    function App() {
-      const [activeTab, setActiveTab] = useState('code');
-      const [targetUrl, setTargetUrl] = useState('google.com');
-      const [targetPort, setTargetPort] = useState(443);
-      const [isScanning, setIsScanning] = useState(false);
-      const [scanLogs, setScanLogs] = useState([]);
-      const [findings, setFindings] = useState([]);
-      const [score, setScore] = useState(25);
-      const [hndlRating, setHndlRating] = useState('CRITICAL (Immediate Harvest Now, Decrypt Later Threat)');
-      const [targetName, setTargetName] = useState('Quantum-Vulnerable Core Banking Backend');
-      const [selectedFinding, setSelectedFinding] = useState(null);
-      const [remediation, setRemediation] = useState(null);
-      const [searchQuery, setSearchQuery] = useState('');
-      const [filter, setFilter] = useState('ALL');
-      const [handshakeIdx, setHandshakeIdx] = useState(-1);
-
-      // Load initial bank demo findings on mount
-      useEffect(() => {
-        executeDemo('bank-app', 'Quantum-Vulnerable Core Banking Backend (Python)');
-      }, []);
-
-      const executeDemo = async (demoId, label) => {
-        setIsScanning(true);
-        setTargetName(label);
-        setScanLogs([
-          `[00:00.05] ▶ Initializing AST Parser on ${label}...`,
-          `[00:00.20] ▶ Inspecting cryptographic imports and key parameters...`
-        ]);
-
-        try {
-          const res = await fetch(`/api/scan/demo/${demoId}`);
-          const data = await res.json();
-          setScanLogs(data.scan_logs || []);
-          setFindings(data.findings || []);
-          setScore(data.quantum_readiness_score || 30);
-          setHndlRating(data.hndl_exposure_rating || 'HIGH');
-        } catch (e) {
-          console.warn('API error, using fallback');
-        }
-        setIsScanning(false);
-      };
-
-      const executeUrlScan = async () => {
-        setIsScanning(true);
-        setHandshakeIdx(0);
-        setScanLogs([
-          `[00:00.05] ▶ Connecting to ${targetUrl}:${targetPort}...`,
-          `[00:00.20] ▶ ClientHello: Proposing TLS 1.3/1.2 cipher suites...`
-        ]);
-
-        const stepTimer = setInterval(() => {
-          setHandshakeIdx(prev => (prev < 4 ? prev + 1 : prev));
-        }, 350);
-
-        try {
-          const res = await fetch('/api/scan/dynamic', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url: targetUrl, port: Number(targetPort) })
-          });
-          const data = await res.json();
-          clearInterval(stepTimer);
-          setHandshakeIdx(4);
-          setFindings(data.findings || []);
-          setScore(data.quantum_readiness_score || 35);
-          setHndlRating(data.hndl_exposure_rating || 'CRITICAL');
-          setTargetName(data.target_host);
-          setScanLogs((data.handshake_steps || []).map(s => `[${s.timestamp_ms}ms] ▶ ${s.name}: ${s.detail}`));
-        } catch (e) {
-          clearInterval(stepTimer);
-        }
-        setIsScanning(false);
-      };
-
-      const openRemediation = async (f) => {
-        setSelectedFinding(f);
-        setRemediation(null);
-        try {
-          const res = await fetch('/api/remediate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ finding: f })
-          });
-          const data = await res.json();
-          setRemediation(data);
-        } catch (e) {
-          console.warn('Remediation error');
-        }
-      };
-
-      const exportCbom = async () => {
-        try {
-          const res = await fetch('/api/cbom/export', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ target_name: targetName, findings: findings, scan_type: 'static' })
-          });
-          const cbom = await res.json();
-          const blob = new Blob([JSON.stringify(cbom, null, 2)], { type: 'application/json' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `cbom_cyclonedx_${targetName.toLowerCase().replace(/[^a-z0-9]/g, '_')}.json`;
-          a.click();
-        } catch (e) {
-          alert('Export generated locally.');
-        }
-      };
-
-      // Filter findings
-      const filteredFindings = findings.filter(f => {
-        const matchSearch = f.algorithm.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            (f.file_path && f.file_path.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                            f.nist_replacement.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchFilter = filter === 'ALL' ||
-                            (filter === 'SHOR' && f.risk_level.includes('SHOR')) ||
-                            (filter === 'GROVER' && f.risk_level.includes('GROVER')) ||
-                            (filter === 'DEPRECATED' && f.risk_level.includes('DEPRECATED')) ||
-                            (filter === 'RESISTANT' && f.risk_level.includes('RESISTANT'));
-        return matchSearch && matchFilter;
-      });
-
-      const shorCount = findings.filter(f => f.risk_level.includes('SHOR')).length;
-      const groverCount = findings.filter(f => f.risk_level.includes('GROVER')).length;
-      const deprecatedCount = findings.filter(f => f.risk_level.includes('DEPRECATED')).length;
-      const resistantCount = findings.filter(f => f.risk_level.includes('RESISTANT')).length;
-
-      return (
-        <div className="relative min-h-screen">
-          <ConstellationCanvas />
-          <div className="scanlines" />
-
-          {/* Fixed Navbar */}
-          <nav className="fixed top-0 left-0 right-0 z-50 py-4 px-6 bg-[#050508]/85 backdrop-blur-2xl border-b border-white/[0.06] flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 p-[1px]">
-                <div className="w-full h-full bg-[#050508] rounded-[11px] flex items-center justify-center font-bold text-indigo-400">
-                  🛡️
-                </div>
-              </div>
-              <div>
-                <span className="font-heading font-extrabold text-xl tracking-tight">AEGIS-Q</span>
-                <span className="ml-2 text-[10px] font-mono px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/20">
-                  SIH26164
-                </span>
-              </div>
+          <!-- Code Tab Content -->
+          <div id="console-tab-code">
+            <div style="border: 2px dashed rgba(255,255,255,0.12); padding: 2rem; border-radius: 16px; text-align: center; background: rgba(255,255,255,0.01); margin-bottom: 1.5rem;">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">⚡</div>
+              <div style="font-size: 0.9375rem; font-weight: 600;">Drag &amp; Drop Codebase Archive (.ZIP)</div>
+              <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">Multi-language AST Parser (Python, JS/TS, Java, Go)</div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.06] text-xs font-mono">
-                <span className={`w-2.5 h-2.5 rounded-full ${shorCount > 0 ? 'bg-red-500 animate-pulse' : 'bg-emerald-400'}`} />
-                <span>{shorCount > 0 ? `${shorCount} Shor Vulnerabilities` : 'Quantum Resistant'}</span>
+            <div>
+              <div style="font-size: 0.6875rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.75rem;">
+                One-Click Test Fixtures:
               </div>
-              <button
-                onClick={exportCbom}
-                className="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 flex items-center gap-1.5 cursor-pointer"
-              >
-                ⬇️ Export CycloneDX v1.6 CBOM
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;">
+                <button onclick="runDemo('bank-app', 'Vulnerable Core Banking (Python)')" style="padding: 0.75rem; border-radius: 12px; background: rgba(255,0,64,0.1); border: 1px solid rgba(255,0,64,0.3); color: #ff8099; text-align: left; font-size: 0.75rem; font-weight: 600; cursor: pointer;">
+                  🔴 Bank App
+                  <div style="font-size: 0.625rem; font-family: 'JetBrains Mono', monospace; color: rgba(255,255,255,0.4); margin-top: 0.25rem;">RSA-2048, MD5, DES</div>
+                </button>
+                <button onclick="runDemo('node-crypto', 'Legacy E-Commerce (Node.js)')" style="padding: 0.75rem; border-radius: 12px; background: rgba(255,170,0,0.1); border: 1px solid rgba(255,170,0,0.3); color: #ffcc66; text-align: left; font-size: 0.75rem; font-weight: 600; cursor: pointer;">
+                  🟡 Node Auth
+                  <div style="font-size: 0.625rem; font-family: 'JetBrains Mono', monospace; color: rgba(255,255,255,0.4); margin-top: 0.25rem;">3DES, MD5, AES-ECB</div>
+                </button>
+                <button onclick="runDemo('secure-ref', 'Post-Quantum Stack (ML-KEM, ML-DSA)')" style="padding: 0.75rem; border-radius: 12px; background: rgba(0,255,136,0.1); border: 1px solid rgba(0,255,136,0.3); color: #66ffb3; text-align: left; font-size: 0.75rem; font-weight: 600; cursor: pointer;">
+                  🟢 Quantum-Resistant
+                  <div style="font-size: 0.625rem; font-family: 'JetBrains Mono', monospace; color: rgba(255,255,255,0.4); margin-top: 0.25rem;">ML-KEM, ML-DSA, AES-GCM</div>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- URL Tab Content -->
+          <div id="console-tab-url" style="display: none;">
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem;">
+              <input type="text" id="target-url-input" value="google.com" placeholder="google.com" style="flex: 1; padding: 0.75rem 1rem; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.8125rem; outline: none;">
+              <input type="number" id="target-port-input" value="443" style="width: 70px; padding: 0.75rem 0.5rem; text-align: center; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.8125rem; outline: none;">
+              <button onclick="runDynamicProbe()" id="probe-btn" class="btn-primary" style="padding: 0.75rem 1.5rem; font-size: 0.8125rem;">
+                <span>Probe TLS</span>
               </button>
             </div>
-          </nav>
 
-          {/* Hero Section */}
-          <section className="pt-32 pb-14 text-center px-6 max-w-5xl mx-auto z-10 relative">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] backdrop-blur-xl mb-6 text-xs font-mono text-white/80">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-              NIST FIPS 203 (ML-KEM) • FIPS 204 (ML-DSA) • FIPS 205 (SLH-DSA)
-            </div>
-            <h1 className="text-5xl sm:text-7xl font-heading font-extrabold tracking-tight mb-6">
-              Discover. Analyze. <span className="gradient-text-fortify">Fortify.</span>
-            </h1>
-            <p className="text-sm sm:text-base text-white/60 max-w-3xl mx-auto mb-6 font-light leading-relaxed">
-              Cryptographic Discovery & Quantum-Resilience Analysis. Scans codebases and live TLS endpoints to generate standards-compliant <strong>CycloneDX v1.6 CBOMs</strong> and verified post-quantum migration patches.
-            </p>
-          </section>
-
-          {/* Scan Hub & Live Terminal */}
-          <section className="max-w-7xl mx-auto px-6 mb-16 relative z-10">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-              {/* Scan Container */}
-              <div className="lg:col-span-7 glass-panel p-6 sm:p-8">
-                <div className="flex items-center gap-2 p-1.5 bg-white/[0.03] border border-white/[0.06] rounded-2xl mb-6">
-                  <button
-                    onClick={() => setActiveTab('code')}
-                    className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                      activeTab === 'code' ? 'bg-white text-black' : 'text-white/60 hover:text-white'
-                    }`}
-                  >
-                    📁 Codebase Scan (.ZIP)
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('url')}
-                    className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                      activeTab === 'url' ? 'bg-white text-black' : 'text-white/60 hover:text-white'
-                    }`}
-                  >
-                    🌐 Live URL / TLS Scan
-                  </button>
-                </div>
-
-                {activeTab === 'code' ? (
-                  <div className="space-y-6">
-                    <div className="border-2 border-dashed border-white/10 hover:border-indigo-500/50 p-8 rounded-2xl text-center bg-white/[0.01]">
-                      <div className="text-3xl mb-2">⚡</div>
-                      <div className="text-sm font-semibold text-white">Drop Codebase ZIP Archive Here</div>
-                      <div className="text-xs text-white/40 mt-1">Multi-language AST & Regex scanner (Python, JS/TS, Java, Go)</div>
-                    </div>
-
-                    <div>
-                      <div className="text-[11px] font-mono text-white/40 uppercase mb-3">Pre-Packaged Sample Fixtures:</div>
-                      <div className="grid grid-cols-3 gap-2.5">
-                        <button
-                          onClick={() => executeDemo('bank-app', 'Vulnerable Core Banking (Python)')}
-                          className="p-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-left text-xs font-semibold text-red-300 transition-all"
-                        >
-                          🔴 Bank App
-                          <div className="text-[10px] text-white/40 font-mono mt-1">RSA-2048, MD5, DES</div>
-                        </button>
-                        <button
-                          onClick={() => executeDemo('node-crypto', 'Legacy E-Commerce (Node.js)')}
-                          className="p-3 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-left text-xs font-semibold text-amber-300 transition-all"
-                        >
-                          🟡 Node Auth
-                          <div className="text-[10px] text-white/40 font-mono mt-1">3DES, MD5, AES-ECB</div>
-                        </button>
-                        <button
-                          onClick={() => executeDemo('secure-ref', 'Post-Quantum Reference Stack')}
-                          className="p-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-left text-xs font-semibold text-emerald-300 transition-all"
-                        >
-                          🟢 Quantum-Resistant
-                          <div className="text-[10px] text-white/40 font-mono mt-1">ML-KEM, ML-DSA</div>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={targetUrl}
-                        onChange={e => setTargetUrl(e.target.value)}
-                        className="flex-1 px-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-xl text-xs font-mono text-white focus:outline-none focus:border-indigo-400"
-                        placeholder="google.com"
-                      />
-                      <input
-                        type="number"
-                        value={targetPort}
-                        onChange={e => setTargetPort(e.target.value)}
-                        className="w-20 px-2 py-3 bg-white/[0.03] border border-white/[0.08] rounded-xl text-xs font-mono text-center text-white"
-                      />
-                      <button
-                        onClick={executeUrlScan}
-                        disabled={isScanning}
-                        className="px-5 py-3 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/40"
-                      >
-                        {isScanning ? 'Probing...' : 'Probe TLS'}
-                      </button>
-                    </div>
-
-                    {/* TLS Handshake Steps */}
-                    <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
-                      <div className="text-[11px] font-mono text-white/40 uppercase mb-3 text-center">Live Socket Handshake Progression</div>
-                      <div className="flex justify-between text-xs font-mono">
-                        {['ClientHello', 'ServerHello', 'Certificate', 'KeyExchange', 'Finished'].map((st, i) => (
-                          <div key={st} className="flex flex-col items-center">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center border ${
-                              i <= handshakeIdx ? 'bg-emerald-500/20 border-emerald-400 text-emerald-400 font-bold' : 'border-white/10 text-white/30'
-                            }`}>
-                              {i <= handshakeIdx ? '✓' : i + 1}
-                            </div>
-                            <span className="text-[10px] text-white/50 mt-1">{st}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
+            <!-- Handshake steps -->
+            <div style="padding: 1rem; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 14px;">
+              <div style="font-size: 0.6875rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); text-transform: uppercase; text-align: center; margin-bottom: 0.75rem;">
+                Live Socket Handshake Progression
               </div>
-
-              {/* Live Terminal */}
-              <div className="lg:col-span-5 glass-panel h-[360px] p-4 flex flex-col font-mono text-xs overflow-hidden">
-                <div className="flex justify-between items-center pb-2 border-b border-white/[0.06] text-white/50 text-[11px]">
-                  <span>DISCOVERY AUDIT LOG STREAM</span>
-                  <span className="text-emerald-400">{isScanning ? '● ACTIVE PROBE' : '● READY'}</span>
+              <div style="display: flex; justify-content: space-between; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 0.6875rem;">
+                <div id="hs-1">
+                  <div style="width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--accent); color: var(--accent); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.25rem;">1</div>
+                  <span style="color: var(--text-secondary);">ClientHello</span>
                 </div>
-                <div className="flex-1 overflow-y-auto space-y-1.5 py-3">
-                  {scanLogs.map((log, i) => (
-                    <div key={i} className="text-white/80 leading-relaxed">
-                      {log}
-                    </div>
-                  ))}
+                <div id="hs-2">
+                  <div style="width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--glass-border); color: var(--text-muted); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.25rem;">2</div>
+                  <span style="color: var(--text-secondary);">ServerHello</span>
+                </div>
+                <div id="hs-3">
+                  <div style="width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--glass-border); color: var(--text-muted); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.25rem;">3</div>
+                  <span style="color: var(--text-secondary);">Certificate</span>
+                </div>
+                <div id="hs-4">
+                  <div style="width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--glass-border); color: var(--text-muted); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.25rem;">4</div>
+                  <span style="color: var(--text-secondary);">KeyExchange</span>
+                </div>
+                <div id="hs-5">
+                  <div style="width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--glass-border); color: var(--text-muted); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.25rem;">5</div>
+                  <span style="color: var(--text-secondary);">Finished</span>
                 </div>
               </div>
             </div>
-          </section>
-
-          {/* Quantum Risk Radial Gauge */}
-          <section className="max-w-7xl mx-auto px-6 mb-16 relative z-10">
-            <div className="glass-panel p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-8">
-              <div className="text-center md:text-left">
-                <div className="text-6xl font-heading font-extrabold text-white tracking-tight">{score}%</div>
-                <div className="text-xs font-mono text-white/50 uppercase tracking-widest mt-1">
-                  Aegis-Q Quantum Readiness Index (Heuristic)
-                </div>
-                <p className="text-[11px] text-white/40 mt-1 max-w-sm">
-                  Heuristic score calculated from discovered cryptographic assets and assigned risk categories.
-                </p>
-                <div className={`mt-3 inline-block px-4 py-1 rounded-full text-xs font-bold border ${
-                  score < 50 ? 'bg-red-500/15 border-red-500 text-red-400 glow-critical' : 'bg-emerald-500/15 border-emerald-400 text-emerald-400'
-                }`}>
-                  {score < 50 ? 'CRITICAL — Immediate PQC Migration Required' : 'QUANTUM RESISTANT'}
-                </div>
-              </div>
-
-              <div className="flex-1 w-full space-y-3">
-                <div>
-                  <div className="flex justify-between text-xs font-mono mb-1">
-                    <span className="text-red-400 font-semibold">🔴 Shor's Algorithm Vulnerable (Public-Key / Factoring / Discrete Log):</span>
-                    <span className="text-white font-bold">{shorCount} Assets</span>
-                  </div>
-                  <div className="h-2 w-full bg-white/[0.06] rounded-full overflow-hidden">
-                    <div className="h-full bg-red-500" style={{ width: `${Math.min(100, shorCount * 35)}%` }} />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between text-xs font-mono mb-1">
-                    <span className="text-amber-400 font-semibold">🟡 Grover's Search Halved (128-bit Symmetric / Hashes):</span>
-                    <span className="text-white font-bold">{groverCount} Assets</span>
-                  </div>
-                  <div className="h-2 w-full bg-white/[0.06] rounded-full overflow-hidden">
-                    <div className="h-full bg-amber-400" style={{ width: `${Math.min(100, groverCount * 25)}%` }} />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between text-xs font-mono mb-1">
-                    <span className="text-zinc-400">⚠️ Deprecated Classical (MD5 / SHA-1 / DES / ECB):</span>
-                    <span className="text-white font-bold">{deprecatedCount} Assets</span>
-                  </div>
-                  <div className="h-2 w-full bg-white/[0.06] rounded-full overflow-hidden">
-                    <div className="h-full bg-zinc-400" style={{ width: `${Math.min(100, deprecatedCount * 25)}%` }} />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between text-xs font-mono mb-1">
-                    <span className="text-emerald-400">🟢 Quantum-Resistant (ML-KEM / ML-DSA / AES-256 / SHA-512):</span>
-                    <span className="text-white font-bold">{resistantCount} Assets</span>
-                  </div>
-                  <div className="h-2 w-full bg-white/[0.06] rounded-full overflow-hidden">
-                    <div className="h-full bg-emerald-400" style={{ width: `${Math.min(100, resistantCount * 25)}%` }} />
-                  </div>
-                </div>
-
-                <div className="p-3 bg-white/[0.02] border border-white/[0.06] rounded-xl text-xs font-mono text-white/70">
-                  ⏳ <strong>HNDL Horizon:</strong> {hndlRating}
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* CBOM Explorer Table */}
-          <section className="max-w-7xl mx-auto px-6 mb-16 relative z-10">
-            <div className="glass-panel p-6 sm:p-8">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-white/[0.06]">
-                <div>
-                  <h2 className="text-2xl font-heading font-bold text-white">Cryptography Bill of Materials (CBOM)</h2>
-                  <p className="text-xs text-white/50 font-mono mt-0.5">OWASP CycloneDX v1.6 Standard • {findings.length} Classified Cryptographic Assets</p>
-                </div>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  placeholder="Filter algorithm or file..."
-                  className="px-3.5 py-2 bg-white/[0.03] border border-white/[0.08] rounded-xl text-xs font-mono text-white focus:outline-none"
-                />
-              </div>
-
-              <div className="overflow-x-auto mt-4">
-                <table className="w-full text-left text-xs font-mono">
-                  <thead>
-                    <tr className="border-b border-white/[0.06] text-white/40 uppercase text-[11px]">
-                      <th className="py-3 px-3">Cryptographic Asset</th>
-                      <th className="py-3 px-3">Primitive Category</th>
-                      <th className="py-3 px-3">Classical Strength</th>
-                      <th className="py-3 px-3">Threat Classification</th>
-                      <th className="py-3 px-3">Target NIST PQC Standard</th>
-                      <th className="py-3 px-3 text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/[0.04]">
-                    {filteredFindings.map(f => (
-                      <tr key={f.id} className="hover:bg-white/[0.02] transition-colors">
-                        <td className="py-3.5 px-3">
-                          <div className="font-bold text-white">{f.algorithm}</div>
-                          <div className="text-[10px] text-white/40">{f.file_path || 'Network Endpoint'}</div>
-                        </td>
-                        <td className="py-3.5 px-3 text-indigo-200">{f.primitive}</td>
-                        <td className="py-3.5 px-3 text-white/70">
-                          {f.classical_security_bits ? `~${f.classical_security_bits}-bit` : 'N/A'}
-                        </td>
-                        <td className="py-3.5 px-3">
-                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                            f.risk_level.includes('SHOR') ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
-                            f.risk_level.includes('GROVER') ? 'bg-amber-500/20 text-amber-400' :
-                            f.risk_level.includes('RESISTANT') ? 'bg-emerald-500/20 text-emerald-400' : 'bg-zinc-500/20 text-zinc-300'
-                          }`}>
-                            {f.risk_level}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-3 text-indigo-300 font-semibold">{f.nist_replacement}</td>
-                        <td className="py-3.5 px-3 text-right">
-                          <button
-                            onClick={() => openRemediation(f)}
-                            className="px-3 py-1 rounded-lg bg-indigo-600/30 hover:bg-indigo-600 text-white font-semibold text-xs transition-all cursor-pointer"
-                          >
-                            🪄 Patch
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </section>
-
-          {/* AI Remediation Diff Modal */}
-          {selectedFinding && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl">
-              <div className="glass-panel w-full max-w-5xl max-h-[90vh] flex flex-col p-6 border border-white/[0.12] shadow-2xl">
-                <div className="flex justify-between items-center pb-4 border-b border-white/[0.08]">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl">🪄</span>
-                    <div>
-                      <h3 className="text-lg font-heading font-bold text-white">
-                        PQC Migration Suggestion: {selectedFinding.algorithm} ({selectedFinding.primitive})
-                      </h3>
-                      <div className="text-[11px] text-amber-400/90 font-mono">
-                        ⚠️ AI-assisted migration patch requiring developer validation and unit testing.
-                      </div>
-                    </div>
-                  </div>
-                  <button onClick={() => setSelectedFinding(null)} className="text-white/50 hover:text-white text-lg">✕</button>
-                </div>
-
-                <div className="flex-1 overflow-y-auto py-4 space-y-4 font-mono text-xs">
-                  {remediation ? (
-                    <div>
-                      <div className="grid grid-cols-2 gap-4 mb-4">
-                        <div className="p-3 rounded-xl bg-red-500/5 border border-red-500/20">
-                          <div className="text-red-400 font-bold mb-1">🔴 Legacy Cryptographic Code</div>
-                          <pre className="text-white/80 whitespace-pre-wrap">{remediation.original_code}</pre>
-                        </div>
-                        <div className="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
-                          <div className="text-emerald-400 font-bold mb-1">🟢 Post-Quantum Remediated ({remediation.target_fips})</div>
-                          <pre className="text-emerald-200 whitespace-pre-wrap">{remediation.patched_code}</pre>
-                        </div>
-                      </div>
-
-                      <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] text-white/80 font-sans leading-relaxed">
-                        <div className="font-bold text-white font-mono mb-1">NIST Technical Rationale:</div>
-                        {remediation.why_vulnerable}
-                      </div>
-
-                      <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex justify-between items-center text-xs font-mono text-indigo-300">
-                        <span>Standard: <strong>{remediation.nist_reference}</strong></span>
-                        <a href={remediation.nist_link} target="_blank" rel="noopener noreferrer" className="underline hover:text-white">
-                          View NIST CSRC Specification ↗
-                        </a>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-center py-12 text-white/50">Synthesizing NIST PQC Patch with Gemini Engine...</div>
-                  )}
-                </div>
-
-                <div className="pt-4 border-t border-white/[0.08] flex justify-end gap-3">
-                  <button
-                    onClick={() => {
-                      if (remediation) navigator.clipboard.writeText(remediation.patched_code);
-                      alert('Patched code copied to clipboard!');
-                    }}
-                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-lg"
-                  >
-                    📋 Copy Patched Code
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Footer */}
-          <footer className="text-center py-8 text-xs font-mono text-white/40 border-t border-white/[0.06]">
-            © 2026 Aegis-Q • Smart India Hackathon (SIH26164) • 100% Free Tier Architecture
-          </footer>
+          </div>
         </div>
-      );
+
+        <!-- Live Terminal Stream -->
+        <div class="glass" style="padding: 1.25rem; display: flex; flex-direction: column; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; height: 360px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.6875rem;">
+            <span>DISCOVERY LOG STREAM</span>
+            <span id="terminal-status" style="color: var(--safe);">● READY</span>
+          </div>
+          <div id="terminal-logs" style="flex: 1; overflow-y: auto; padding-top: 0.75rem; line-height: 1.7; color: rgba(255,255,255,0.8);">
+            <div>[00:00.01] ▶ Aegis-Q Scanner Engine initialized.</div>
+            <div>[00:00.05] ▶ Ready to audit software packages or HTTPS sockets.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quantum Readiness Gauge Card -->
+      <div class="glass" style="padding: 2.5rem; margin-bottom: 2.5rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1.6fr; gap: 3rem; align-items: center;" class="gauge-grid">
+          <!-- Gauge Center -->
+          <div style="text-align: center;">
+            <div style="position: relative; width: 220px; height: 220px; margin: 0 auto;">
+              <svg viewBox="0 0 200 200" style="width: 100%; height: 100%; transform: rotate(-90deg);">
+                <circle cx="100" cy="100" r="80" fill="transparent" stroke="rgba(255,255,255,0.06)" stroke-width="14" />
+                <circle id="console-gauge-ring" cx="100" cy="100" r="80" fill="transparent" stroke="#ff0040" stroke-width="14" stroke-linecap="round" stroke-dasharray="502.65" stroke-dashoffset="376" style="transition: all 1.2s var(--expo);" />
+              </svg>
+              <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <span id="console-gauge-score" style="font-family: 'Space Grotesk', sans-serif; font-size: 3.5rem; font-weight: 700; line-height: 1;">25%</span>
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.625rem; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 0.25rem;">Readiness Index</span>
+              </div>
+            </div>
+            <div style="font-size: 0.6875rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; margin-top: 0.5rem;">
+              Heuristic score based on discovered cryptographic assets and assigned risk categories.
+            </div>
+            <div id="console-threat-badge" style="display: inline-block; margin-top: 0.75rem; padding: 0.35rem 1rem; border-radius: 100px; font-size: 0.75rem; font-weight: 700; background: rgba(255,0,64,0.15); border: 1px solid var(--critical); color: #ff8099;">
+              CRITICAL — Immediate PQC Action Required
+            </div>
+          </div>
+
+          <!-- Gauge Bars -->
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Shor Bar -->
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 0.35rem;">
+                <span style="color: var(--critical); font-weight: 600;">🔴 Shor's Algorithm Vulnerable (Public Key):</span>
+                <span id="bar-shor-count" style="font-weight: 700;">1 Asset</span>
+              </div>
+              <div style="height: 6px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden;">
+                <div id="bar-shor-fill" style="height: 100%; background: var(--critical); width: 60%; transition: width 1s ease;"></div>
+              </div>
+            </div>
+
+            <!-- Grover Bar -->
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 0.35rem;">
+                <span style="color: var(--warning); font-weight: 600;">🟡 Grover's Search Halved (128-bit Symmetric):</span>
+                <span id="bar-grover-count" style="font-weight: 700;">0 Assets</span>
+              </div>
+              <div style="height: 6px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden;">
+                <div id="bar-grover-fill" style="height: 100%; background: var(--warning); width: 0%; transition: width 1s ease;"></div>
+              </div>
+            </div>
+
+            <!-- Deprecated Bar -->
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 0.35rem;">
+                <span style="color: var(--text-secondary);">⚠️ Deprecated Classical (MD5 / SHA-1 / DES):</span>
+                <span id="bar-deprecated-count" style="font-weight: 700;">4 Assets</span>
+              </div>
+              <div style="height: 6px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden;">
+                <div id="bar-deprecated-fill" style="height: 100%; background: #a1a1aa; width: 70%; transition: width 1s ease;"></div>
+              </div>
+            </div>
+
+            <!-- Quantum Resistant Bar -->
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 0.35rem;">
+                <span style="color: var(--safe); font-weight: 600;">🟢 Quantum-Resistant (ML-KEM / ML-DSA / AES-256):</span>
+                <span id="bar-resistant-count" style="font-weight: 700;">1 Asset</span>
+              </div>
+              <div style="height: 6px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden;">
+                <div id="bar-resistant-fill" style="height: 100%; background: var(--safe); width: 25%; transition: width 1s ease;"></div>
+              </div>
+            </div>
+
+            <!-- HNDL Horizon card -->
+            <div style="padding: 0.875rem 1.25rem; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 12px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.5rem;">
+              ⏳ <strong style="color: #fff;">HNDL Threat Horizon:</strong> <span id="hndl-text">CRITICAL (Immediate Harvest Now, Decrypt Later Threat Active)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CBOM Explorer Data Table -->
+      <div class="glass" style="padding: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 1.25rem; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700;">
+              Cryptography Bill of Materials (CBOM)
+            </h2>
+            <p style="color: var(--text-secondary); font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; margin-top: 0.25rem;">
+              OWASP CycloneDX v1.6 Standard • <span id="cbom-asset-count">6</span> Discovered Cryptographic Assets
+            </p>
+          </div>
+          <input type="text" id="cbom-search" oninput="filterCbomTable()" placeholder="Search algorithm or file..." style="padding: 0.5rem 1rem; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 10px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; outline: none; width: 220px;">
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--glass-border); color: var(--text-muted); text-transform: uppercase; font-size: 0.6875rem;">
+                <th style="padding: 0.75rem;">Cryptographic Asset</th>
+                <th style="padding: 0.75rem;">Primitive Category</th>
+                <th style="padding: 0.75rem;">Classical Security</th>
+                <th style="padding: 0.75rem;">Threat Classification</th>
+                <th style="padding: 0.75rem;">Target NIST Standard</th>
+                <th style="padding: 0.75rem; text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="cbom-tbody">
+              <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= VIEW 3: AI REMEDIATION MODAL ================= -->
+  <div id="remediation-modal" class="modal-backdrop" style="display: none;">
+    <div class="glass" style="max-width: 900px; width: 100%; max-height: 90vh; display: flex; flex-direction: column; padding: 2rem; border-color: rgba(255,255,255,0.15); box-shadow: 0 25px 80px rgba(0,0,0,0.8);">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem; margin-bottom: 1rem;">
+        <div>
+          <h3 id="modal-algo-title" style="font-family: 'Space Grotesk', sans-serif; font-size: 1.375rem; font-weight: 700;">
+            PQC Migration Studio
+          </h3>
+          <p id="modal-algo-subtitle" style="font-size: 0.75rem; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; margin-top: 0.25rem;">
+            Target Algorithm: RSA-2048
+          </p>
+        </div>
+        <button onclick="closeRemediationModal()" style="background: none; border: none; color: var(--text-secondary); font-size: 1.25rem; cursor: pointer; padding: 0.5rem;">✕</button>
+      </div>
+
+      <!-- Warning notice -->
+      <div style="padding: 0.75rem 1rem; background: rgba(255,170,0,0.1); border: 1px solid rgba(255,170,0,0.3); border-radius: 10px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #ffcc66; margin-bottom: 1.25rem;">
+        ⚠️ AI-assisted migration patch suggestion — developer validation and unit testing required.
+      </div>
+
+      <!-- Modal Body -->
+      <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div style="background: rgba(255,0,64,0.05); border: 1px solid rgba(255,0,64,0.2); padding: 1rem; border-radius: 12px;">
+            <div style="color: var(--critical); font-weight: 700; margin-bottom: 0.5rem;">🔴 Legacy Cryptographic Code</div>
+            <pre id="modal-legacy-code" style="white-space: pre-wrap; color: rgba(255,255,255,0.8);"></pre>
+          </div>
+          <div style="background: rgba(0,255,136,0.05); border: 1px solid rgba(0,255,136,0.2); padding: 1rem; border-radius: 12px;">
+            <div style="color: var(--safe); font-weight: 700; margin-bottom: 0.5rem;">🟢 Post-Quantum Remediated (<span id="modal-fips-label">NIST FIPS 203</span>)</div>
+            <pre id="modal-patched-code" style="white-space: pre-wrap; color: #b3ffd9;"></pre>
+          </div>
+        </div>
+
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 1rem; border-radius: 12px; font-family: 'Inter', sans-serif; font-size: 0.8125rem; line-height: 1.6; color: var(--text-secondary);">
+          <strong style="color: #fff; font-family: 'JetBrains Mono', monospace;">NIST Technical Rationale:</strong>
+          <div id="modal-rationale-text" style="margin-top: 0.25rem;"></div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div style="border-top: 1px solid var(--glass-border); padding-top: 1rem; margin-top: 1rem; display: flex; justify-content: flex-end; gap: 0.75rem;">
+        <button onclick="copyPatchedCode()" class="btn-primary" style="padding: 0.625rem 1.5rem; font-size: 0.8125rem;">
+          <span>📋 Copy Patched Code</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ================= VIEW SWITCHER =================
+    function showLandingView() {
+      document.getElementById('landing-view').style.display = 'block';
+      document.getElementById('scanner-view').style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    function showScannerView(tab = 'code') {
+      document.getElementById('landing-view').style.display = 'none';
+      document.getElementById('scanner-view').style.display = 'block';
+      switchConsoleTab(tab);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // If no findings yet, run default bank app demo
+      if (currentFindings.length === 0) {
+        runDemo('bank-app', 'Vulnerable Core Banking (Python)');
+      }
+    }
+
+    function switchConsoleTab(tab) {
+      if (tab === 'code') {
+        document.getElementById('console-tab-code').style.display = 'block';
+        document.getElementById('console-tab-url').style.display = 'none';
+        document.getElementById('tab-btn-code').style.background = '#fff';
+        document.getElementById('tab-btn-code').style.color = '#000';
+        document.getElementById('tab-btn-url').style.background = 'transparent';
+        document.getElementById('tab-btn-url').style.color = 'var(--text-secondary)';
+      } else {
+        document.getElementById('console-tab-code').style.display = 'none';
+        document.getElementById('console-tab-url').style.display = 'block';
+        document.getElementById('tab-btn-url').style.background = '#fff';
+        document.getElementById('tab-btn-url').style.color = '#000';
+        document.getElementById('tab-btn-code').style.background = 'transparent';
+        document.getElementById('tab-btn-code').style.color = 'var(--text-secondary)';
+      }
+    }
+
+    // ================= STATE & SCANNER LOGIC =================
+    let currentFindings = [];
+    let currentTargetName = 'Quantum-Vulnerable Core Banking Backend (Python)';
+    let activeRemediationData = null;
+
+    async function runDemo(demoId, label) {
+      currentTargetName = label;
+      document.getElementById('current-target-name').innerText = label;
+      addLog(`▶ Initializing AST analysis on '${label}'...`);
+      
+      try {
+        const res = await fetch(`/api/scan/demo/${demoId}`);
+        const data = await res.json();
+        updateConsoleView(data);
+      } catch (e) {
+        addLog(`⚠️ Scanner API error: ${e.message}`);
+      }
+    }
+
+    async function runDynamicProbe() {
+      const url = document.getElementById('target-url-input').value.trim() || 'google.com';
+      const port = parseInt(document.getElementById('target-port-input').value) || 443;
+      currentTargetName = url;
+      document.getElementById('current-target-name').innerText = `Live Endpoint: ${url}:${port}`;
+      
+      // Animate handshake progression
+      let step = 1;
+      const interval = setInterval(() => {
+        if (step <= 5) {
+          const el = document.getElementById(`hs-${step}`);
+          if (el) {
+            el.children[0].style.borderColor = 'var(--safe)';
+            el.children[0].style.color = 'var(--safe)';
+            el.children[0].innerText = '✓';
+          }
+          step++;
+        } else {
+          clearInterval(interval);
+        }
+      }, 250);
+
+      addLog(`▶ Initiating non-intrusive SSL socket probe to ${url}:${port}...`);
+      
+      try {
+        const res = await fetch('/api/scan/dynamic', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: url, port: port })
+        });
+        const data = await res.json();
+        clearInterval(interval);
+        for (let i = 1; i <= 5; i++) {
+          const el = document.getElementById(`hs-${i}`);
+          if (el) {
+            el.children[0].style.borderColor = 'var(--safe)';
+            el.children[0].style.color = 'var(--safe)';
+            el.children[0].innerText = '✓';
+          }
+        }
+        updateConsoleView(data);
+      } catch (e) {
+        addLog(`⚠️ Probe error: ${e.message}`);
+      }
+    }
+
+    function updateConsoleView(data) {
+      currentFindings = data.findings || [];
+      const score = data.quantum_readiness_score || 30;
+      
+      // Update logs
+      if (data.scan_logs) {
+        data.scan_logs.forEach(l => addLog(l));
+      } else if (data.handshake_steps) {
+        data.handshake_steps.forEach(s => addLog(`[${s.timestamp_ms}ms] ${s.name}: ${s.detail}`));
+      }
+
+      // Update Gauge
+      document.getElementById('console-gauge-score').innerText = `${score}%`;
+      const circumference = 2 * Math.PI * 80;
+      const offset = circumference - (score / 100) * circumference;
+      const ring = document.getElementById('console-gauge-ring');
+      ring.style.strokeDashoffset = offset;
+      ring.style.stroke = score < 40 ? '#ff0040' : score < 75 ? '#ffaa00' : '#00ff88';
+
+      const badge = document.getElementById('console-threat-badge');
+      if (score < 40) {
+        badge.innerText = 'CRITICAL — Immediate PQC Action Required';
+        badge.style.background = 'rgba(255,0,64,0.15)';
+        badge.style.borderColor = 'var(--critical)';
+        badge.style.color = '#ff8099';
+      } else if (score < 75) {
+        badge.innerText = 'ELEVATED — Upgrade 128-bit & Deprecated Primitives';
+        badge.style.background = 'rgba(255,170,0,0.15)';
+        badge.style.borderColor = 'var(--warning)';
+        badge.style.color = '#ffcc66';
+      } else {
+        badge.innerText = 'QUANTUM-RESISTANT — Post-Quantum Standards Compliant';
+        badge.style.background = 'rgba(0,255,136,0.15)';
+        badge.style.borderColor = 'var(--safe)';
+        badge.style.color = '#66ffb3';
+      }
+
+      // Counts
+      const shor = currentFindings.filter(f => f.risk_level.includes('SHOR')).length;
+      const grover = currentFindings.filter(f => f.risk_level.includes('GROVER')).length;
+      const deprecated = currentFindings.filter(f => f.risk_level.includes('DEPRECATED')).length;
+      const resistant = currentFindings.filter(f => f.risk_level.includes('RESISTANT')).length;
+
+      document.getElementById('bar-shor-count').innerText = `${shor} Asset${shor !== 1 ? 's' : ''}`;
+      document.getElementById('bar-shor-fill').style.width = `${Math.min(100, shor * 40)}%`;
+
+      document.getElementById('bar-grover-count').innerText = `${grover} Asset${grover !== 1 ? 's' : ''}`;
+      document.getElementById('bar-grover-fill').style.width = `${Math.min(100, grover * 30)}%`;
+
+      document.getElementById('bar-deprecated-count').innerText = `${deprecated} Asset${deprecated !== 1 ? 's' : ''}`;
+      document.getElementById('bar-deprecated-fill').style.width = `${Math.min(100, deprecated * 30)}%`;
+
+      document.getElementById('bar-resistant-count').innerText = `${resistant} Asset${resistant !== 1 ? 's' : ''}`;
+      document.getElementById('bar-resistant-fill').style.width = `${Math.min(100, resistant * 30)}%`;
+
+      document.getElementById('hndl-text').innerText = data.hndl_exposure_rating || 'CRITICAL (Harvest Now, Decrypt Later Threat Active)';
+      document.getElementById('cbom-asset-count').innerText = currentFindings.length;
+
+      renderCbomTable(currentFindings);
+    }
+
+    function renderCbomTable(findingsList) {
+      const tbody = document.getElementById('cbom-tbody');
+      tbody.innerHTML = '';
+
+      if (findingsList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="padding: 2rem; text-align: center; color: var(--text-muted);">No cryptographic assets found.</td></tr>`;
+        return;
+      }
+
+      findingsList.forEach(f => {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid rgba(255,255,255,0.04)';
+        tr.style.transition = 'background 0.2s';
+        tr.onmouseenter = () => tr.style.background = 'rgba(255,255,255,0.02)';
+        tr.onmouseleave = () => tr.style.background = 'transparent';
+
+        let badgeStyle = 'background: rgba(255,255,255,0.05); color: #fff;';
+        if (f.risk_level.includes('SHOR')) badgeStyle = 'background: rgba(255,0,64,0.15); color: #ff8099; border: 1px solid rgba(255,0,64,0.3);';
+        else if (f.risk_level.includes('GROVER')) badgeStyle = 'background: rgba(255,170,0,0.15); color: #ffcc66; border: 1px solid rgba(255,170,0,0.3);';
+        else if (f.risk_level.includes('RESISTANT')) badgeStyle = 'background: rgba(0,255,136,0.15); color: #66ffb3; border: 1px solid rgba(0,255,136,0.3);';
+
+        tr.innerHTML = `
+          <td style="padding: 0.875rem 0.75rem;">
+            <div style="font-weight: 700; color: #fff;">${f.algorithm}</div>
+            <div style="font-size: 0.6875rem; color: var(--text-muted);">${f.file_path || 'Live Endpoint'}</div>
+          </td>
+          <td style="padding: 0.875rem 0.75rem; color: #c7d2fe;">${f.primitive}</td>
+          <td style="padding: 0.875rem 0.75rem; color: var(--text-secondary);">${f.classical_security_bits ? `~${f.classical_security_bits}-bit` : 'N/A'}</td>
+          <td style="padding: 0.875rem 0.75rem;">
+            <span style="padding: 0.2rem 0.6rem; border-radius: 100px; font-size: 0.6875rem; font-weight: 600; ${badgeStyle}">
+              ${f.risk_level}
+            </span>
+          </td>
+          <td style="padding: 0.875rem 0.75rem; color: var(--accent); font-weight: 600;">${f.nist_replacement}</td>
+          <td style="padding: 0.875rem 0.75rem; text-align: right;">
+            <button onclick='openRemediationModal(${JSON.stringify(f).replace(/'/g, "&apos;")})' style="padding: 0.35rem 0.75rem; border-radius: 8px; background: rgba(99,102,241,0.2); border: 1px solid var(--accent); color: #fff; font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600; cursor: pointer;">
+              🪄 Patch
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterCbomTable() {
+      const q = document.getElementById('cbom-search').value.toLowerCase();
+      const filtered = currentFindings.filter(f => 
+        f.algorithm.toLowerCase().includes(q) ||
+        (f.file_path && f.file_path.toLowerCase().includes(q)) ||
+        f.nist_replacement.toLowerCase().includes(q)
+      );
+      renderCbomTable(filtered);
+    }
+
+    async function openRemediationModal(finding) {
+      document.getElementById('modal-algo-title').innerText = `PQC Migration: ${finding.algorithm}`;
+      document.getElementById('modal-algo-subtitle').innerText = `Primitive: ${finding.primitive} • ${finding.file_path || 'Endpoint'}`;
+      document.getElementById('modal-legacy-code').innerText = finding.code_snippet || '# Discovered cryptographic initialization';
+      document.getElementById('modal-patched-code').innerText = 'Synthesizing post-quantum patch...';
+      document.getElementById('modal-rationale-text').innerText = finding.risk_reason;
+      document.getElementById('remediation-modal').style.display = 'flex';
+
+      try {
+        const res = await fetch('/api/remediate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ finding: finding })
+        });
+        const data = await res.json();
+        activeRemediationData = data;
+        document.getElementById('modal-patched-code').innerText = data.patched_code;
+        document.getElementById('modal-fips-label').innerText = data.target_fips || 'NIST PQC';
+        document.getElementById('modal-rationale-text').innerText = data.why_vulnerable || finding.risk_reason;
+      } catch (e) {
+        document.getElementById('modal-patched-code').innerText = `# Post-quantum patch template generated locally.\n# Target: ${finding.nist_replacement}`;
+      }
+    }
+
+    function closeRemediationModal() {
+      document.getElementById('remediation-modal').style.display = 'none';
+    }
+
+    function copyPatchedCode() {
+      const code = document.getElementById('modal-patched-code').innerText;
+      navigator.clipboard.writeText(code);
+      alert('Post-quantum code patch copied to clipboard!');
+    }
+
+    async function exportCurrentCbom() {
+      try {
+        const res = await fetch('/api/cbom/export', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ target_name: currentTargetName, findings: currentFindings, scan_type: 'static' })
+        });
+        const cbom = await res.json();
+        const blob = new Blob([JSON.stringify(cbom, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `cbom_cyclonedx_${currentTargetName.toLowerCase().replace(/[^a-z0-9]/g, '_')}.json`;
+        a.click();
+      } catch (e) {
+        alert('Export generated locally.');
+      }
+    }
+
+    function addLog(msg) {
+      const logs = document.getElementById('terminal-logs');
+      const div = document.createElement('div');
+      div.innerText = msg;
+      logs.appendChild(div);
+      logs.scrollTop = logs.scrollHeight;
+    }
+
+    // ================= GSAP & LENIS SCROLL SETUP =================
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      direction: 'vertical',
+      gestureDirection: 'vertical',
+      smooth: true,
+      smoothTouch: false,
+      touchMultiplier: 2,
+    });
+    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+    gsap.ticker.lagSmoothing(0);
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Loader
+    const loaderTl = gsap.timeline();
+    loaderTl
+      .to('.loader', { opacity: 0, duration: 0.6, delay: 0.8, ease: 'power2.inOut' })
+      .set('.loader', { display: 'none' })
+      .from('.nav', { y: -100, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.2')
+      .from('.hero-badge', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.5')
+      .from('.hero-title .line span', { y: 120, opacity: 0, duration: 1.2, stagger: 0.12, ease: 'power4.out' }, '-=0.5')
+      .from('.hero-subtitle', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.8')
+      .from('.hero-buttons button', { y: 30, opacity: 0, duration: 0.8, stagger: 0.08, ease: 'power3.out' }, '-=0.6')
+      .from('.hero-scroll', { opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.4');
+
+    // Cursor
+    const cursor = document.querySelector('.cursor');
+    const cursorRing = document.querySelector('.cursor-ring');
+    let mouseX = 0, mouseY = 0, cursorX = 0, cursorY = 0;
+    let isTouch = window.matchMedia('(pointer: coarse)').matches;
+    if (!isTouch) {
+      document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+      function animateCursor() {
+        cursorX += (mouseX - cursorX) * 0.15;
+        cursorY += (mouseY - cursorY) * 0.15;
+        cursor.style.left = cursorX - 5 + 'px';
+        cursor.style.top = cursorY - 5 + 'px';
+        cursorRing.style.left = cursorX - 40 + 'px';
+        cursorRing.style.top = cursorY - 40 + 'px';
+        requestAnimationFrame(animateCursor);
+      }
+      animateCursor();
+      const hoverEls = document.querySelectorAll('a, button, .glass, .threat-card, .showcase-card, .assembly-piece');
+      hoverEls.forEach(el => {
+        el.addEventListener('mouseenter', () => { cursor.classList.add('expanded'); cursorRing.style.opacity = '1'; });
+        el.addEventListener('mouseleave', () => { cursor.classList.remove('expanded'); cursorRing.style.opacity = '0'; });
+      });
+    }
+
+    // Dot Grid Canvas
+    const canvas = document.getElementById('dotCanvas');
+    const ctx = canvas.getContext('2d');
+    let dots = [];
+    let canvasW, canvasH;
+    let gridMouseX = -1000, gridMouseY = -1000;
+    let touchActive = false;
+    let time = 0;
+
+    function resizeCanvas() {
+      canvasW = window.innerWidth;
+      canvasH = window.innerHeight;
+      canvas.width = canvasW * window.devicePixelRatio;
+      canvas.height = canvasH * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      initDots();
+    }
+
+    function initDots() {
+      dots = [];
+      const spacing = isTouch ? 35 : 28;
+      const cols = Math.ceil(canvasW / spacing) + 2;
+      const rows = Math.ceil(canvasH / spacing) + 2;
+      for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+          dots.push({
+            baseX: i * spacing - spacing,
+            baseY: j * spacing - spacing,
+            x: i * spacing - spacing,
+            y: j * spacing - spacing,
+            vx: 0,
+            vy: 0,
+            size: isTouch ? 1.2 : 1.5,
+            opacity: 0.15,
+            phase: Math.random() * Math.PI * 2
+          });
+        }
+      }
+    }
+
+    function updateDots() {
+      time += 0.016;
+      const influenceRadius = isTouch ? 180 : 220;
+      const influenceRadiusSq = influenceRadius * influenceRadius;
+      const forceStrength = isTouch ? 0.15 : 0.12;
+      const springStrength = 0.08;
+      const damping = 0.85;
+      let autoX = -1000, autoY = -1000;
+      if (isTouch && !touchActive) {
+        autoX = canvasW * 0.5 + Math.sin(time * 0.8) * canvasW * 0.3;
+        autoY = canvasH * 0.5 + Math.cos(time * 0.6) * canvasH * 0.25;
+      }
+      for (let dot of dots) {
+        let targetX = dot.baseX;
+        let targetY = dot.baseY;
+        let mx = touchActive || !isTouch ? gridMouseX : autoX;
+        let my = touchActive || !isTouch ? gridMouseY : autoY;
+        const dx = dot.baseX - mx;
+        const dy = dot.baseY - my;
+        const distSq = dx * dx + dy * dy;
+        if (distSq < influenceRadiusSq && distSq > 1) {
+          const dist = Math.sqrt(distSq);
+          const force = (1 - dist / influenceRadius) * influenceRadius * forceStrength;
+          const angle = Math.atan2(dy, dx);
+          targetX += Math.cos(angle) * force;
+          targetY += Math.sin(angle) * force;
+          dot.opacity = 0.15 + (1 - dist / influenceRadius) * 0.5;
+        } else {
+          dot.opacity += (0.15 - dot.opacity) * 0.05;
+        }
+        targetX += Math.sin(time * 0.5 + dot.baseY * 0.01) * 2;
+        targetY += Math.cos(time * 0.4 + dot.baseX * 0.01) * 2;
+        const ax = (targetX - dot.x) * springStrength;
+        const ay = (targetY - dot.y) * springStrength;
+        dot.vx += ax;
+        dot.vy += ay;
+        dot.vx *= damping;
+        dot.vy *= damping;
+        dot.x += dot.vx;
+        dot.y += dot.vy;
+      }
+    }
+
+    function drawDots() {
+      ctx.clearRect(0, 0, canvasW, canvasH);
+      for (let dot of dots) {
+        const speed = Math.sqrt(dot.vx * dot.vx + dot.vy * dot.vy);
+        const dynamicSize = dot.size + speed * 0.3;
+        ctx.beginPath();
+        ctx.arc(dot.x, dot.y, Math.max(0.5, dynamicSize), 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(0.8, dot.opacity + speed * 0.02)})`;
+        ctx.fill();
+      }
+    }
+
+    function animateDots() {
+      updateDots();
+      drawDots();
+      requestAnimationFrame(animateDots);
+    }
+
+    document.addEventListener('mousemove', (e) => {
+      gridMouseX = e.clientX;
+      gridMouseY = e.clientY;
+    });
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    animateDots();
+
+    // Nav Scroll
+    const nav = document.querySelector('.nav');
+    lenis.on('scroll', ({ scroll }) => {
+      if (scroll > 80) nav.classList.add('scrolled');
+      else nav.classList.remove('scrolled');
+    });
+
+    // Magnetic Buttons
+    document.querySelectorAll('.btn-primary, .btn-secondary, .nav-cta').forEach(btn => {
+      btn.addEventListener('mousemove', (e) => {
+        const rect = btn.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        gsap.to(btn, { x: x * 0.25, y: y * 0.25, duration: 0.3, ease: 'power2.out' });
+      });
+      btn.addEventListener('mouseleave', () => {
+        gsap.to(btn, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.4)' });
+      });
+    });
+
+    // 3D Assembly ScrollTrigger
+    const assemblyPieces = {
+      'asm-center': { scattered: { x: 0, y: -300, rotateX: 45, rotateY: -30, scale: 0.6, opacity: 0 }, assembled: { x: 0, y: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1 } },
+      'asm-tl': { scattered: { x: -400, y: -250, rotateX: -30, rotateY: 45, scale: 0.5, opacity: 0 }, assembled: { x: 0, y: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1 } },
+      'asm-tr': { scattered: { x: 400, y: -200, rotateX: 30, rotateY: -45, scale: 0.5, opacity: 0 }, assembled: { x: 0, y: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1 } },
+      'asm-bl': { scattered: { x: -350, y: 300, rotateX: -45, rotateY: 30, scale: 0.5, opacity: 0 }, assembled: { x: 0, y: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1 } },
+      'asm-br': { scattered: { x: 350, y: 280, rotateX: 45, rotateY: -30, scale: 0.5, opacity: 0 }, assembled: { x: 0, y: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1 } },
+      'asm-sl': { scattered: { x: -500, y: 50, rotateX: 20, rotateY: 60, scale: 0.4, opacity: 0 }, assembled: { x: 0, y: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1 } },
+      'asm-sr': { scattered: { x: 500, y: 80, rotateX: -20, rotateY: -60, scale: 0.4, opacity: 0 }, assembled: { x: 0, y: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1 } },
+      'asm-fl1': { scattered: { x: 200, y: -350, rotateX: 60, rotateY: 20, scale: 0.3, opacity: 0 }, assembled: { x: 0, y: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1 } },
+      'asm-fl2': { scattered: { x: -200, y: 350, rotateX: -60, rotateY: -20, scale: 0.3, opacity: 0 }, assembled: { x: 0, y: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1 } }
+    };
+    Object.keys(assemblyPieces).forEach(id => {
+      const piece = document.getElementById(id);
+      if (!piece) return;
+      const s = assemblyPieces[id].scattered;
+      gsap.set(piece, { x: s.x, y: s.y, rotateX: s.rotateX, rotateY: s.rotateY, scale: s.scale, opacity: s.opacity, transformPerspective: 1000 });
+    });
+    const assemblyTl = gsap.timeline({ scrollTrigger: { trigger: '.assembly-section', start: 'top top', end: 'bottom bottom', scrub: 1.2 } });
+    Object.keys(assemblyPieces).forEach((id, i) => {
+      const piece = document.getElementById(id);
+      if (!piece) return;
+      const a = assemblyPieces[id].assembled;
+      assemblyTl.to(piece, { x: a.x, y: a.y, rotateX: a.rotateX, rotateY: a.rotateY, scale: a.scale, opacity: a.opacity, duration: 1, ease: 'power2.out' }, i * 0.05);
+    });
+    assemblyTl.to({}, { duration: 0.5 });
+    Object.keys(assemblyPieces).forEach((id, i) => {
+      const piece = document.getElementById(id);
+      if (!piece) return;
+      const s = assemblyPieces[id].scattered;
+      const disperseX = s.x * 1.5 + (Math.random() - 0.5) * 200;
+      const disperseY = s.y * 1.5 + (Math.random() - 0.5) * 200;
+      assemblyTl.to(piece, { x: disperseX, y: disperseY, rotateX: s.rotateX * 1.5, rotateY: s.rotateY * 1.5, scale: 0.3, opacity: 0, duration: 1, ease: 'power2.in' }, 1.5 + i * 0.03);
+    });
+
+    // Text Assembly
+    const textWords = document.querySelectorAll('.text-assembly-word');
+    const textSub = document.getElementById('text-assembly-sub');
+    textWords.forEach((word, i) => {
+      const angle = (i / textWords.length) * Math.PI * 2;
+      const distance = 300 + Math.random() * 200;
+      gsap.set(word, {
+        x: Math.cos(angle) * distance,
+        y: Math.sin(angle) * distance,
+        opacity: 0,
+        scale: 0.5,
+        filter: 'blur(10px)',
+        rotateZ: (Math.random() - 0.5) * 30
+      });
+    });
+    gsap.set(textSub, { y: 60, opacity: 0, filter: 'blur(8px)' });
+    const textTl = gsap.timeline({
+      scrollTrigger: { trigger: '.text-assembly', start: 'top top', end: 'bottom bottom', scrub: 1.5, pin: false }
+    });
+    textWords.forEach((word, i) => {
+      textTl.to(word, {
+        x: 0, y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', rotateZ: 0,
+        duration: 1, ease: 'power3.out'
+      }, i * 0.06);
+    });
+    textTl.to(textSub, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.8, ease: 'power2.out' }, 0.4);
+    textTl.to({}, { duration: 0.6 });
+    textWords.forEach((word, i) => {
+      const angle = Math.random() * Math.PI * 2;
+      const distance = 400 + Math.random() * 300;
+      textTl.to(word, {
+        x: Math.cos(angle) * distance, y: Math.sin(angle) * distance,
+        opacity: 0, scale: 0.3, filter: 'blur(15px)', rotateZ: (Math.random() - 0.5) * 60,
+        duration: 1, ease: 'power2.in'
+      }, 1.8 + i * 0.02);
+    });
+    textTl.to(textSub, { y: -40, opacity: 0, filter: 'blur(10px)', duration: 0.8, ease: 'power2.in' }, 1.8);
+
+    // Scroll Animations
+    gsap.from('.threats-section .section-header', { scrollTrigger: { trigger: '.threats-section', start: 'top 80%', toggleActions: 'play none none none' }, y: 60, opacity: 0, duration: 1, ease: 'power3.out' });
+    gsap.from('.threat-card', { scrollTrigger: { trigger: '.threats-grid', start: 'top 80%', toggleActions: 'play none none none' }, y: 80, opacity: 0, duration: 0.8, stagger: 0.08, ease: 'power3.out' });
+    gsap.from('.showcase-section .section-header', { scrollTrigger: { trigger: '.showcase-section', start: 'top 80%', toggleActions: 'play none none none' }, y: 60, opacity: 0, duration: 1, ease: 'power3.out' });
+    gsap.from('.showcase-card', { scrollTrigger: { trigger: '.showcase-grid', start: 'top 80%', toggleActions: 'play none none none' }, y: 100, opacity: 0, duration: 1, stagger: 0.12, ease: 'power3.out' });
+    gsap.from('.stat-item', { scrollTrigger: { trigger: '.stats', start: 'top 80%', toggleActions: 'play none none none' }, y: 60, opacity: 0, duration: 0.8, stagger: 0.12, ease: 'power3.out' });
+
+    // Stats counter
+    document.querySelectorAll('.stat-number').forEach(stat => {
+      const target = parseInt(stat.getAttribute('data-target'));
+      ScrollTrigger.create({ trigger: stat, start: 'top 85%', onEnter: () => {
+        gsap.to(stat, { innerHTML: target, duration: 2.2, snap: { innerHTML: 1 }, ease: 'power2.out', onUpdate: function() {
+          stat.innerHTML = Math.round(this.targets()[0].innerHTML) + (stat.getAttribute('data-target') === '100' ? '%' : '+');
+        }});
+      }, once: true });
+    });
+
+    // Spotlight cursor effect on cards
+    document.querySelectorAll('.threat-card, .showcase-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty('--mouse-x', e.clientX - rect.left + 'px');
+        card.style.setProperty('--mouse-y', e.clientY - rect.top + 'px');
+      });
+    });
   </script>
 </body>
 </html>
