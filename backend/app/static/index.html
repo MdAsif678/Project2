@@ -22,7 +22,7 @@
       --bg-elevated: #08080c;
       --glass: rgba(255,255,255,0.025);
       --glass-border: rgba(255,255,255,0.07);
-      --glass-border-hover: rgba(255,255,255,0.14);
+      --glass-border-hover: rgba(255,255,255,0.15);
       --text: #ffffff;
       --text-secondary: rgba(255,255,255,0.60);
       --text-muted: rgba(255,255,255,0.30);
@@ -41,40 +41,10 @@
       background: var(--bg);
       color: var(--text);
       overflow-x: hidden;
-      cursor: none;
+      cursor: auto;
       -webkit-font-smoothing: antialiased;
     }
-    .cursor {
-      width: 10px; height: 10px;
-      background: #fff;
-      border-radius: 50%;
-      position: fixed;
-      pointer-events: none;
-      z-index: 99999;
-      mix-blend-mode: difference;
-      transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease;
-    }
-    .cursor.expanded {
-      width: 60px; height: 60px;
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.5);
-      mix-blend-mode: normal;
-    }
-    .cursor-ring {
-      width: 80px; height: 80px;
-      border: 1px solid var(--accent);
-      border-radius: 50%;
-      position: fixed;
-      pointer-events: none;
-      z-index: 99998;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      animation: cursorPulse 2s ease-in-out infinite;
-    }
-    @keyframes cursorPulse {
-      0%, 100% { transform: scale(1); opacity: 0.3; }
-      50% { transform: scale(1.2); opacity: 0.6; }
-    }
+    
     .loader {
       position: fixed; inset: 0;
       background: var(--bg);
@@ -84,21 +54,22 @@
       flex-direction: column;
     }
     .loader-ring {
-      width: 60px; height: 60px;
+      width: 50px; height: 50px;
       border: 2px solid var(--glass-border);
       border-top-color: var(--accent);
       border-radius: 50%;
-      animation: spin 1s linear infinite;
+      animation: spin 0.8s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     .loader-text {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.875rem;
+      font-size: 0.8125rem;
       color: var(--text-muted);
-      margin-top: 1.5rem;
+      margin-top: 1.25rem;
       letter-spacing: 0.2em;
       text-transform: uppercase;
     }
+
     #dotCanvas {
       position: fixed; top: 0; left: 0;
       width: 100%; height: 100%;
@@ -134,27 +105,27 @@
       border: 1px solid var(--glass-border);
       border-radius: 20px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      transition: all 0.5s var(--expo);
+      transition: all 0.4s var(--expo);
     }
     .glass:hover {
       border-color: var(--glass-border-hover);
-      box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+      box-shadow: 0 25px 70px rgba(0,0,0,0.4);
     }
     .nav {
       position: fixed; top: 0; left: 0; right: 0;
       z-index: 1000;
       padding: 1rem 2.5rem;
       display: flex; justify-content: space-between; align-items: center;
-      transition: all 0.5s var(--expo);
+      transition: all 0.4s var(--expo);
       background: rgba(3,3,5,0.85);
       backdrop-filter: blur(30px);
       border-bottom: 1px solid var(--glass-border);
     }
     .nav-logo {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.5rem; font-weight: 700;
+      font-size: 1.4rem; font-weight: 700;
       letter-spacing: -0.02em; color: var(--text);
-      text-decoration: none; position: relative;
+      text-decoration: none;
       display: flex; align-items: center; gap: 0.5rem;
       cursor: pointer;
     }
@@ -164,12 +135,11 @@
       background: rgba(99,102,241,0.15); color: var(--accent);
       border: 1px solid rgba(99,102,241,0.25);
     }
-    .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; }
+    .nav-links { display: flex; gap: 1.75rem; list-style: none; align-items: center; }
     .nav-links a {
       color: var(--text-secondary); text-decoration: none;
       font-size: 0.8125rem; font-weight: 500;
       letter-spacing: 0.04em; transition: color 0.3s ease;
-      position: relative; padding: 0.25rem 0;
       cursor: pointer;
     }
     .nav-links a:hover { color: var(--text); }
@@ -180,12 +150,12 @@
       border: none; border-radius: 100px;
       font-family: 'Inter', sans-serif; font-size: 0.8125rem;
       font-weight: 600; cursor: pointer;
-      transition: all 0.4s var(--expo);
+      transition: all 0.3s var(--expo);
       box-shadow: 0 0 25px rgba(99,102,241,0.35);
     }
     .nav-cta:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 40px rgba(99,102,241,0.6);
+      transform: scale(1.04);
+      box-shadow: 0 0 35px rgba(99,102,241,0.6);
     }
     .status-orb {
       width: 8px; height: 8px; border-radius: 50%;
@@ -200,14 +170,15 @@
       0%, 100% { transform: scale(1); opacity: 0.5; }
       50% { transform: scale(1.8); opacity: 0; }
     }
+
     .hero {
-      min-height: 95vh; display: flex;
+      min-height: 90vh; display: flex;
       align-items: center; justify-content: center;
-      position: relative; padding: 6.5rem 1.5rem 2rem; z-index: 1;
+      position: relative; padding: 7rem 1.5rem 3rem; z-index: 1;
     }
     .hero-content {
       position: relative; z-index: 2;
-      text-align: center; max-width: 950px; width: 100%;
+      text-align: center; max-width: 900px; width: 100%;
     }
     .hero-badge {
       display: inline-flex; align-items: center; gap: 0.5rem;
@@ -228,7 +199,7 @@
     }
     .hero-title {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(2.75rem, 7vw, 5.5rem);
+      font-size: clamp(2.75rem, 6.5vw, 5.25rem);
       font-weight: 700; line-height: 1.05;
       letter-spacing: -0.03em; margin-bottom: 1.25rem;
     }
@@ -241,61 +212,21 @@
     .hero-subtitle {
       font-size: clamp(0.9375rem, 1.8vw, 1.15rem);
       color: var(--text-secondary); line-height: 1.7;
-      max-width: 700px; margin: 0 auto 2rem; font-weight: 400;
+      max-width: 650px; margin: 0 auto 2.5rem; font-weight: 400;
     }
 
-    /* Hero Quick Scan Bar */
-    .hero-quick-bar {
-      background: rgba(10, 10, 16, 0.85);
-      backdrop-filter: blur(25px);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 20px;
-      padding: 1.25rem 1.5rem;
-      max-width: 820px;
-      margin: 0 auto 1.5rem;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-      text-align: left;
+    /* Hero Buttons Row */
+    .hero-buttons {
+      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem;
     }
-    .hero-quick-input {
-      display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;
-    }
-    .hero-quick-input input {
-      flex: 1; min-width: 240px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--glass-border);
-      border-radius: 12px;
-      padding: 0.875rem 1.25rem;
-      color: #fff;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.875rem;
-      outline: none;
-      transition: border 0.3s;
-    }
-    .hero-quick-input input:focus {
-      border-color: var(--accent);
-    }
-    .hero-quick-fixtures {
-      display: flex; gap: 0.5rem; align-items: center; margin-top: 1rem; flex-wrap: wrap;
-    }
-    .hero-fixture-btn {
-      padding: 0.35rem 0.75rem;
-      border-radius: 8px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.6875rem;
-      font-weight: 600;
-      border: 1px solid;
-      background: rgba(255,255,255,0.03);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .hero-fixture-btn:hover { transform: translateY(-1px); }
 
     .btn-primary {
-      padding: 0.875rem 2rem; background: #ffffff; color: #000;
+      padding: 0.9rem 2rem; background: #ffffff; color: #000000;
       border: none; border-radius: 100px;
-      font-family: 'Inter', sans-serif; font-size: 0.875rem;
+      font-family: 'Inter', sans-serif; font-size: 0.9rem;
       font-weight: 600; cursor: pointer;
-      transition: all 0.4s var(--expo);
+      transition: all 0.3s var(--expo);
+      display: inline-flex; align-items: center; gap: 0.5rem;
       box-shadow: 0 10px 30px rgba(255,255,255,0.2);
     }
     .btn-primary:hover {
@@ -305,22 +236,24 @@
       color: #fff;
     }
     .btn-secondary {
-      padding: 0.875rem 2rem; background: rgba(255,255,255,0.04); color: var(--text);
+      padding: 0.9rem 2rem; background: rgba(255,255,255,0.04); color: var(--text);
       border: 1px solid var(--glass-border); border-radius: 100px;
-      font-family: 'Inter', sans-serif; font-size: 0.875rem;
+      font-family: 'Inter', sans-serif; font-size: 0.9rem;
       font-weight: 600; cursor: pointer;
-      transition: all 0.4s var(--expo);
+      transition: all 0.3s var(--expo);
+      display: inline-flex; align-items: center; gap: 0.5rem;
       backdrop-filter: blur(10px);
     }
     .btn-secondary:hover {
       border-color: var(--accent);
       transform: translateY(-2px);
       box-shadow: 0 10px 30px rgba(99,102,241,0.15);
+      color: #fff;
     }
 
     /* Marquee */
     .marquee-section {
-      padding: 2rem 0; overflow: hidden;
+      padding: 1.75rem 0; overflow: hidden;
       border-top: 1px solid var(--glass-border);
       border-bottom: 1px solid var(--glass-border);
       position: relative; z-index: 1; background: var(--bg);
@@ -340,11 +273,9 @@
     }
     .marquee-text {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(1rem, 2vw, 1.5rem);
+      font-size: clamp(0.9375rem, 1.8vw, 1.25rem);
       font-weight: 600; color: var(--text-muted);
-      transition: color 0.4s ease;
     }
-    .marquee-item:hover .marquee-text { color: var(--text); }
     .marquee-dot {
       width: 6px; height: 6px;
       background: var(--accent); border-radius: 50%;
@@ -353,7 +284,7 @@
 
     /* Threat Matrix */
     .threats-section {
-      padding: 6rem 2rem;
+      padding: 5rem 1.5rem;
       position: relative; z-index: 1; background: var(--bg);
     }
     .threats-grid {
@@ -366,38 +297,35 @@
     .threat-card {
       background: var(--glass);
       border: 1px solid var(--glass-border);
-      border-radius: 20px;
-      padding: 2rem 1.5rem;
-      transition: all 0.5s var(--expo);
-      position: relative;
-      overflow: hidden;
-      backdrop-filter: blur(10px);
+      border-radius: 18px;
+      padding: 1.75rem 1.5rem;
+      transition: all 0.3s var(--expo);
     }
     .threat-card:hover {
       border-color: var(--glass-border-hover);
-      transform: translateY(-4px);
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
     }
     .threat-icon {
-      width: 44px; height: 44px;
-      border-radius: 12px;
+      width: 40px; height: 40px;
+      border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
-      margin-bottom: 1rem;
+      margin-bottom: 0.875rem;
       font-size: 1.25rem;
     }
     .threat-title {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.125rem;
+      font-size: 1.0625rem;
       font-weight: 600;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.35rem;
     }
     .threat-desc {
       color: var(--text-secondary);
       font-size: 0.8125rem;
-      line-height: 1.7;
+      line-height: 1.6;
     }
 
-    /* Explainer banner */
+    /* Explainer Card */
     .explainer-card {
       max-width: 1100px; margin: 0 auto 3rem;
       padding: 2rem; border-radius: 20px;
@@ -407,7 +335,7 @@
 
     /* Stats */
     .stats {
-      padding: 5rem 2rem;
+      padding: 4rem 1.5rem;
       border-top: 1px solid var(--glass-border);
       border-bottom: 1px solid var(--glass-border);
       position: relative; z-index: 1; background: var(--bg);
@@ -428,7 +356,7 @@
     }
     .stat-number {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(2rem, 4vw, 3rem);
+      font-size: clamp(2rem, 3.5vw, 2.75rem);
       font-weight: 700;
       line-height: 1;
       margin-bottom: 0.5rem;
@@ -444,22 +372,29 @@
       text-transform: uppercase;
     }
 
+    /* CTA */
+    .cta-section {
+      padding: 5rem 1.5rem;
+      text-align: center;
+      position: relative; z-index: 1; background: var(--bg);
+    }
+
     /* Footer */
     .footer {
-      padding: 4rem 2.5rem 2rem;
+      padding: 3.5rem 2rem 2rem;
       border-top: 1px solid var(--glass-border);
       position: relative; z-index: 1; background: var(--bg);
     }
     .footer-grid {
       display: grid;
       grid-template-columns: 2fr 1fr 1fr 1fr;
-      gap: 3rem;
+      gap: 2.5rem;
       max-width: 1100px;
-      margin: 0 auto 3rem;
+      margin: 0 auto 2.5rem;
     }
     .footer-brand {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.5rem; font-weight: 700; margin-bottom: 0.875rem;
+      font-size: 1.4rem; font-weight: 700; margin-bottom: 0.75rem;
     }
     .footer-desc {
       color: var(--text-secondary);
@@ -468,7 +403,7 @@
     .footer-column h4 {
       font-size: 0.75rem; font-weight: 600;
       letter-spacing: 0.08em; text-transform: uppercase;
-      margin-bottom: 1rem; color: var(--text-muted);
+      margin-bottom: 0.875rem; color: var(--text-muted);
     }
     .footer-column ul { list-style: none; }
     .footer-column li { margin-bottom: 0.5rem; }
@@ -480,7 +415,7 @@
     .footer-column a:hover { color: var(--text); }
     .footer-bottom {
       max-width: 1100px; margin: 0 auto;
-      padding-top: 1.5rem; border-top: 1px solid var(--glass-border);
+      padding-top: 1.25rem; border-top: 1px solid var(--glass-border);
       display: flex; justify-content: space-between; align-items: center;
       flex-wrap: wrap; gap: 1rem;
     }
@@ -489,7 +424,7 @@
       font-family: 'JetBrains Mono', monospace;
     }
 
-    /* Interactive Scanner Console Overlay */
+    /* ================= SCANNER VIEW ================= */
     #scanner-view {
       display: none;
       min-height: 100vh;
@@ -521,15 +456,10 @@
       .threats-grid { grid-template-columns: 1fr; }
       .stats-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
       .footer-grid { grid-template-columns: 1fr; gap: 1.5rem; }
-      .cursor, .cursor-ring { display: none !important; }
-      body { cursor: auto; }
-      .btn-primary, .btn-secondary, .nav-cta, .hero-fixture-btn { cursor: pointer; }
     }
   </style>
 </head>
 <body>
-  <div class="cursor"></div>
-  <div class="cursor-ring"></div>
   
   <div class="loader">
     <div class="loader-ring"></div>
@@ -543,21 +473,21 @@
   <!-- Global Nav -->
   <nav class="nav">
     <a onclick="showLandingView()" class="nav-logo">
-      <span style="font-size:1.6rem;">🛡️</span> AEGIS-Q
+      <span style="font-size:1.5rem;">🛡️</span> AEGIS-Q
       <span class="nav-logo-badge">SIH26164</span>
     </a>
     <ul class="nav-links">
       <li><a onclick="showLandingView()">Home</a></li>
       <li><a onclick="openGlossaryModal()">📖 Cryptography Glossary</a></li>
-      <li><a onclick="showScannerView('code')">Codebase Scan</a></li>
-      <li><a onclick="showScannerView('url')">Live TLS Probe</a></li>
+      <li><a onclick="showScannerView('url')">🌐 Live TLS Probe</a></li>
+      <li><a onclick="showScannerView('code')">📁 Codebase Scanner</a></li>
       <li><a href="#threats" onclick="showLandingView()">Threat Matrix</a></li>
     </ul>
     <div style="display:flex;align-items:center;gap:0.75rem;">
       <button onclick="openGlossaryModal()" class="btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
         <span>❓ Terms Guide</span>
       </button>
-      <button onclick="showScannerView('code')" class="nav-cta">
+      <button onclick="showScannerView('url')" class="nav-cta">
         <span>⚡ Launch Console</span>
       </button>
     </div>
@@ -565,7 +495,7 @@
 
   <!-- ================= VIEW 1: CINEMATIC HOMEPAGE ================= -->
   <div id="landing-view">
-    <!-- Hero Section with Immediate Quick-Launcher -->
+    <!-- Hero Section with Simple Clear Action Buttons -->
     <section class="hero" id="hero">
       <div class="hero-content">
         <div class="hero-badge">
@@ -577,56 +507,50 @@
           <span class="gradient-text">Post-Quantum Fortification.</span>
         </h1>
         <p class="hero-subtitle">
-          Enterprise cryptographic discovery engine. Detect Shor &amp; Grover vulnerabilities in your software source code and live HTTPS endpoints in seconds.
+          AI-powered cryptographic discovery and vulnerability analysis. Scan enterprise codebases and probe live HTTPS website encryption against Shor's and Grover's quantum threat algorithms.
         </p>
 
-        <!-- Immediate Quick-Action Card Right on Hero -->
-        <div class="hero-quick-bar">
-          <div style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.625rem; display: flex; justify-content: space-between;">
-            <span>🌐 Instant Live Website Encryption Prober</span>
-            <span style="color: var(--safe);">Non-Intrusive SSL Probe</span>
-          </div>
-          <div class="hero-quick-input">
-            <input type="text" id="hero-url-input" value="google.com" placeholder="Enter any domain (e.g. google.com, github.com, bank.com)">
-            <button onclick="probeFromHero()" class="btn-primary" style="padding: 0.875rem 1.75rem;">
-              <span>⚡ Probe Website Now</span>
-            </button>
-          </div>
-          
-          <div class="hero-quick-fixtures">
-            <span style="font-size: 0.6875rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Or test sample codebases:</span>
-            <button onclick="runDemo('bank-app', 'Vulnerable Core Banking (Python)')" class="hero-fixture-btn" style="border-color: rgba(255,0,64,0.4); color: #ff8099;">
-              🔴 Bank App (RSA-2048, MD5)
-            </button>
-            <button onclick="runDemo('node-crypto', 'Legacy E-Commerce (Node.js)')" class="hero-fixture-btn" style="border-color: rgba(255,170,0,0.4); color: #ffcc66;">
-              🟡 Node Auth (3DES, ECB)
-            </button>
-            <button onclick="runDemo('secure-ref', 'Post-Quantum Stack (ML-KEM, ML-DSA)')" class="hero-fixture-btn" style="border-color: rgba(0,255,136,0.4); color: #66ffb3;">
-              🟢 Quantum-Resistant Stack
-            </button>
-            <button onclick="showScannerView('code')" class="hero-fixture-btn" style="border-color: rgba(99,102,241,0.4); color: #c7d2fe;">
-              📁 Upload .ZIP
-            </button>
-          </div>
+        <!-- Two Clear Entry Buttons -->
+        <div class="hero-buttons">
+          <button onclick="showScannerView('url')" class="btn-primary">
+            <span>🌐 Probe Website Encryption (Live TLS)</span>
+          </button>
+          <button onclick="showScannerView('code')" class="btn-secondary">
+            <span>📁 Scan Codebase (.ZIP / AST)</span>
+          </button>
+        </div>
+
+        <!-- Quick 1-Click Samples -->
+        <div style="display: flex; gap: 0.5rem; justify-content: center; align-items: center; flex-wrap: wrap;">
+          <span style="font-size: 0.6875rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Or test pre-loaded fixtures:</span>
+          <button onclick="runDemo('bank-app', 'Vulnerable Core Banking (Python)')" style="padding: 0.35rem 0.75rem; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.6875rem; font-weight: 600; border: 1px solid rgba(255,0,64,0.4); background: rgba(255,0,64,0.1); color: #ff8099; cursor: pointer;">
+            🔴 Bank App
+          </button>
+          <button onclick="runDemo('node-crypto', 'Legacy E-Commerce (Node.js)')" style="padding: 0.35rem 0.75rem; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.6875rem; font-weight: 600; border: 1px solid rgba(255,170,0,0.4); background: rgba(255,170,0,0.1); color: #ffcc66; cursor: pointer;">
+            🟡 Node Auth
+          </button>
+          <button onclick="runDemo('secure-ref', 'Post-Quantum Stack (ML-KEM, ML-DSA)')" style="padding: 0.35rem 0.75rem; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.6875rem; font-weight: 600; border: 1px solid rgba(0,255,136,0.4); background: rgba(0,255,136,0.1); color: #66ffb3; cursor: pointer;">
+            🟢 Quantum-Resistant Stack
+          </button>
         </div>
       </div>
     </section>
 
     <!-- Why Do Sites Score Low Explainer Card -->
-    <section style="padding: 0 1.5rem 4rem; position: relative; z-index: 1;">
+    <section style="padding: 0 1.5rem 3.5rem; position: relative; z-index: 1;">
       <div class="explainer-card">
         <div style="display: flex; gap: 1rem; align-items: flex-start; flex-wrap: wrap;">
           <div style="font-size: 2rem;">💡</div>
           <div style="flex: 1; min-width: 280px;">
-            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem;">
               Why do almost all live websites (Google, Banks, Amazon) score ~25% to 30% today?
             </h3>
             <p style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.7;">
-              <strong>The Reality:</strong> Over <strong>99% of the web</strong> today still relies on classical public-key cryptography (<strong>RSA</strong> or <strong>ECDSA</strong> for certificates, and <strong>ECDH</strong> for key exchange). 
-              Because <em>Shor's quantum algorithm</em> completely breaks integer factorization and elliptic curve logarithms in polynomial time, the public key layers score <strong>0% quantum-safe</strong>.
-              The ~25% baseline comes solely from their symmetric record cipher (<strong>AES-256-GCM</strong>), which survives Grover's algorithm with ~128 bits of security margin.
+              <strong>The Reality:</strong> Over <strong>99% of the web</strong> today still relies on classical public-key cryptography (<strong>RSA</strong> or <strong>ECDSA</strong> certificates, and <strong>ECDH</strong> key exchange). 
+              Because <em>Shor's quantum algorithm</em> completely breaks integer factorization and elliptic curves in polynomial time, their public key layers score <strong>0% quantum-safe</strong>.
+              The ~25% baseline comes solely from their symmetric record cipher (<strong>AES-256-GCM</strong>), which retains ~128 bits of security under Grover's algorithm.
             </p>
-            <div style="margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+            <div style="margin-top: 1rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
               <span style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; padding: 0.25rem 0.75rem; background: rgba(255,0,64,0.15); border: 1px solid var(--critical); border-radius: 6px; color: #ff8099;">
                 🔴 Certificate (ECDSA/RSA): Shor Broken
               </span>
@@ -649,7 +573,7 @@
           <span class="marquee-text">NIST FIPS 203 (ML-KEM)</span><span class="marquee-dot"></span>
           <span class="marquee-text">NIST FIPS 204 (ML-DSA)</span><span class="marquee-dot"></span>
           <span class="marquee-text">CycloneDX v1.6 CBOM</span><span class="marquee-dot"></span>
-          <span class="marquee-text">Shor's Algorithm Threat</span><span class="marquee-dot"></span>
+          <span class="marquee-text">Shor's Threat Factorization</span><span class="marquee-dot"></span>
           <span class="marquee-text">Grover's Quadratic Halving</span><span class="marquee-dot"></span>
           <span class="marquee-text">Harvest Now Decrypt Later (HNDL)</span><span class="marquee-dot"></span>
           <span class="marquee-text">AES-256-GCM Resilient</span><span class="marquee-dot"></span>
@@ -658,7 +582,7 @@
           <span class="marquee-text">NIST FIPS 203 (ML-KEM)</span><span class="marquee-dot"></span>
           <span class="marquee-text">NIST FIPS 204 (ML-DSA)</span><span class="marquee-dot"></span>
           <span class="marquee-text">CycloneDX v1.6 CBOM</span><span class="marquee-dot"></span>
-          <span class="marquee-text">Shor's Algorithm Threat</span><span class="marquee-dot"></span>
+          <span class="marquee-text">Shor's Threat Factorization</span><span class="marquee-dot"></span>
           <span class="marquee-text">Grover's Quadratic Halving</span><span class="marquee-dot"></span>
           <span class="marquee-text">Harvest Now Decrypt Later (HNDL)</span><span class="marquee-dot"></span>
           <span class="marquee-text">AES-256-GCM Resilient</span><span class="marquee-dot"></span>
@@ -711,22 +635,35 @@
     <section class="stats" id="stats">
       <div class="stats-grid">
         <div class="stat-item">
-          <div class="stat-number" data-target="156">0</div>
+          <div class="stat-number">156+</div>
           <div class="stat-label">Cryptographic Assets Mapped</div>
         </div>
         <div class="stat-item">
-          <div class="stat-number" data-target="12">0</div>
+          <div class="stat-number">12</div>
           <div class="stat-label">Automated Test Suites</div>
         </div>
         <div class="stat-item">
-          <div class="stat-number" data-target="4">0</div>
+          <div class="stat-number">4</div>
           <div class="stat-label">Languages (Python, JS, Java, Go)</div>
         </div>
         <div class="stat-item">
-          <div class="stat-number" data-target="100">0</div>
-          <div class="stat-label">% Free Tier Deployable</div>
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Free Tier Deployable</div>
         </div>
       </div>
+    </section>
+
+    <!-- Bottom CTA -->
+    <section class="cta-section">
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin-bottom: 1rem;">
+        Ready to assess your encryption?
+      </h2>
+      <p style="color: var(--text-secondary); max-width: 500px; margin: 0 auto 2rem; font-size: 0.9375rem;">
+        Open the Aegis-Q Discovery Console to run live TLS socket probes or static codebase audits in seconds.
+      </p>
+      <button onclick="showScannerView('url')" class="btn-primary" style="padding: 1rem 2.5rem; font-size: 1rem;">
+        <span>⚡ Launch Discovery Console</span>
+      </button>
     </section>
 
     <!-- Footer -->
@@ -739,8 +676,8 @@
         <div class="footer-column">
           <h4>Discovery Console</h4>
           <ul>
-            <li><a onclick="showScannerView('code')">Codebase Scan (.ZIP)</a></li>
             <li><a onclick="showScannerView('url')">Live TLS Handshake</a></li>
+            <li><a onclick="showScannerView('code')">Codebase Scan (.ZIP)</a></li>
             <li><a onclick="openGlossaryModal()">Cryptographic Glossary</a></li>
           </ul>
         </div>
@@ -777,14 +714,14 @@
       <!-- Console Header Bar -->
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
         <div>
-          <button onclick="showLandingView()" class="btn-secondary" style="padding: 0.5rem 1.25rem; font-size: 0.8125rem; display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+          <button onclick="showLandingView()" class="btn-secondary" style="padding: 0.5rem 1.25rem; font-size: 0.8125rem; margin-bottom: 0.75rem;">
             <span>← Back to Overview</span>
           </button>
-          <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 2.25rem; font-weight: 700;">
+          <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 700;">
             Cryptographic Discovery &amp; CBOM Console
           </h1>
           <p style="color: var(--text-secondary); font-size: 0.875rem; margin-top: 0.25rem;">
-            Target: <strong style="color: #fff;" id="current-target-name">Quantum-Vulnerable Core Banking Backend (Python)</strong>
+            Current Target: <strong style="color: #fff;" id="current-target-name">google.com (Live TLS Handshake)</strong>
           </p>
         </div>
 
@@ -801,60 +738,31 @@
       <!-- Scan Hub + Live Terminal Grid -->
       <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
         <!-- Scan Controls Card -->
-        <div class="glass" style="padding: 2rem;">
+        <div class="glass" style="padding: 1.75rem;">
           <!-- Tabs -->
-          <div style="display: flex; gap: 0.5rem; background: rgba(255,255,255,0.03); padding: 0.35rem; border-radius: 14px; margin-bottom: 1.5rem; border: 1px solid var(--glass-border);">
-            <button id="tab-btn-code" onclick="switchConsoleTab('code')" style="flex: 1; padding: 0.6rem; border-radius: 10px; border: none; font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600; cursor: pointer; background: #fff; color: #000; transition: all 0.3s;">
-              📁 Codebase Scan (.ZIP)
+          <div style="display: flex; gap: 0.5rem; background: rgba(255,255,255,0.03); padding: 0.35rem; border-radius: 14px; margin-bottom: 1.25rem; border: 1px solid var(--glass-border);">
+            <button id="tab-btn-url" onclick="switchConsoleTab('url')" style="flex: 1; padding: 0.6rem; border-radius: 10px; border: none; font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600; cursor: pointer; background: #fff; color: #000; transition: all 0.3s;">
+              🌐 Live Website / TLS Prober
             </button>
-            <button id="tab-btn-url" onclick="switchConsoleTab('url')" style="flex: 1; padding: 0.6rem; border-radius: 10px; border: none; font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600; cursor: pointer; background: transparent; color: var(--text-secondary); transition: all 0.3s;">
-              🌐 Live URL / TLS Prober
+            <button id="tab-btn-code" onclick="switchConsoleTab('code')" style="flex: 1; padding: 0.6rem; border-radius: 10px; border: none; font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600; cursor: pointer; background: transparent; color: var(--text-secondary); transition: all 0.3s;">
+              📁 Codebase Scan (.ZIP / AST)
             </button>
-          </div>
-
-          <!-- Code Tab Content -->
-          <div id="console-tab-code">
-            <div style="border: 2px dashed rgba(255,255,255,0.12); padding: 1.75rem; border-radius: 16px; text-align: center; background: rgba(255,255,255,0.01); margin-bottom: 1.25rem;">
-              <div style="font-size: 1.75rem; margin-bottom: 0.35rem;">⚡</div>
-              <div style="font-size: 0.875rem; font-weight: 600;">Drag &amp; Drop Codebase Archive (.ZIP)</div>
-              <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">Multi-language AST Parser (Python, JS/TS, Java, Go)</div>
-            </div>
-
-            <div>
-              <div style="font-size: 0.6875rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.75rem;">
-                One-Click Test Fixtures:
-              </div>
-              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;">
-                <button onclick="runDemo('bank-app', 'Vulnerable Core Banking (Python)')" style="padding: 0.75rem; border-radius: 12px; background: rgba(255,0,64,0.1); border: 1px solid rgba(255,0,64,0.3); color: #ff8099; text-align: left; font-size: 0.75rem; font-weight: 600; cursor: pointer;">
-                  🔴 Bank App
-                  <div style="font-size: 0.625rem; font-family: 'JetBrains Mono', monospace; color: rgba(255,255,255,0.4); margin-top: 0.25rem;">RSA-2048, MD5, DES</div>
-                </button>
-                <button onclick="runDemo('node-crypto', 'Legacy E-Commerce (Node.js)')" style="padding: 0.75rem; border-radius: 12px; background: rgba(255,170,0,0.1); border: 1px solid rgba(255,170,0,0.3); color: #ffcc66; text-align: left; font-size: 0.75rem; font-weight: 600; cursor: pointer;">
-                  🟡 Node Auth
-                  <div style="font-size: 0.625rem; font-family: 'JetBrains Mono', monospace; color: rgba(255,255,255,0.4); margin-top: 0.25rem;">3DES, MD5, AES-ECB</div>
-                </button>
-                <button onclick="runDemo('secure-ref', 'Post-Quantum Stack (ML-KEM, ML-DSA)')" style="padding: 0.75rem; border-radius: 12px; background: rgba(0,255,136,0.1); border: 1px solid rgba(0,255,136,0.3); color: #66ffb3; text-align: left; font-size: 0.75rem; font-weight: 600; cursor: pointer;">
-                  🟢 Quantum-Resistant
-                  <div style="font-size: 0.625rem; font-family: 'JetBrains Mono', monospace; color: rgba(255,255,255,0.4); margin-top: 0.25rem;">ML-KEM, ML-DSA, AES-GCM</div>
-                </button>
-              </div>
-            </div>
           </div>
 
           <!-- URL Tab Content -->
-          <div id="console-tab-url" style="display: none;">
-            <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem;">
-              <input type="text" id="target-url-input" value="google.com" placeholder="google.com" style="flex: 1; padding: 0.75rem 1rem; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.8125rem; outline: none;">
+          <div id="console-tab-url">
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem;">
+              <input type="text" id="target-url-input" value="google.com" placeholder="e.g. google.com, github.com, bank.com" style="flex: 1; padding: 0.75rem 1rem; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.8125rem; outline: none;">
               <input type="number" id="target-port-input" value="443" style="width: 70px; padding: 0.75rem 0.5rem; text-align: center; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.8125rem; outline: none;">
               <button onclick="runDynamicProbe()" id="probe-btn" class="btn-primary" style="padding: 0.75rem 1.5rem; font-size: 0.8125rem;">
                 <span>Probe TLS</span>
               </button>
             </div>
 
-            <!-- Handshake steps -->
+            <!-- Handshake steps visualizer -->
             <div style="padding: 1rem; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 14px;">
               <div style="font-size: 0.6875rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); text-transform: uppercase; text-align: center; margin-bottom: 0.75rem;">
-                Live Socket Handshake Progression
+                5-Step TLS Socket Handshake Inspection
               </div>
               <div style="display: flex; justify-content: space-between; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 0.6875rem;">
                 <div id="hs-1">
@@ -880,6 +788,30 @@
               </div>
             </div>
           </div>
+
+          <!-- Code Tab Content -->
+          <div id="console-tab-code" style="display: none;">
+            <div style="border: 2px dashed rgba(255,255,255,0.12); padding: 1.5rem; border-radius: 16px; text-align: center; background: rgba(255,255,255,0.01); margin-bottom: 1rem;">
+              <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">⚡</div>
+              <div style="font-size: 0.875rem; font-weight: 600;">Multi-Language AST Source Scanner</div>
+              <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">Select a pre-loaded vulnerable codebase fixture:</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;">
+              <button onclick="runDemo('bank-app', 'Vulnerable Core Banking (Python)')" style="padding: 0.625rem; border-radius: 10px; background: rgba(255,0,64,0.1); border: 1px solid rgba(255,0,64,0.3); color: #ff8099; text-align: left; font-size: 0.6875rem; font-weight: 600; cursor: pointer;">
+                🔴 Bank App (Python)
+                <div style="font-size: 0.5625rem; color: rgba(255,255,255,0.4); margin-top: 0.2rem;">RSA-2048, MD5, DES</div>
+              </button>
+              <button onclick="runDemo('node-crypto', 'Legacy E-Commerce (Node.js)')" style="padding: 0.625rem; border-radius: 10px; background: rgba(255,170,0,0.1); border: 1px solid rgba(255,170,0,0.3); color: #ffcc66; text-align: left; font-size: 0.6875rem; font-weight: 600; cursor: pointer;">
+                🟡 Node Auth (JS)
+                <div style="font-size: 0.5625rem; color: rgba(255,255,255,0.4); margin-top: 0.2rem;">3DES, MD5, ECB</div>
+              </button>
+              <button onclick="runDemo('secure-ref', 'Post-Quantum Stack (ML-KEM, ML-DSA)')" style="padding: 0.625rem; border-radius: 10px; background: rgba(0,255,136,0.1); border: 1px solid rgba(0,255,136,0.3); color: #66ffb3; text-align: left; font-size: 0.6875rem; font-weight: 600; cursor: pointer;">
+                🟢 Quantum-Resistant
+                <div style="font-size: 0.5625rem; color: rgba(255,255,255,0.4); margin-top: 0.2rem;">ML-KEM, ML-DSA</div>
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- Live Terminal Stream -->
@@ -889,24 +821,24 @@
             <span id="terminal-status" style="color: var(--safe);">● READY</span>
           </div>
           <div id="terminal-logs" style="flex: 1; overflow-y: auto; padding-top: 0.75rem; line-height: 1.7; color: rgba(255,255,255,0.8);">
-            <div>[00:00.01] ▶ Aegis-Q Scanner Engine online.</div>
-            <div>[00:00.05] ▶ Ready to audit software source or live HTTPS endpoints.</div>
+            <div>[00:00.01] ▶ Aegis-Q Discovery Engine initialized.</div>
+            <div>[00:00.05] ▶ Ready to audit software packages or HTTPS sockets.</div>
           </div>
         </div>
       </div>
 
       <!-- Quantum Readiness Gauge + Score Breakdown Card -->
-      <div class="glass" style="padding: 2.25rem; margin-bottom: 2.5rem;">
-        <div style="display: grid; grid-template-columns: 1fr 1.6fr; gap: 3rem; align-items: center;">
+      <div class="glass" style="padding: 2rem; margin-bottom: 2rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1.6fr; gap: 2.5rem; align-items: center;">
           <!-- Gauge Center -->
           <div style="text-align: center;">
-            <div style="position: relative; width: 200px; height: 200px; margin: 0 auto;">
+            <div style="position: relative; width: 190px; height: 190px; margin: 0 auto;">
               <svg viewBox="0 0 200 200" style="width: 100%; height: 100%; transform: rotate(-90deg);">
                 <circle cx="100" cy="100" r="80" fill="transparent" stroke="rgba(255,255,255,0.06)" stroke-width="14" />
                 <circle id="console-gauge-ring" cx="100" cy="100" r="80" fill="transparent" stroke="#ff0040" stroke-width="14" stroke-linecap="round" stroke-dasharray="502.65" stroke-dashoffset="376" style="transition: all 1.2s var(--expo);" />
               </svg>
               <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                <span id="console-gauge-score" style="font-family: 'Space Grotesk', sans-serif; font-size: 3.25rem; font-weight: 700; line-height: 1;">25%</span>
+                <span id="console-gauge-score" style="font-family: 'Space Grotesk', sans-serif; font-size: 3rem; font-weight: 700; line-height: 1;">35%</span>
                 <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.625rem; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 0.25rem;">Readiness Index</span>
               </div>
             </div>
@@ -915,7 +847,6 @@
               CRITICAL — Immediate PQC Action Required
             </div>
 
-            <!-- Mathematical Breakdown toggle -->
             <div style="margin-top: 0.75rem; font-size: 0.6875rem; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace;">
               Score Formula: Heuristic (Shor -40%, Grover -10%, Deprecated -15%, PQC +25%)
             </div>
@@ -927,10 +858,10 @@
             <div>
               <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 0.35rem;">
                 <span style="color: var(--critical); font-weight: 600;">🔴 Shor's Vulnerable (Public Key &amp; Key Agreement):</span>
-                <span id="bar-shor-count" style="font-weight: 700;">1 Asset</span>
+                <span id="bar-shor-count" style="font-weight: 700;">2 Assets</span>
               </div>
               <div style="height: 6px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden;">
-                <div id="bar-shor-fill" style="height: 100%; background: var(--critical); width: 60%; transition: width 1s ease;"></div>
+                <div id="bar-shor-fill" style="height: 100%; background: var(--critical); width: 65%; transition: width 1s ease;"></div>
               </div>
             </div>
 
@@ -949,10 +880,10 @@
             <div>
               <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 0.35rem;">
                 <span style="color: var(--text-secondary);">⚠️ Deprecated Classical (MD5 / SHA-1 / DES):</span>
-                <span id="bar-deprecated-count" style="font-weight: 700;">4 Assets</span>
+                <span id="bar-deprecated-count" style="font-weight: 700;">0 Assets</span>
               </div>
               <div style="height: 6px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden;">
-                <div id="bar-deprecated-fill" style="height: 100%; background: #a1a1aa; width: 70%; transition: width 1s ease;"></div>
+                <div id="bar-deprecated-fill" style="height: 100%; background: #a1a1aa; width: 0%; transition: width 1s ease;"></div>
               </div>
             </div>
 
@@ -963,7 +894,7 @@
                 <span id="bar-resistant-count" style="font-weight: 700;">1 Asset</span>
               </div>
               <div style="height: 6px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden;">
-                <div id="bar-resistant-fill" style="height: 100%; background: var(--safe); width: 25%; transition: width 1s ease;"></div>
+                <div id="bar-resistant-fill" style="height: 100%; background: var(--safe); width: 35%; transition: width 1s ease;"></div>
               </div>
             </div>
 
@@ -983,7 +914,7 @@
               Cryptography Bill of Materials (CBOM)
             </h2>
             <p style="color: var(--text-secondary); font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; margin-top: 0.25rem;">
-              OWASP CycloneDX v1.6 Standard • <span id="cbom-asset-count">6</span> Discovered Cryptographic Assets
+              OWASP CycloneDX v1.6 Standard • <span id="cbom-asset-count">3</span> Discovered Cryptographic Assets
             </p>
           </div>
           <input type="text" id="cbom-search" oninput="filterCbomTable()" placeholder="Search algorithm or file..." style="padding: 0.5rem 1rem; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 10px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; outline: none; width: 220px;">
@@ -1061,7 +992,7 @@
       <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem; margin-bottom: 1.25rem;">
         <div>
           <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700;">
-            📖 Aegis-Q Cryptographic Glossary &amp; Investigator Guide
+            📖 Aegis-Q Cryptographic Glossary &amp; Guide
           </h3>
           <p style="font-size: 0.75rem; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; margin-top: 0.25rem;">
             Plain-English reference for SIH26164 judges and security analysts
@@ -1076,7 +1007,7 @@
             1. What is TLS (Transport Layer Security)?
           </h4>
           <p style="color: var(--text-secondary);">
-            TLS is the cryptographic protocol that powers HTTPS (the padlock icon in your browser). It encrypts all network traffic between you and a remote server so attackers cannot eavesdrop on passwords, banking details, or API calls.
+            TLS is the cryptographic protocol that powers HTTPS (the padlock icon in your browser). It encrypts all network traffic between your device and remote web servers.
           </p>
         </div>
 
@@ -1085,36 +1016,36 @@
             2. What is a CBOM (Cryptography Bill of Materials)?
           </h4>
           <p style="color: var(--text-secondary);">
-            Just like an ingredients list on food packaging or an SBOM for software packages, a <strong>CBOM (OWASP CycloneDX v1.6)</strong> is a standardized machine-readable inventory listing every encryption algorithm, key length, certificate, and post-quantum risk level inside an enterprise system.
+            A standardized machine-readable inventory (OWASP CycloneDX v1.6) listing every encryption algorithm, certificate, and post-quantum risk level in an application.
           </p>
         </div>
 
-        <div style="padding: 1rem; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 12px;">
+        <div style="padding: 1rem; background: rgba(255,255,255,0.02); border: 1px solid var(--critical); border-radius: 12px;">
           <h4 style="color: var(--critical); font-size: 0.9375rem; margin-bottom: 0.25rem; font-family: 'Space Grotesk', sans-serif;">
             3. What is Shor's Algorithm?
           </h4>
           <p style="color: var(--text-secondary);">
-            A quantum algorithm formulated by Peter Shor in 1994. On a quantum computer, it factors large prime numbers and computes discrete logarithms in polynomial time $O(n^3)$. This means <strong>RSA-2048, ECDSA, ECDH, and Ed25519 are 100% broken</strong> once quantum computers arrive.
+            A quantum algorithm that solves discrete logarithms and prime factorization in polynomial time $O(n^3)$. This means <strong>RSA, ECDSA, and ECDH are completely broken</strong> on quantum computers.
           </p>
         </div>
 
-        <div style="padding: 1rem; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 12px;">
+        <div style="padding: 1rem; background: rgba(255,255,255,0.02); border: 1px solid var(--warning); border-radius: 12px;">
           <h4 style="color: var(--warning); font-size: 0.9375rem; margin-bottom: 0.25rem; font-family: 'Space Grotesk', sans-serif;">
             4. What is Grover's Algorithm?
           </h4>
           <p style="color: var(--text-secondary);">
-            A quantum algorithm providing a quadratic speedup for brute-force searches. It effectively halves symmetric encryption key lengths: <strong>AES-128 drops to 64 bits of security</strong> (vulnerable), whereas <strong>AES-256 drops to ~128 bits</strong> (still quantum-resistant!).
+            A quantum search algorithm that halves symmetric encryption key lengths: <strong>AES-128 drops to 64-bit security</strong> (vulnerable), whereas <strong>AES-256 drops to ~128-bit security</strong> (still safe!).
           </p>
         </div>
 
-        <div style="padding: 1rem; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 12px;">
+        <div style="padding: 1rem; background: rgba(255,255,255,0.02); border: 1px solid var(--safe); border-radius: 12px;">
           <h4 style="color: var(--safe); font-size: 0.9375rem; margin-bottom: 0.25rem; font-family: 'Space Grotesk', sans-serif;">
             5. What are NIST FIPS 203 &amp; FIPS 204?
           </h4>
           <p style="color: var(--text-secondary);">
-            The official Post-Quantum Cryptography standards finalized by NIST in 2024:
-            <br>• <strong>FIPS 203 (ML-KEM / Kyber)</strong>: Lattice-based Key Encapsulation (replaces ECDH and RSA key exchange).
-            <br>• <strong>FIPS 204 (ML-DSA / Dilithium)</strong>: Lattice-based Digital Signatures (replaces ECDSA and RSA signatures).
+            Official Post-Quantum standards finalized by NIST in 2024:
+            <br>• <strong>FIPS 203 (ML-KEM / Kyber)</strong>: Lattice-based Key Encapsulation (replaces ECDH / RSA key exchange).
+            <br>• <strong>FIPS 204 (ML-DSA / Dilithium)</strong>: Lattice-based Signatures (replaces ECDSA / RSA signatures).
           </p>
         </div>
 
@@ -1123,7 +1054,7 @@
             6. What is HNDL (Harvest Now, Decrypt Later)?
           </h4>
           <p style="color: var(--text-secondary);">
-            Nation-state actors are currently recording and storing encrypted government and financial HTTPS communications today. When fault-tolerant quantum computers become operational, they will retroactively decrypt all collected historical secrets.
+            Adversaries collecting and storing encrypted communications today to retroactively decrypt them when quantum hardware is online.
           </p>
         </div>
       </div>
@@ -1144,21 +1075,15 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function showScannerView(tab = 'code') {
+    function showScannerView(tab = 'url') {
       document.getElementById('landing-view').style.display = 'none';
       document.getElementById('scanner-view').style.display = 'block';
       switchConsoleTab(tab);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       if (currentFindings.length === 0) {
-        runDemo('bank-app', 'Vulnerable Core Banking (Python)');
+        if (tab === 'url') runDynamicProbe();
+        else runDemo('bank-app', 'Vulnerable Core Banking (Python)');
       }
-    }
-
-    function probeFromHero() {
-      const url = document.getElementById('hero-url-input').value.trim() || 'google.com';
-      document.getElementById('target-url-input').value = url;
-      showScannerView('url');
-      runDynamicProbe();
     }
 
     function switchConsoleTab(tab) {
@@ -1188,7 +1113,7 @@
 
     // ================= STATE & SCANNER LOGIC =================
     let currentFindings = [];
-    let currentTargetName = 'Quantum-Vulnerable Core Banking Backend (Python)';
+    let currentTargetName = 'google.com (Live TLS Handshake)';
     let activeRemediationData = null;
 
     async function runDemo(demoId, label) {
@@ -1207,17 +1132,37 @@
     }
 
     async function runDynamicProbe() {
-      const url = document.getElementById('target-url-input').value.trim() || 'google.com';
-      const port = parseInt(document.getElementById('target-port-input').value) || 443;
-      currentTargetName = url;
-      document.getElementById('current-target-name').innerText = `Live Endpoint: ${url}:${port}`;
+      const probeBtn = document.getElementById('probe-btn');
+      const urlInput = document.getElementById('target-url-input');
+      const portInput = document.getElementById('target-port-input');
       
-      // Animate handshake progression
+      const rawUrl = urlInput ? urlInput.value.trim() : 'google.com';
+      const cleanUrl = rawUrl || 'google.com';
+      const port = portInput ? (parseInt(portInput.value) || 443) : 443;
+      
+      currentTargetName = `${cleanUrl} (Live TLS Handshake)`;
+      document.getElementById('current-target-name').innerText = currentTargetName;
+      
+      if (probeBtn) {
+        probeBtn.disabled = true;
+        probeBtn.innerText = 'Probing...';
+      }
+
+      // Reset step indicators
+      for (let i = 1; i <= 5; i++) {
+        const el = document.getElementById(`hs-${i}`);
+        if (el && el.children[0]) {
+          el.children[0].style.borderColor = 'var(--glass-border)';
+          el.children[0].style.color = 'var(--text-muted)';
+          el.children[0].innerText = i;
+        }
+      }
+
       let step = 1;
       const interval = setInterval(() => {
         if (step <= 5) {
           const el = document.getElementById(`hs-${step}`);
-          if (el) {
+          if (el && el.children[0]) {
             el.children[0].style.borderColor = 'var(--safe)';
             el.children[0].style.color = 'var(--safe)';
             el.children[0].innerText = '✓';
@@ -1226,21 +1171,26 @@
         } else {
           clearInterval(interval);
         }
-      }, 200);
+      }, 180);
 
-      addLog(`▶ Initiating non-intrusive SSL socket probe to ${url}:${port}...`);
+      addLog(`▶ Initiating non-intrusive SSL socket probe to ${cleanUrl}:${port}...`);
       
       try {
         const res = await fetch('/api/scan/dynamic', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: url, port: port })
+          body: JSON.stringify({ url: cleanUrl, port: port })
         });
+        
+        if (!res.ok) {
+          throw new Error(`Server returned HTTP ${res.status}`);
+        }
+        
         const data = await res.json();
         clearInterval(interval);
         for (let i = 1; i <= 5; i++) {
           const el = document.getElementById(`hs-${i}`);
-          if (el) {
+          if (el && el.children[0]) {
             el.children[0].style.borderColor = 'var(--safe)';
             el.children[0].style.color = 'var(--safe)';
             el.children[0].innerText = '✓';
@@ -1249,12 +1199,17 @@
         updateConsoleView(data);
       } catch (e) {
         addLog(`⚠️ Probe error: ${e.message}`);
+      } finally {
+        if (probeBtn) {
+          probeBtn.disabled = false;
+          probeBtn.innerText = 'Probe TLS';
+        }
       }
     }
 
     function updateConsoleView(data) {
       currentFindings = data.findings || [];
-      const score = data.quantum_readiness_score || 30;
+      const score = (typeof data.quantum_readiness_score === 'number') ? data.quantum_readiness_score : 35;
       
       if (data.scan_logs) {
         data.scan_logs.forEach(l => addLog(l));
@@ -1267,32 +1222,36 @@
       const circumference = 2 * Math.PI * 80;
       const offset = circumference - (score / 100) * circumference;
       const ring = document.getElementById('console-gauge-ring');
-      ring.style.strokeDashoffset = offset;
-      ring.style.stroke = score < 40 ? '#ff0040' : score < 75 ? '#ffaa00' : '#00ff88';
+      if (ring) {
+        ring.style.strokeDashoffset = offset;
+        ring.style.stroke = score < 40 ? '#ff0040' : score < 75 ? '#ffaa00' : '#00ff88';
+      }
 
       const badge = document.getElementById('console-threat-badge');
-      if (score < 40) {
-        badge.innerText = 'CRITICAL — Immediate PQC Action Required';
-        badge.style.background = 'rgba(255,0,64,0.15)';
-        badge.style.borderColor = 'var(--critical)';
-        badge.style.color = '#ff8099';
-      } else if (score < 75) {
-        badge.innerText = 'ELEVATED — Upgrade 128-bit & Deprecated Primitives';
-        badge.style.background = 'rgba(255,170,0,0.15)';
-        badge.style.borderColor = 'var(--warning)';
-        badge.style.color = '#ffcc66';
-      } else {
-        badge.innerText = 'QUANTUM-RESISTANT — Post-Quantum Standards Compliant';
-        badge.style.background = 'rgba(0,255,136,0.15)';
-        badge.style.borderColor = 'var(--safe)';
-        badge.style.color = '#66ffb3';
+      if (badge) {
+        if (score < 40) {
+          badge.innerText = 'CRITICAL — Immediate PQC Action Required';
+          badge.style.background = 'rgba(255,0,64,0.15)';
+          badge.style.borderColor = 'var(--critical)';
+          badge.style.color = '#ff8099';
+        } else if (score < 75) {
+          badge.innerText = 'ELEVATED — Upgrade 128-bit & Deprecated Primitives';
+          badge.style.background = 'rgba(255,170,0,0.15)';
+          badge.style.borderColor = 'var(--warning)';
+          badge.style.color = '#ffcc66';
+        } else {
+          badge.innerText = 'QUANTUM-RESISTANT — Post-Quantum Standards Compliant';
+          badge.style.background = 'rgba(0,255,136,0.15)';
+          badge.style.borderColor = 'var(--safe)';
+          badge.style.color = '#66ffb3';
+        }
       }
 
       // Counts
-      const shor = currentFindings.filter(f => f.risk_level.includes('SHOR')).length;
-      const grover = currentFindings.filter(f => f.risk_level.includes('GROVER')).length;
-      const deprecated = currentFindings.filter(f => f.risk_level.includes('DEPRECATED')).length;
-      const resistant = currentFindings.filter(f => f.risk_level.includes('RESISTANT')).length;
+      const shor = currentFindings.filter(f => (f.risk_level || '').includes('SHOR')).length;
+      const grover = currentFindings.filter(f => (f.risk_level || '').includes('GROVER')).length;
+      const deprecated = currentFindings.filter(f => (f.risk_level || '').includes('DEPRECATED')).length;
+      const resistant = currentFindings.filter(f => (f.risk_level || '').includes('RESISTANT')).length;
 
       document.getElementById('bar-shor-count').innerText = `${shor} Asset${shor !== 1 ? 's' : ''}`;
       document.getElementById('bar-shor-fill').style.width = `${Math.min(100, shor * 40)}%`;
@@ -1304,7 +1263,7 @@
       document.getElementById('bar-deprecated-fill').style.width = `${Math.min(100, deprecated * 30)}%`;
 
       document.getElementById('bar-resistant-count').innerText = `${resistant} Asset${resistant !== 1 ? 's' : ''}`;
-      document.getElementById('bar-resistant-fill').style.width = `${Math.min(100, resistant * 30)}%`;
+      document.getElementById('bar-resistant-fill').style.width = `${Math.min(100, resistant * 35)}%`;
 
       document.getElementById('hndl-text').innerText = data.hndl_exposure_rating || 'CRITICAL (Harvest Now, Decrypt Later Threat Active)';
       document.getElementById('cbom-asset-count').innerText = currentFindings.length;
@@ -1321,33 +1280,34 @@
         return;
       }
 
-      findingsList.forEach(f => {
+      findingsList.forEach((f, idx) => {
         const tr = document.createElement('tr');
         tr.style.borderBottom = '1px solid rgba(255,255,255,0.04)';
         tr.style.transition = 'background 0.2s';
         tr.onmouseenter = () => tr.style.background = 'rgba(255,255,255,0.02)';
         tr.onmouseleave = () => tr.style.background = 'transparent';
 
+        const risk = f.risk_level || 'UNKNOWN';
         let badgeStyle = 'background: rgba(255,255,255,0.05); color: #fff;';
-        if (f.risk_level.includes('SHOR')) badgeStyle = 'background: rgba(255,0,64,0.15); color: #ff8099; border: 1px solid rgba(255,0,64,0.3);';
-        else if (f.risk_level.includes('GROVER')) badgeStyle = 'background: rgba(255,170,0,0.15); color: #ffcc66; border: 1px solid rgba(255,170,0,0.3);';
-        else if (f.risk_level.includes('RESISTANT')) badgeStyle = 'background: rgba(0,255,136,0.15); color: #66ffb3; border: 1px solid rgba(0,255,136,0.3);';
+        if (risk.includes('SHOR')) badgeStyle = 'background: rgba(255,0,64,0.15); color: #ff8099; border: 1px solid rgba(255,0,64,0.3);';
+        else if (risk.includes('GROVER')) badgeStyle = 'background: rgba(255,170,0,0.15); color: #ffcc66; border: 1px solid rgba(255,170,0,0.3);';
+        else if (risk.includes('RESISTANT')) badgeStyle = 'background: rgba(0,255,136,0.15); color: #66ffb3; border: 1px solid rgba(0,255,136,0.3);';
 
         tr.innerHTML = `
           <td style="padding: 0.875rem 0.75rem;">
-            <div style="font-weight: 700; color: #fff;">${f.algorithm}</div>
+            <div style="font-weight: 700; color: #fff;">${f.algorithm || 'Unknown'}</div>
             <div style="font-size: 0.6875rem; color: var(--text-muted);">${f.file_path || 'Live TLS Endpoint'}</div>
           </td>
-          <td style="padding: 0.875rem 0.75rem; color: #c7d2fe;">${f.primitive}</td>
+          <td style="padding: 0.875rem 0.75rem; color: #c7d2fe;">${f.primitive || 'Cryptographic Asset'}</td>
           <td style="padding: 0.875rem 0.75rem; color: var(--text-secondary);">${f.classical_security_bits ? `~${f.classical_security_bits}-bit` : 'N/A'}</td>
           <td style="padding: 0.875rem 0.75rem;">
             <span style="padding: 0.2rem 0.6rem; border-radius: 100px; font-size: 0.6875rem; font-weight: 600; ${badgeStyle}">
-              ${f.risk_level}
+              ${risk}
             </span>
           </td>
-          <td style="padding: 0.875rem 0.75rem; color: var(--accent); font-weight: 600;">${f.nist_replacement}</td>
+          <td style="padding: 0.875rem 0.75rem; color: var(--accent); font-weight: 600;">${f.nist_replacement || 'NIST PQC'}</td>
           <td style="padding: 0.875rem 0.75rem; text-align: right;">
-            <button onclick='openRemediationModal(${JSON.stringify(f).replace(/'/g, "&apos;")})' style="padding: 0.35rem 0.75rem; border-radius: 8px; background: rgba(99,102,241,0.2); border: 1px solid var(--accent); color: #fff; font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600; cursor: pointer;">
+            <button onclick="openRemediationModalByIndex(${idx})" style="padding: 0.35rem 0.75rem; border-radius: 8px; background: rgba(99,102,241,0.2); border: 1px solid var(--accent); color: #fff; font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600; cursor: pointer;">
               🪄 Patch
             </button>
           </td>
@@ -1359,19 +1319,22 @@
     function filterCbomTable() {
       const q = document.getElementById('cbom-search').value.toLowerCase();
       const filtered = currentFindings.filter(f => 
-        f.algorithm.toLowerCase().includes(q) ||
-        (f.file_path && f.file_path.toLowerCase().includes(q)) ||
-        f.nist_replacement.toLowerCase().includes(q)
+        (f.algorithm || '').toLowerCase().includes(q) ||
+        (f.file_path || '').toLowerCase().includes(q) ||
+        (f.nist_replacement || '').toLowerCase().includes(q)
       );
       renderCbomTable(filtered);
     }
 
-    async function openRemediationModal(finding) {
+    async function openRemediationModalByIndex(idx) {
+      const finding = currentFindings[idx];
+      if (!finding) return;
+
       document.getElementById('modal-algo-title').innerText = `PQC Migration: ${finding.algorithm}`;
       document.getElementById('modal-algo-subtitle').innerText = `Primitive: ${finding.primitive} • ${finding.file_path || 'Live Endpoint'}`;
       document.getElementById('modal-legacy-code').innerText = finding.code_snippet || '# Discovered cryptographic initialization';
       document.getElementById('modal-patched-code').innerText = 'Synthesizing post-quantum patch...';
-      document.getElementById('modal-rationale-text').innerText = finding.risk_reason;
+      document.getElementById('modal-rationale-text').innerText = finding.risk_reason || 'Vulnerable to quantum cryptanalysis.';
       document.getElementById('remediation-modal').style.display = 'flex';
 
       try {
@@ -1421,6 +1384,7 @@
 
     function addLog(msg) {
       const logs = document.getElementById('terminal-logs');
+      if (!logs) return;
       const div = document.createElement('div');
       div.innerText = msg;
       logs.appendChild(div);
@@ -1445,39 +1409,15 @@
     // Loader
     const loaderTl = gsap.timeline();
     loaderTl
-      .to('.loader', { opacity: 0, duration: 0.6, delay: 0.6, ease: 'power2.inOut' })
+      .to('.loader', { opacity: 0, duration: 0.5, delay: 0.5, ease: 'power2.inOut' })
       .set('.loader', { display: 'none' })
       .from('.nav', { y: -100, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.2')
       .from('.hero-badge', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.5')
       .from('.hero-title', { y: 40, opacity: 0, duration: 1.0, ease: 'power4.out' }, '-=0.5')
       .from('.hero-subtitle', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.7')
-      .from('.hero-quick-bar', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.5');
+      .from('.hero-buttons', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.5');
 
-    // Cursor
-    const cursor = document.querySelector('.cursor');
-    const cursorRing = document.querySelector('.cursor-ring');
-    let mouseX = 0, mouseY = 0, cursorX = 0, cursorY = 0;
-    let isTouch = window.matchMedia('(pointer: coarse)').matches;
-    if (!isTouch) {
-      document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
-      function animateCursor() {
-        cursorX += (mouseX - cursorX) * 0.15;
-        cursorY += (mouseY - cursorY) * 0.15;
-        cursor.style.left = cursorX - 5 + 'px';
-        cursor.style.top = cursorY - 5 + 'px';
-        cursorRing.style.left = cursorX - 40 + 'px';
-        cursorRing.style.top = cursorY - 40 + 'px';
-        requestAnimationFrame(animateCursor);
-      }
-      animateCursor();
-      const hoverEls = document.querySelectorAll('a, button, .glass, .threat-card, .hero-fixture-btn');
-      hoverEls.forEach(el => {
-        el.addEventListener('mouseenter', () => { cursor.classList.add('expanded'); cursorRing.style.opacity = '1'; });
-        el.addEventListener('mouseleave', () => { cursor.classList.remove('expanded'); cursorRing.style.opacity = '0'; });
-      });
-    }
-
-    // Dot Grid Canvas
+    // Dot Grid Canvas with Physics Mouse Interaction
     const canvas = document.getElementById('dotCanvas');
     const ctx = canvas.getContext('2d');
     let dots = [];
@@ -1496,7 +1436,7 @@
 
     function initDots() {
       dots = [];
-      const spacing = isTouch ? 36 : 28;
+      const spacing = 28;
       const cols = Math.ceil(canvasW / spacing) + 2;
       const rows = Math.ceil(canvasH / spacing) + 2;
       for (let i = 0; i < cols; i++) {
@@ -1517,7 +1457,7 @@
 
     function updateDots() {
       time += 0.016;
-      const radius = 200;
+      const radius = 220;
       const radiusSq = radius * radius;
       for (let dot of dots) {
         const dx = dot.baseX - gridMouseX;
@@ -1567,16 +1507,6 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
     animateDots();
-
-    // Stats counter
-    document.querySelectorAll('.stat-number').forEach(stat => {
-      const target = parseInt(stat.getAttribute('data-target'));
-      ScrollTrigger.create({ trigger: stat, start: 'top 85%', onEnter: () => {
-        gsap.to(stat, { innerHTML: target, duration: 2.2, snap: { innerHTML: 1 }, ease: 'power2.out', onUpdate: function() {
-          stat.innerHTML = Math.round(this.targets()[0].innerHTML) + (stat.getAttribute('data-target') === '100' ? '%' : '+');
-        }});
-      }, once: true });
-    });
   </script>
 </body>
 </html>
