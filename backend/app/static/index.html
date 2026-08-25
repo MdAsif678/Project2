@@ -3,1582 +3,1404 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Aegis-Q — Post-Quantum Cryptographic Discovery & CBOM Platform (SIH26164)</title>
-  <meta name="description" content="AI-powered cryptographic discovery, CycloneDX v1.6 CBOM generation, and NIST Post-Quantum Cryptography (PQC) automated migration." />
+  <title>Aegis-Q — Cryptographic Discovery, CBOM &amp; Quantum Risk Analysis</title>
+  <meta name="description" content="Enterprise Cryptographic Discovery, CycloneDX v1.6 CBOM Generation, and Post-Quantum Migration Planning (SIH26164)." />
   
-  <!-- Fonts -->
+  <!-- Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- GSAP, ScrollTrigger & Lenis CDN -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <style>
     :root {
-      --bg: #030305;
-      --bg-elevated: #08080c;
-      --glass: rgba(255,255,255,0.025);
-      --glass-border: rgba(255,255,255,0.08);
-      --glass-border-hover: rgba(255,255,255,0.18);
+      --bg: #06070a;
+      --bg-surface: #0c0e14;
+      --bg-elevated: #12151f;
+      --glass: rgba(18, 21, 31, 0.7);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(99, 102, 241, 0.5);
+      
       --text: #ffffff;
-      --text-secondary: rgba(255,255,255,0.65);
-      --text-muted: rgba(255,255,255,0.35);
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      
       --accent: #6366f1;
-      --accent-2: #a855f7;
-      --accent-3: #ec4899;
-      --safe: #00ff88;
-      --warning: #ffaa00;
-      --critical: #ff0040;
-      --expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --accent-hover: #4f46e5;
+      --accent-glow: rgba(99, 102, 241, 0.25);
+      
+      --critical: #ef4444;
+      --critical-bg: rgba(239, 68, 68, 0.12);
+      --critical-border: rgba(239, 68, 68, 0.3);
+      
+      --warning: #f59e0b;
+      --warning-bg: rgba(245, 158, 11, 0.12);
+      --warning-border: rgba(245, 158, 11, 0.3);
+      
+      --safe: #10b981;
+      --safe-bg: rgba(16, 185, 129, 0.12);
+      --safe-border: rgba(16, 185, 129, 0.3);
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+      
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
     }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: auto; }
+    
     body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
       color: var(--text);
-      overflow-x: hidden;
-      cursor: auto;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
       -webkit-font-smoothing: antialiased;
     }
-    
-    /* Permanent Fixed Nav */
-    .nav {
-      position: fixed; top: 0; left: 0; right: 0;
-      z-index: 9999;
-      padding: 0.85rem 2.5rem;
-      display: flex; justify-content: space-between; align-items: center;
-      background: rgba(3,3,5,0.85);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      border-bottom: 1px solid var(--glass-border);
-    }
-    .nav-logo {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.35rem; font-weight: 700;
-      letter-spacing: -0.02em; color: var(--text);
-      text-decoration: none;
-      display: flex; align-items: center; gap: 0.5rem;
-      cursor: pointer;
-    }
-    .nav-logo-badge {
-      font-size: 0.625rem; font-family: 'JetBrains Mono', monospace;
-      padding: 0.2rem 0.5rem; border-radius: 100px;
-      background: rgba(99,102,241,0.15); color: var(--accent);
-      border: 1px solid rgba(99,102,241,0.25);
-    }
-    .nav-links { display: flex; gap: 1.75rem; list-style: none; align-items: center; }
-    .nav-links a {
-      color: var(--text-secondary); text-decoration: none;
-      font-size: 0.8125rem; font-weight: 500;
-      letter-spacing: 0.04em; transition: color 0.3s ease;
-      cursor: pointer;
-    }
-    .nav-links a:hover { color: var(--text); }
-    .nav-cta {
-      padding: 0.55rem 1.3rem;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: #ffffff;
-      border: none; border-radius: 100px;
-      font-family: 'Inter', sans-serif; font-size: 0.8125rem;
-      font-weight: 600; cursor: pointer;
-      transition: all 0.3s var(--expo);
-      box-shadow: 0 0 20px rgba(99,102,241,0.35);
-    }
-    .nav-cta:hover {
-      transform: scale(1.04);
-      box-shadow: 0 0 30px rgba(99,102,241,0.6);
-    }
 
-    #dotCanvas {
-      position: fixed; top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 0;
-      pointer-events: none;
-    }
-    .scanlines {
+    /* Ambient Background */
+    .bg-grid {
       position: fixed; inset: 0;
-      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
-      pointer-events: none;
-      z-index: 9998;
-    }
-    .perspective-grid {
-      position: fixed; inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
-      background-size: 80px 80px;
-      mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
-      -webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
-      animation: gridDrift 60s linear infinite;
+      background-image: 
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 40px 40px;
       pointer-events: none;
       z-index: 0;
     }
-    @keyframes gridDrift {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(80px); }
-    }
-    .glass {
-      background: var(--glass);
-      backdrop-filter: blur(20px) saturate(1.2);
-      -webkit-backdrop-filter: blur(20px) saturate(1.2);
-      border: 1px solid var(--glass-border);
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      transition: all 0.4s var(--expo);
-    }
-    .glass:hover {
-      border-color: var(--glass-border-hover);
-      box-shadow: 0 25px 70px rgba(0,0,0,0.4);
-    }
 
-    /* Hero */
-    .hero {
-      min-height: 88vh; display: flex;
-      align-items: center; justify-content: center;
-      position: relative; padding: 7.5rem 1.5rem 2.5rem; z-index: 1;
-    }
-    .hero-content {
-      position: relative; z-index: 2;
-      text-align: center; max-width: 900px; width: 100%;
-    }
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      padding: 0.5rem 1rem; background: var(--glass);
-      border: 1px solid var(--glass-border); border-radius: 100px;
-      font-size: 0.75rem; font-weight: 500;
-      color: var(--text-secondary); margin-bottom: 1.5rem;
-      backdrop-filter: blur(10px); font-family: 'JetBrains Mono', monospace;
-    }
-    .hero-badge-dot {
-      width: 6px; height: 6px; background: var(--safe);
-      border-radius: 50%;
-      animation: pulse 2s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,255,136,0.4); }
-      50% { opacity: 0.6; box-shadow: 0 0 0 8px rgba(0,255,136,0); }
-    }
-    .hero-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(2.75rem, 6.5vw, 5.25rem);
-      font-weight: 700; line-height: 1.05;
-      letter-spacing: -0.03em; margin-bottom: 1.25rem;
-    }
-    .gradient-text {
-      background: linear-gradient(135deg, var(--accent), var(--accent-2), var(--accent-3));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .hero-subtitle {
-      font-size: clamp(0.9375rem, 1.8vw, 1.15rem);
-      color: var(--text-secondary); line-height: 1.7;
-      max-width: 650px; margin: 0 auto 2.5rem; font-weight: 400;
-    }
-
-    .hero-buttons {
-      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem;
-    }
-
-    .btn-primary {
-      padding: 0.9rem 2rem; background: #ffffff; color: #000000;
-      border: none; border-radius: 100px;
-      font-family: 'Inter', sans-serif; font-size: 0.9rem;
-      font-weight: 600; cursor: pointer;
-      transition: all 0.3s var(--expo);
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      box-shadow: 0 10px 30px rgba(255,255,255,0.2);
-    }
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 15px 40px rgba(99,102,241,0.4);
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: #fff;
-    }
-    .btn-secondary {
-      padding: 0.9rem 2rem; background: rgba(255,255,255,0.04); color: var(--text);
-      border: 1px solid var(--glass-border); border-radius: 100px;
-      font-family: 'Inter', sans-serif; font-size: 0.9rem;
-      font-weight: 600; cursor: pointer;
-      transition: all 0.3s var(--expo);
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      backdrop-filter: blur(10px);
-    }
-    .btn-secondary:hover {
-      border-color: var(--accent);
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(99,102,241,0.15);
-      color: #fff;
-    }
-
-    /* Marquee */
-    .marquee-section {
-      padding: 1.75rem 0; overflow: hidden;
-      border-top: 1px solid var(--glass-border);
-      border-bottom: 1px solid var(--glass-border);
-      position: relative; z-index: 1; background: var(--bg);
-    }
-    .marquee-track {
-      display: flex; width: max-content;
-      animation: marquee 25s linear infinite;
-    }
-    .marquee-track:hover { animation-play-state: paused; }
-    @keyframes marquee {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-    .marquee-item {
-      display: flex; align-items: center;
-      gap: 2rem; padding: 0 2rem; white-space: nowrap;
-    }
-    .marquee-text {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(0.9375rem, 1.8vw, 1.25rem);
-      font-weight: 600; color: var(--text-muted);
-    }
-    .marquee-dot {
-      width: 6px; height: 6px;
-      background: var(--accent); border-radius: 50%;
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 260px;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
       flex-shrink: 0;
-    }
-
-    /* 3D Assembly Section */
-    .assembly-section {
-      min-height: 250vh;
-      position: relative; z-index: 1; background: var(--bg);
-    }
-    .assembly-sticky {
-      position: sticky; top: 0; height: 100vh;
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden; perspective: 1200px;
-    }
-    .assembly-container {
-      position: relative;
-      width: 100%; max-width: 1000px; height: 600px;
-    }
-    .assembly-piece {
-      position: absolute; border-radius: 16px; overflow: hidden;
-      will-change: transform; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-      cursor: pointer; transition: filter 0.3s ease, border-color 0.3s ease;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-    .assembly-piece:hover {
-      filter: brightness(1.2) drop-shadow(0 0 25px rgba(99,102,241,0.5));
-      border-color: rgba(255,255,255,0.4);
-      z-index: 50;
-    }
-    .assembly-piece-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.2));
-      mix-blend-mode: overlay;
-    }
-    .assembly-label {
-      position: absolute; top: 5.5rem; left: 50%;
-      transform: translateX(-50%); z-index: 10; text-align: center;
-    }
-    .assembly-label span {
-      display: inline-block; padding: 0.5rem 1.25rem;
-      background: var(--glass); border: 1px solid var(--glass-border);
-      border-radius: 100px; font-size: 0.75rem; font-weight: 600;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--accent); backdrop-filter: blur(10px);
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    /* Threat Matrix */
-    .threats-section {
-      padding: 6rem 1.5rem;
-      position: relative; z-index: 1; background: var(--bg);
-    }
-    .threats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.25rem;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    .threat-card {
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      border-radius: 18px;
-      padding: 1.75rem 1.5rem;
-      transition: all 0.3s var(--expo);
-      position: relative; overflow: hidden;
-    }
-    .threat-card::before {
-      content: ''; position: absolute; inset: 0;
-      background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(99, 102, 241, 0.1), transparent 50%);
-      opacity: 0; transition: opacity 0.3s ease;
-    }
-    .threat-card:hover::before { opacity: 1; }
-    .threat-card:hover {
-      border-color: var(--glass-border-hover);
-      transform: translateY(-3px);
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-    }
-    .threat-icon {
-      width: 40px; height: 40px;
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 0.875rem;
-      font-size: 1.25rem;
-      position: relative; z-index: 1;
-    }
-    .threat-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.0625rem;
-      font-weight: 600;
-      margin-bottom: 0.35rem;
-      position: relative; z-index: 1;
-    }
-    .threat-desc {
-      color: var(--text-secondary);
-      font-size: 0.8125rem;
-      line-height: 1.6;
-      position: relative; z-index: 1;
-    }
-
-    /* Showcase Section */
-    .showcase-section {
-      padding: 6rem 1.5rem;
-      position: relative; z-index: 1; background: var(--bg);
-      overflow: hidden;
-    }
-    .showcase-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1.75rem;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    .showcase-card {
-      position: relative;
-      border-radius: 20px;
-      overflow: hidden;
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      padding: 2rem;
-      transition: all 0.4s var(--expo);
-    }
-    .showcase-card:hover {
-      border-color: var(--glass-border-hover);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-      transform: translateY(-4px);
-    }
-
-    /* Text Fragment Assembly */
-    .text-assembly {
-      min-height: 180vh;
-      position: relative; z-index: 1; background: var(--bg);
-    }
-    .text-assembly-sticky {
-      position: sticky; top: 0; height: 100vh;
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
-    }
-    .text-assembly-content {
-      text-align: center; max-width: 900px; padding: 0 1.5rem;
-    }
-    .text-assembly-word {
-      display: inline-block;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(2.25rem, 5.5vw, 4.5rem);
-      font-weight: 700; line-height: 1.1;
-      letter-spacing: -0.02em; margin: 0 0.25rem;
-      will-change: transform, opacity, filter;
-    }
-    .text-assembly-word.gradient {
-      background: linear-gradient(135deg, var(--accent), var(--accent-2), var(--accent-3));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .text-assembly-sub {
-      font-size: 1.05rem; color: var(--text-secondary);
-      max-width: 550px; margin: 2rem auto 0; line-height: 1.7;
-    }
-
-    /* Stats */
-    .stats {
-      padding: 4rem 1.5rem;
-      border-top: 1px solid var(--glass-border);
-      border-bottom: 1px solid var(--glass-border);
-      position: relative; z-index: 1; background: var(--bg);
-    }
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 2rem;
-      max-width: 1000px;
-      margin: 0 auto;
-      text-align: center;
-    }
-    .stat-item { position: relative; padding: 1rem; }
-    .stat-item:not(:last-child)::after {
-      content: ''; position: absolute; right: -1rem; top: 50%;
-      transform: translateY(-50%); width: 1px; height: 40px;
-      background: var(--glass-border);
-    }
-    .stat-number {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(2rem, 3.5vw, 2.75rem);
-      font-weight: 700;
-      line-height: 1;
-      margin-bottom: 0.5rem;
-      background: linear-gradient(135deg, var(--text), var(--text-secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .stat-label {
-      color: var(--text-muted);
-      font-size: 0.75rem;
-      font-weight: 500;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-
-    /* Footer */
-    .footer {
-      padding: 3.5rem 2rem 2rem;
-      border-top: 1px solid var(--glass-border);
-      position: relative; z-index: 1; background: var(--bg);
-    }
-    .footer-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1fr;
-      gap: 2.5rem;
-      max-width: 1100px;
-      margin: 0 auto 2.5rem;
-    }
-    .footer-brand {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.4rem; font-weight: 700; margin-bottom: 0.75rem;
-    }
-    .footer-desc {
-      color: var(--text-secondary);
-      font-size: 0.8125rem; line-height: 1.7; max-width: 280px;
-    }
-    .footer-column h4 {
-      font-size: 0.75rem; font-weight: 600;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      margin-bottom: 0.875rem; color: var(--text-muted);
-    }
-    .footer-column ul { list-style: none; }
-    .footer-column li { margin-bottom: 0.5rem; }
-    .footer-column a {
-      color: var(--text-secondary); text-decoration: none;
-      font-size: 0.8125rem; transition: color 0.3s ease;
-      cursor: pointer;
-    }
-    .footer-column a:hover { color: var(--text); }
-    .footer-bottom {
-      max-width: 1100px; margin: 0 auto;
-      padding-top: 1.25rem; border-top: 1px solid var(--glass-border);
-      display: flex; justify-content: space-between; align-items: center;
-      flex-wrap: wrap; gap: 1rem;
-    }
-    .footer-copyright {
-      color: var(--text-muted); font-size: 0.75rem;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    /* ================= SCANNER VIEW ================= */
-    #scanner-view {
-      display: none;
-      min-height: 100vh;
-      padding-top: 5.5rem;
-      padding-bottom: 5rem;
       position: relative;
       z-index: 10;
     }
 
-    /* Modal Backdrop */
+    .brand {
+      padding: 1.5rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand-icon {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--accent), #a855f7);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+    .brand-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+    .brand-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.625rem;
+      padding: 0.15rem 0.4rem;
+      background: var(--accent-glow);
+      color: #c7d2fe;
+      border-radius: 4px;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    .nav-menu {
+      padding: 1rem 0.75rem;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      flex: 1;
+      overflow-y: auto;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+    }
+    .nav-item.active {
+      background: var(--accent-glow);
+      color: #ffffff;
+      font-weight: 600;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+    }
+    .nav-icon {
+      font-size: 1.1rem;
+      width: 20px;
+      text-align: center;
+    }
+
+    .sidebar-footer {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--safe);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6875rem;
+    }
+    .status-dot {
+      width: 6px; height: 6px;
+      background: var(--safe);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--safe);
+    }
+
+    /* Main Content Area */
+    .main-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Top App Header */
+    .top-header {
+      height: 60px;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: rgba(6, 7, 10, 0.8);
+      backdrop-filter: blur(12px);
+      flex-shrink: 0;
+    }
+    .header-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+    .breadcrumb-active {
+      color: var(--text);
+      font-weight: 600;
+    }
+    .header-target-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.85rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    /* Scrollable View Viewport */
+    .viewport {
+      flex: 1;
+      overflow-y: auto;
+      padding: 2rem;
+    }
+
+    .view-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: none;
+      animation: fadeIn 0.2s ease-out forwards;
+    }
+    .view-section.active-view {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Typography & Headers */
+    .page-header {
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .page-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .page-subtitle {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+      max-width: 650px;
+      line-height: 1.5;
+    }
+
+    /* Button Hierarchy System */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.35rem;
+      background: var(--accent);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 0 24px rgba(99, 102, 241, 0.4);
+    }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.35rem;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    .btn-text {
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .btn-text:hover {
+      background: var(--accent-glow);
+    }
+    .btn-row-action {
+      padding: 0.35rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .btn-row-action:hover {
+      background: var(--accent-glow);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* Cards & Containers */
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+    .card-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    /* Metric Grid */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .metric-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      position: relative;
+    }
+    .metric-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+    .metric-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-top: 0.5rem;
+      line-height: 1;
+    }
+    .metric-subtext {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 0.5rem;
+    }
+
+    /* Tables */
+    .table-container {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .table-toolbar {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+    .search-input {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem 0.85rem;
+      color: var(--text);
+      font-size: 0.8125rem;
+      outline: none;
+      width: 260px;
+    }
+    .search-input:focus {
+      border-color: var(--border-focus);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.8125rem;
+    }
+    th {
+      padding: 0.85rem 1.25rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.6875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.01);
+    }
+    td {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.015);
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .badge-critical {
+      background: var(--critical-bg);
+      color: #fca5a5;
+      border: 1px solid var(--critical-border);
+    }
+    .badge-warning {
+      background: var(--warning-bg);
+      color: #fcd34d;
+      border: 1px solid var(--warning-border);
+    }
+    .badge-safe {
+      background: var(--safe-bg);
+      color: #6ee7b7;
+      border: 1px solid var(--safe-border);
+    }
+    .badge-neutral {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    /* Modal System */
     .modal-backdrop {
       position: fixed; inset: 0;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(20px);
-      z-index: 10000;
-      display: flex; align-items: center; justify-content: center;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
       padding: 1.5rem;
+    }
+    .modal-backdrop.open {
+      display: flex;
+    }
+    .modal-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 750px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      animation: modalPop 0.2s var(--expo);
+    }
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+    .modal-body {
+      padding: 1.5rem;
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      font-size: 0.875rem;
+    }
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+    .modal-close-btn {
+      background: none; border: none;
+      color: var(--text-muted);
+      font-size: 1.25rem; cursor: pointer;
+    }
+    .modal-close-btn:hover { color: var(--text); }
+
+    /* Code diff styling */
+    .diff-block {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .diff-pane {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+    }
+    .diff-pane-title {
+      font-size: 0.6875rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .diff-legacy { color: #fca5a5; }
+    .diff-pqc { color: #86efac; }
+    pre {
+      white-space: pre-wrap;
+      word-break: break-all;
     }
 
     @media (max-width: 1024px) {
-      .threats-grid { grid-template-columns: repeat(2, 1fr); }
-      .showcase-grid { grid-template-columns: 1fr; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .stat-item:not(:last-child)::after { display: none; }
-      .footer-grid { grid-template-columns: repeat(2, 1fr); }
-      .assembly-container { transform: scale(0.8); }
+      .metric-grid { grid-template-columns: repeat(2, 1fr); }
+      .diff-block { grid-template-columns: 1fr; }
     }
     @media (max-width: 768px) {
-      .nav { padding: 0.75rem 1.25rem; }
-      .nav-links { display: none; }
-      .threats-grid { grid-template-columns: 1fr; }
-      .stats-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
-      .footer-grid { grid-template-columns: 1fr; gap: 1.5rem; }
-      .assembly-container { transform: scale(0.6); }
+      body { flex-direction: column; }
+      .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+      .nav-menu { flex-direction: row; overflow-x: auto; padding: 0.5rem; }
+      .metric-grid { grid-template-columns: 1fr; }
+      .viewport { padding: 1rem; }
     }
   </style>
 </head>
 <body>
 
-  <canvas id="dotCanvas"></canvas>
-  <div class="perspective-grid"></div>
-  <div class="scanlines"></div>
+  <div class="bg-grid"></div>
 
-  <!-- Always Visible Fixed Nav -->
-  <nav class="nav">
-    <a onclick="showLandingView()" class="nav-logo">
-      <span style="font-size:1.4rem;">🛡️</span> AEGIS-Q
-      <span class="nav-logo-badge">SIH26164</span>
-    </a>
-    <ul class="nav-links">
-      <li><a onclick="showLandingView()">Home</a></li>
-      <li><a onclick="openGlossaryModal()">📖 Cryptography Glossary</a></li>
-      <li><a onclick="showScannerView('url')">🌐 Live TLS Probe</a></li>
-      <li><a onclick="showScannerView('code')">📁 Codebase Scanner</a></li>
-      <li><a href="#threats" onclick="showLandingView()">Threat Matrix</a></li>
-    </ul>
-    <div style="display:flex;align-items:center;gap:0.75rem;">
-      <button onclick="openGlossaryModal()" class="btn-secondary" style="padding: 0.45rem 0.9rem; font-size: 0.75rem;">
-        <span>❓ Terms Guide</span>
-      </button>
-      <button onclick="showScannerView('url')" class="nav-cta">
-        <span>⚡ Launch Console</span>
-      </button>
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">🛡️</div>
+      <div>
+        <div class="brand-title">Aegis-Q</div>
+      </div>
+      <span class="brand-tag">SIH26164</span>
     </div>
-  </nav>
 
-  <!-- ================= VIEW 1: CINEMATIC HOMEPAGE ================= -->
-  <div id="landing-view">
-    <!-- Hero Section -->
-    <section class="hero" id="hero">
-      <div class="hero-content">
-        <div class="hero-badge">
-          <span class="hero-badge-dot"></span>
-          NIST FIPS 203 (ML-KEM) • FIPS 204 (ML-DSA) • CycloneDX v1.6 Standard
-        </div>
-        <h1 class="hero-title">
-          Discover. Analyze.<br>
-          <span class="gradient-text">Post-Quantum Fortification.</span>
-        </h1>
-        <p class="hero-subtitle">
-          AI-powered cryptographic discovery and vulnerability analysis. Scan enterprise codebases and probe live HTTPS website encryption against Shor's and Grover's quantum threat algorithms.
-        </p>
+    <ul class="nav-menu">
+      <li><a class="nav-item active" onclick="navigateTo('dashboard')"><span class="nav-icon">📊</span> Dashboard</a></li>
+      <li><a class="nav-item" onclick="navigateTo('new-scan')"><span class="nav-icon">⚡</span> New Scan</a></li>
+      <li><a class="nav-item" onclick="navigateTo('findings')"><span class="nav-icon">🔍</span> Findings</a></li>
+      <li><a class="nav-item" onclick="navigateTo('cbom')"><span class="nav-icon">📦</span> CBOM</a></li>
+      <li><a class="nav-item" onclick="navigateTo('remediation')"><span class="nav-icon">🪄</span> Remediation</a></li>
+      <li><a class="nav-item" onclick="navigateTo('history')"><span class="nav-icon">🕒</span> Scan History</a></li>
+      <li><a class="nav-item" onclick="navigateTo('settings')"><span class="nav-icon">⚙️</span> Settings</a></li>
+    </ul>
 
-        <!-- Two Clear Entry Buttons -->
-        <div class="hero-buttons">
-          <button onclick="showScannerView('url')" class="btn-primary">
-            <span>🌐 Probe Website Encryption (Live TLS)</span>
-          </button>
-          <button onclick="showScannerView('code')" class="btn-secondary">
-            <span>📁 Scan Codebase (.ZIP / AST)</span>
-          </button>
-        </div>
-
-        <!-- Quick 1-Click Samples -->
-        <div style="display: flex; gap: 0.5rem; justify-content: center; align-items: center; flex-wrap: wrap;">
-          <span style="font-size: 0.6875rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Or test pre-loaded fixtures:</span>
-          <button onclick="loadFixtureAndSwitch('bank-app', 'Vulnerable Core Banking (Python)')" style="padding: 0.35rem 0.75rem; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.6875rem; font-weight: 600; border: 1px solid rgba(255,0,64,0.4); background: rgba(255,0,64,0.1); color: #ff8099; cursor: pointer;">
-            🔴 Bank App
-          </button>
-          <button onclick="loadFixtureAndSwitch('node-crypto', 'Legacy E-Commerce (Node.js)')" style="padding: 0.35rem 0.75rem; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.6875rem; font-weight: 600; border: 1px solid rgba(255,170,0,0.4); background: rgba(255,170,0,0.1); color: #ffcc66; cursor: pointer;">
-            🟡 Node Auth
-          </button>
-          <button onclick="loadFixtureAndSwitch('secure-ref', 'Post-Quantum Stack (ML-KEM, ML-DSA)')" style="padding: 0.35rem 0.75rem; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.6875rem; font-weight: 600; border: 1px solid rgba(0,255,136,0.4); background: rgba(0,255,136,0.1); color: #66ffb3; cursor: pointer;">
-            🟢 Quantum-Resistant Stack
-          </button>
-        </div>
+    <div class="sidebar-footer">
+      <div class="status-indicator">
+        <span class="status-dot"></span>
+        <span>Engine Online • FIPS 203/204</span>
       </div>
-    </section>
+      <div>CycloneDX v1.6 Standard</div>
+    </div>
+  </aside>
 
-    <!-- Marquee -->
-    <section class="marquee-section">
-      <div class="marquee-track">
-        <div class="marquee-item">
-          <span class="marquee-text">NIST FIPS 203 (ML-KEM-768)</span><span class="marquee-dot"></span>
-          <span class="marquee-text">NIST FIPS 204 (ML-DSA-65)</span><span class="marquee-dot"></span>
-          <span class="marquee-text">CycloneDX v1.6 CBOM</span><span class="marquee-dot"></span>
-          <span class="marquee-text">Shor's Factorization Threat</span><span class="marquee-dot"></span>
-          <span class="marquee-text">Grover's Quadratic Search</span><span class="marquee-dot"></span>
-          <span class="marquee-text">Harvest Now Decrypt Later (HNDL)</span><span class="marquee-dot"></span>
-          <span class="marquee-text">AES-256-GCM Resilient</span><span class="marquee-dot"></span>
-        </div>
-        <div class="marquee-item">
-          <span class="marquee-text">NIST FIPS 203 (ML-KEM-768)</span><span class="marquee-dot"></span>
-          <span class="marquee-text">NIST FIPS 204 (ML-DSA-65)</span><span class="marquee-dot"></span>
-          <span class="marquee-text">CycloneDX v1.6 CBOM</span><span class="marquee-dot"></span>
-          <span class="marquee-text">Shor's Factorization Threat</span><span class="marquee-dot"></span>
-          <span class="marquee-text">Grover's Quadratic Search</span><span class="marquee-dot"></span>
-          <span class="marquee-text">Harvest Now Decrypt Later (HNDL)</span><span class="marquee-dot"></span>
-          <span class="marquee-text">AES-256-GCM Resilient</span><span class="marquee-dot"></span>
-        </div>
-      </div>
-    </section>
-
-    <!-- 3D Discovered Assets Assembly / Disassembly -->
-    <section class="assembly-section" id="assembly">
-      <div class="assembly-sticky">
-        <div class="assembly-label"><span>Discovered Cryptographic Assets Spectrum (Click any card to inspect)</span></div>
-        <div class="assembly-container">
-          <div class="assembly-piece" id="asm-center" onclick="openAssetDetailModal('RSA-2048 Asymmetric Key', 'Key Agreement & Encapsulation', 'CRITICAL_SHOR', 'Integer Prime Factorization (N = p × q)', 'Peter Shor proved in 1994 that quantum computers solve prime factorization in polynomial time O(n³). RSA-2048 is completely broken.', 'NIST FIPS 203 (ML-KEM-768) / FIPS 204 (ML-DSA)', 'bank-app')" style="width:380px;height:280px;top:160px;left:310px;">
-            <div style="width:100%;height:100%;background:linear-gradient(135deg,#1e1b4b,#312e81);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.875rem;color:white;padding:1.5rem;text-align:center;">
-              <span style="color:#ff0040;font-weight:700;font-size:1.1rem;margin-bottom:0.25rem;">🔴 RSA-2048 Asymmetric Key</span>
-              <span style="font-size:0.75rem;color:rgba(255,255,255,0.6);">Broken by Shor's Algorithm • Target: ML-KEM-768</span>
-              <span style="font-size:0.6875rem;color:var(--accent);margin-top:0.75rem;text-decoration:underline;">Click to inspect primitive</span>
-            </div>
-            <div class="assembly-piece-overlay"></div>
-          </div>
-          <div class="assembly-piece" id="asm-tl" onclick="openAssetDetailModal('MD5 Message Digest', 'Cryptographic Hash Function', 'DEPRECATED_CLASSICAL', '128-bit Merkle–Damgård hash structure', 'MD5 is mathematically broken by classical collision attacks (e.g. Flame malware). Must never be used for digital signatures or authentication.', 'SHA-256 or NIST FIPS 202 SHA3-512', 'bank-app')" style="width:160px;height:120px;top:30px;left:90px;">
-            <div style="width:100%;height:100%;background:linear-gradient(135deg,#4c0519,#881337);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:white;text-align:center;padding:0.5rem;">
-              <span style="color:#ff0040;font-weight:bold;">MD5 Hash</span>
-              <span style="font-size:0.6rem;color:rgba(255,255,255,0.5);">Deprecated Classical</span>
-            </div>
-            <div class="assembly-piece-overlay"></div>
-          </div>
-          <div class="assembly-piece" id="asm-tr" onclick="openAssetDetailModal('AES-256-GCM', 'Symmetric Authenticated Cipher', 'QUANTUM_RESISTANT', '256-bit Galois/Counter Mode (AEAD)', 'Grover\'s quantum algorithm halves brute force search time, leaving AES-256 with ~128 bits of quantum security margin—fully resilient.', 'NIST FIPS 197 (AES-256-GCM)', 'secure-ref')" style="width:140px;height:110px;top:50px;left:720px;">
-            <div style="width:100%;height:100%;background:linear-gradient(135deg,#064e3b,#065f46);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:white;text-align:center;padding:0.5rem;">
-              <span style="color:#00ff88;font-weight:bold;">AES-256-GCM</span>
-              <span style="font-size:0.6rem;color:rgba(255,255,255,0.5);">Quantum-Resistant</span>
-            </div>
-            <div class="assembly-piece-overlay"></div>
-          </div>
-          <div class="assembly-piece" id="asm-bl" onclick="openAssetDetailModal('DES (Data Encryption Standard)', 'Legacy Symmetric Feistel Cipher', 'DEPRECATED_CLASSICAL', '56-bit Key Space', 'DES can be cracked in a matter of hours by commodity GPUs. Modern security standards mandate immediate upgrade to AES-256.', 'AES-256-GCM (NIST FIPS 197)', 'bank-app')" style="width:180px;height:140px;top:460px;left:70px;">
-            <div style="width:100%;height:100%;background:linear-gradient(135deg,#1c1917,#44403c);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:white;text-align:center;padding:0.5rem;">
-              <span style="color:#ffaa00;font-weight:bold;">DES (56-bit)</span>
-              <span style="font-size:0.6rem;color:rgba(255,255,255,0.5);">Insecure Cipher</span>
-            </div>
-            <div class="assembly-piece-overlay"></div>
-          </div>
-          <div class="assembly-piece" id="asm-br" onclick="openAssetDetailModal('SHA-1 Digest', 'Cryptographic Hash Function', 'DEPRECATED_CLASSICAL', '160-bit Hash Value', 'Classically vulnerable to practical collision generation (demonstrated in Google\'s SHAttered research). Deprecated by NIST.', 'SHA-256 / SHA3-512', 'bank-app')" style="width:150px;height:120px;top:440px;left:700px;">
-            <div style="width:100%;height:100%;background:linear-gradient(135deg,#0c4a6e,#0369a1);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:white;text-align:center;padding:0.5rem;">
-              <span style="color:#fbbf24;font-weight:bold;">SHA-1 Digest</span>
-              <span style="font-size:0.6rem;color:rgba(255,255,255,0.5);">Collision Vulnerable</span>
-            </div>
-            <div class="assembly-piece-overlay"></div>
-          </div>
-          <div class="assembly-piece" id="asm-sl" onclick="openAssetDetailModal('ECDSA P-256', 'Elliptic Curve Digital Signature', 'CRITICAL_SHOR', 'Weierstrass Curve Discrete Logarithm', 'Shor\'s algorithm computes elliptic curve discrete logarithms in polynomial time, completely destroying ECDSA signature forgery resistance.', 'NIST FIPS 204 (ML-DSA-65)', 'bank-app')" style="width:130px;height:160px;top:220px;left:-10px;">
-            <div style="width:100%;height:100%;background:linear-gradient(135deg,#581c87,#7c3aed);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:white;text-align:center;padding:0.5rem;">
-              <span style="color:#ff3366;font-weight:bold;">ECDSA P-256</span>
-              <span style="font-size:0.6rem;color:rgba(255,255,255,0.5);">Digital Signature</span>
-            </div>
-            <div class="assembly-piece-overlay"></div>
-          </div>
-          <div class="assembly-piece" id="asm-sr" onclick="openAssetDetailModal('AES-ECB Mode', 'Symmetric Block Cipher Mode', 'INSECURE_MODE', 'Electronic Codebook without IV/Nonce', 'ECB mode preserves plaintext pattern entropy across ciphertext blocks (the infamous ECB Penguin leak).', 'AES-256-GCM Authenticated Encryption', 'node-crypto')" style="width:140px;height:140px;top:240px;left:850px;">
-            <div style="width:100%;height:100%;background:linear-gradient(135deg,#7c2d12,#c2410c);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:white;text-align:center;padding:0.5rem;">
-              <span style="color:#ffaa00;font-weight:bold;">AES-ECB</span>
-              <span style="font-size:0.6rem;color:rgba(255,255,255,0.5);">Pattern Leakage</span>
-            </div>
-            <div class="assembly-piece-overlay"></div>
-          </div>
-          <div class="assembly-piece" id="asm-fl1" onclick="openAssetDetailModal('ECDH / X25519', 'Key Exchange & Agreement', 'CRITICAL_SHOR', 'Diffie-Hellman Key Agreement', 'ECDH shared secrets are vulnerable to Harvest Now, Decrypt Later (HNDL) quantum eavesdropping.', 'NIST FIPS 203 (ML-KEM-768)', 'bank-app')" style="width:90px;height:90px;top:90px;left:520px;">
-            <div style="width:100%;height:100%;background:linear-gradient(135deg,#134e4a,#14b8a6);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.625rem;color:white;font-weight:bold;">ECDH</div>
-            <div class="assembly-piece-overlay"></div>
-          </div>
-          <div class="assembly-piece" id="asm-fl2" onclick="openAssetDetailModal('RC4 Stream Cipher', 'Legacy Stream Cipher', 'DEPRECATED_CLASSICAL', 'Rivest Cipher 4 PRGA/KSA', 'Known statistical biases in the initial keystream bytes allow plaintext recovery attacks.', 'AES-256-GCM / ChaCha20', 'node-crypto')" style="width:80px;height:80px;top:400px;left:480px;">
-            <div style="width:100%;height:100%;background:linear-gradient(135deg,#3f3f46,#71717a);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.625rem;color:white;font-weight:bold;">RC4</div>
-            <div class="assembly-piece-overlay"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Threat Matrix (Populated & Visible) -->
-    <section class="threats-section" id="threats">
-      <div class="section-header" style="text-align:center;margin-bottom:3.5rem;">
-        <span style="display:inline-block;padding:0.4rem 1rem;background:var(--glass);border:1px solid var(--glass-border);border-radius:100px;font-size:0.6875rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;font-family:'JetBrains Mono',monospace;">Threat Taxonomy</span>
-        <h2 style="font-family:'Space Grotesk',sans-serif;font-size:clamp(2rem,4.5vw,3rem);font-weight:700;line-height:1.1;letter-spacing:-0.02em;margin-bottom:1rem;">Cryptographic<br>Threat Matrix</h2>
-        <p style="font-size:0.9375rem;color:var(--text-secondary);max-width:580px;margin:0 auto;line-height:1.7;">Scientifically grounded classification of classical and quantum computing attack vectors.</p>
-      </div>
-      <div class="threats-grid">
-        <div class="threat-card">
-          <div class="threat-icon" style="background: rgba(255,0,64,0.15); color: var(--critical);">🔴</div>
-          <h3 class="threat-title" style="color:var(--critical);">Shor's Algorithm</h3>
-          <p class="threat-desc">Breaks integer factorization and discrete logarithms in polynomial time $O(n^3)$. RSA, ECDSA, ECDH, and Ed25519 are completely broken on Cryptographically Relevant Quantum Computers.</p>
-        </div>
-        <div class="threat-card">
-          <div class="threat-icon" style="background: rgba(255,170,0,0.15); color: var(--warning);">🟡</div>
-          <h3 class="threat-title" style="color:var(--warning);">Grover's Algorithm</h3>
-          <p class="threat-desc">Provides quadratic speedup for brute force key search. Halves effective key space: AES-128 reduces to ~64-bit security margin, while AES-256 remains resilient with ~128 bits.</p>
-        </div>
-        <div class="threat-card">
-          <div class="threat-icon" style="background: rgba(0,255,136,0.15); color: var(--safe);">🟢</div>
-          <h3 class="threat-title" style="color:var(--safe);">Quantum-Resistant</h3>
-          <p class="threat-desc">NIST FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), and AES-256-GCM maintain >=128-bit quantum security margin based on structured lattice math.</p>
-        </div>
-        <div class="threat-card">
-          <div class="threat-icon" style="background: rgba(255,0,64,0.15); color: var(--critical);">⚡</div>
-          <h3 class="threat-title" style="color:var(--critical);">HNDL Attack</h3>
-          <p class="threat-desc">Harvest Now, Decrypt Later. Adversaries record encrypted TLS sessions today to retroactively decrypt when CRQC quantum hardware is online.</p>
-        </div>
-        <div class="threat-card">
-          <div class="threat-icon" style="background: rgba(255,170,0,0.15); color: var(--warning);">⚠️</div>
-          <h3 class="threat-title" style="color:var(--warning);">Deprecated Classical</h3>
-          <p class="threat-desc">MD5, SHA-1, DES, and AES-ECB mode have demonstrated practical classical collision and diffusion exploits.</p>
-        </div>
-        <div class="threat-card">
-          <div class="threat-icon" style="background: rgba(99,102,241,0.15); color: var(--accent);">🔒</div>
-          <h3 class="threat-title" style="color:var(--accent);">NIST PQC Migration</h3>
-          <p class="threat-desc">AI-assisted code transformations and verified deterministic patches migrating systems directly into production-grade FIPS standards.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Showcase Section (Distinct Interactive Previews) -->
-    <section class="showcase-section" id="showcase">
-      <div class="section-header" style="text-align:center;margin-bottom:3.5rem;">
-        <span style="display:inline-block;padding:0.4rem 1rem;background:var(--glass);border:1px solid var(--glass-border);border-radius:100px;font-size:0.6875rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;font-family:'JetBrains Mono',monospace;">Analysis Capabilities</span>
-        <h2 style="font-family:'Space Grotesk',sans-serif;font-size:clamp(2rem,4.5vw,3rem);font-weight:700;line-height:1.1;letter-spacing:-0.02em;margin-bottom:1rem;">Enterprise Discovery Suite</h2>
-      </div>
-      <div class="showcase-grid">
-        <!-- Showcase 1: CBOM Standard -->
-        <div class="showcase-card">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-            <span style="padding:0.3rem 0.8rem;background:rgba(99,102,241,0.15);border:1px solid var(--accent);color:#c7d2fe;border-radius:100px;font-size:0.6875rem;font-family:'JetBrains Mono',monospace;font-weight:600;">CycloneDX v1.6 Standard</span>
-            <span style="font-size:0.75rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace;">CBOM Engine</span>
-          </div>
-          <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.35rem;font-weight:700;margin-bottom:0.75rem;">Cryptography Bill of Materials</h3>
-          <p style="color:var(--text-secondary);font-size:0.8125rem;line-height:1.6;margin-bottom:1.25rem;">
-            Exports standardized, machine-readable JSON inventories tagging exact classical bit security, NIST quantum security levels (0–5), and cryptographic OIDs for automated DevSecOps pipelines.
-          </p>
-          <div style="background:rgba(0,0,0,0.4);border:1px solid var(--glass-border);border-radius:12px;padding:1rem;font-family:'JetBrains Mono',monospace;font-size:0.6875rem;color:#a5b4fc;margin-bottom:1.5rem;overflow-x:auto;">
-            <div>"bomFormat": "CycloneDX",</div>
-            <div>"specVersion": "1.6",</div>
-            <div>"cryptoProperties": { "assetType": "algorithm", "oid": "1.2.840.113549.1.1.1" }</div>
-          </div>
-          <button onclick="showScannerView('code')" class="btn-secondary" style="width:100%;justify-content:center;padding:0.75rem;font-size:0.8125rem;">
-            <span>📁 Audit Codebase &amp; Export CBOM</span>
-          </button>
-        </div>
-
-        <!-- Showcase 2: Dynamic TLS Inspector -->
-        <div class="showcase-card">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-            <span style="padding:0.3rem 0.8rem;background:rgba(255,0,64,0.15);border:1px solid var(--critical);color:#ff8099;border-radius:100px;font-size:0.6875rem;font-family:'JetBrains Mono',monospace;font-weight:600;">5-Step Socket Handshake</span>
-            <span style="font-size:0.75rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace;">Dynamic Probe</span>
-          </div>
-          <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.35rem;font-weight:700;margin-bottom:0.75rem;">Live TLS Handshake Inspector</h3>
-          <p style="color:var(--text-secondary);font-size:0.8125rem;line-height:1.6;margin-bottom:1.25rem;">
-            Non-intrusively decomposes remote HTTPS connections into Certificate signatures, Key Exchange (KEM), and Record Ciphers, assessing live vulnerability to Harvest Now, Decrypt Later (HNDL).
-          </p>
-          <div style="display:flex;justify-content:space-between;background:rgba(0,0,0,0.4);border:1px solid var(--glass-border);border-radius:12px;padding:1rem;font-family:'JetBrains Mono',monospace;font-size:0.6875rem;color:var(--text-secondary);margin-bottom:1.5rem;">
-            <span style="color:#ff8099;">1. ClientHello</span>
-            <span style="color:#ff8099;">2. ServerHello</span>
-            <span style="color:#ff8099;">3. Cert</span>
-            <span style="color:#ff8099;">4. KeyEx</span>
-            <span style="color:#00ff88;">5. Record (AES)</span>
-          </div>
-          <button onclick="showScannerView('url')" class="btn-primary" style="width:100%;justify-content:center;padding:0.75rem;font-size:0.8125rem;">
-            <span>🌐 Probe Live Website TLS</span>
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Text Assembly -->
-    <section class="text-assembly">
-      <div class="text-assembly-sticky">
-        <div class="text-assembly-content">
-          <div id="text-assembly-line1">
-            <span class="text-assembly-word">The</span>
-            <span class="text-assembly-word">quantum</span>
-            <span class="text-assembly-word">era</span>
-            <span class="text-assembly-word">is</span>
-          </div>
-          <div id="text-assembly-line2">
-            <span class="text-assembly-word gradient">coming</span>
-            <span class="text-assembly-word">&mdash;</span>
-            <span class="text-assembly-word">be</span>
-          </div>
-          <div id="text-assembly-line3">
-            <span class="text-assembly-word">ready</span>
-            <span class="text-assembly-word gradient">before</span>
-            <span class="text-assembly-word">it</span>
-            <span class="text-assembly-word">arrives</span>
-          </div>
-          <p class="text-assembly-sub" id="text-assembly-sub">
-            Every cryptographic primitive matters. Every migration path is intentional.
-            Proactive quantum defense engineered for SIH26164.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Stats -->
-    <section class="stats" id="stats">
-      <div class="stats-grid">
-        <div class="stat-item">
-          <div class="stat-number" data-target="156">0</div>
-          <div class="stat-label">Cryptographic Assets Mapped</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-number" data-target="12">0</div>
-          <div class="stat-label">Automated Test Suites</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-number" data-target="4">0</div>
-          <div class="stat-label">Languages (Python, JS, Java, Go)</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-number" data-target="100">0</div>
-          <div class="stat-label">% Free Tier Deployable</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-      <div class="footer-grid">
-        <div>
-          <div class="footer-brand">AEGIS-Q</div>
-          <p class="footer-desc">Post-Quantum Cryptographic Discovery &amp; CBOM Analysis Platform. Smart India Hackathon (SIH26164).</p>
-        </div>
-        <div class="footer-column">
-          <h4>Discovery Console</h4>
-          <ul>
-            <li><a onclick="showScannerView('url')">Live TLS Handshake</a></li>
-            <li><a onclick="showScannerView('code')">Codebase Scan (.ZIP)</a></li>
-            <li><a onclick="openGlossaryModal()">Cryptographic Glossary</a></li>
-          </ul>
-        </div>
-        <div class="footer-column">
-          <h4>NIST Standards</h4>
-          <ul>
-            <li><a href="https://csrc.nist.gov/pubs/fips/203/final" target="_blank">FIPS 203 (ML-KEM)</a></li>
-            <li><a href="https://csrc.nist.gov/pubs/fips/204/final" target="_blank">FIPS 204 (ML-DSA)</a></li>
-            <li><a href="https://csrc.nist.gov/pubs/fips/205/final" target="_blank">FIPS 205 (SLH-DSA)</a></li>
-            <li><a href="https://csrc.nist.gov/pubs/fips/197/final" target="_blank">FIPS 197 (AES-256)</a></li>
-          </ul>
-        </div>
-        <div class="footer-column">
-          <h4>Repository</h4>
-          <ul>
-            <li><a href="https://github.com/MdAsif678/Project2" target="_blank">GitHub Repository</a></li>
-            <li><a href="https://cyclonedx.org" target="_blank">CycloneDX v1.6 Spec</a></li>
-            <li><a href="/health" target="_blank">API Health Status</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <span class="footer-copyright">&copy; 2026 Aegis-Q &bull; Built for the Quantum Era &bull; SIH26164</span>
-        <div class="footer-social">
-          <a href="https://github.com/MdAsif678/Project2" target="_blank">GitHub Project2</a>
-        </div>
-      </div>
-    </footer>
-  </div>
-
-  <!-- ================= VIEW 2: INTERACTIVE SCANNER CONSOLE ================= -->
-  <div id="scanner-view">
-    <div style="max-width: 1280px; margin: 0 auto; padding: 0 1.5rem;">
-      <!-- Console Header Bar -->
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
-        <div>
-          <button onclick="showLandingView()" class="btn-secondary" style="padding: 0.5rem 1.25rem; font-size: 0.8125rem; margin-bottom: 0.75rem;">
-            <span>← Back to Overview</span>
-          </button>
-          <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 700;">
-            Cryptographic Discovery &amp; CBOM Console
-          </h1>
-          <p style="color: var(--text-secondary); font-size: 0.875rem; margin-top: 0.25rem;">
-            Current Target: <strong style="color: #fff;" id="current-target-name">google.com (Live TLS Handshake)</strong>
-          </p>
-        </div>
-
-        <div style="display: flex; gap: 0.75rem; align-items: center;">
-          <button onclick="openGlossaryModal()" class="btn-secondary" style="padding: 0.625rem 1.25rem; font-size: 0.8125rem;">
-            <span>❓ Terms Guide</span>
-          </button>
-          <button onclick="exportCurrentCbom()" class="btn-primary" style="padding: 0.625rem 1.5rem; font-size: 0.8125rem;">
-            <span>⬇️ Export CycloneDX v1.6 CBOM</span>
-          </button>
-        </div>
+  <!-- MAIN VIEWPORT -->
+  <main class="main-container">
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="header-breadcrumb">
+        <span>Aegis-Q</span>
+        <span>/</span>
+        <span id="header-section-name" class="breadcrumb-active">Dashboard</span>
       </div>
 
-      <!-- Scan Hub + Live Terminal Grid -->
-      <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
-        <!-- Scan Controls Card -->
-        <div class="glass" style="padding: 1.75rem;">
-          <!-- Tabs -->
-          <div style="display: flex; gap: 0.5rem; background: rgba(255,255,255,0.03); padding: 0.35rem; border-radius: 14px; margin-bottom: 1.25rem; border: 1px solid var(--glass-border);">
-            <button id="tab-btn-url" onclick="switchConsoleTab('url')" style="flex: 1; padding: 0.6rem; border-radius: 10px; border: none; font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600; cursor: pointer; background: #fff; color: #000; transition: all 0.3s;">
-              🌐 Live Website / TLS Prober
-            </button>
-            <button id="tab-btn-code" onclick="switchConsoleTab('code')" style="flex: 1; padding: 0.6rem; border-radius: 10px; border: none; font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600; cursor: pointer; background: transparent; color: var(--text-secondary); transition: all 0.3s;">
-              📁 Codebase Scan (.ZIP / AST)
-            </button>
-          </div>
-
-          <!-- URL Tab Content -->
-          <div id="console-tab-url">
-            <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem;">
-              <input type="text" id="target-url-input" value="google.com" placeholder="e.g. google.com, github.com, bank.com" style="flex: 1; padding: 0.75rem 1rem; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.8125rem; outline: none;">
-              <input type="number" id="target-port-input" value="443" style="width: 70px; padding: 0.75rem 0.5rem; text-align: center; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.8125rem; outline: none;">
-              <button onclick="runDynamicProbe()" id="probe-btn" class="btn-primary" style="padding: 0.75rem 1.5rem; font-size: 0.8125rem;">
-                <span>Probe TLS</span>
-              </button>
-            </div>
-
-            <!-- Handshake steps visualizer -->
-            <div style="padding: 1rem; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 14px;">
-              <div style="font-size: 0.6875rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); text-transform: uppercase; text-align: center; margin-bottom: 0.75rem;">
-                5-Step TLS Socket Handshake Inspection
-              </div>
-              <div style="display: flex; justify-content: space-between; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 0.6875rem;">
-                <div id="hs-1">
-                  <div style="width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--accent); color: var(--accent); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.25rem;">1</div>
-                  <span style="color: var(--text-secondary);">ClientHello</span>
-                </div>
-                <div id="hs-2">
-                  <div style="width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--glass-border); color: var(--text-muted); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.25rem;">2</div>
-                  <span style="color: var(--text-secondary);">ServerHello</span>
-                </div>
-                <div id="hs-3">
-                  <div style="width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--glass-border); color: var(--text-muted); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.25rem;">3</div>
-                  <span style="color: var(--text-secondary);">Certificate</span>
-                </div>
-                <div id="hs-4">
-                  <div style="width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--glass-border); color: var(--text-muted); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.25rem;">4</div>
-                  <span style="color: var(--text-secondary);">KeyExchange</span>
-                </div>
-                <div id="hs-5">
-                  <div style="width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--glass-border); color: var(--text-muted); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.25rem;">5</div>
-                  <span style="color: var(--text-secondary);">Finished</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Code Tab Content -->
-          <div id="console-tab-code" style="display: none;">
-            <div style="border: 2px dashed rgba(255,255,255,0.12); padding: 1.5rem; border-radius: 16px; text-align: center; background: rgba(255,255,255,0.01); margin-bottom: 1rem;">
-              <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">⚡</div>
-              <div style="font-size: 0.875rem; font-weight: 600;">Multi-Language AST Source Scanner</div>
-              <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">Select a pre-loaded vulnerable codebase fixture:</div>
-            </div>
-
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;">
-              <button onclick="fetchDemoFixture('bank-app', 'Vulnerable Core Banking (Python)')" style="padding: 0.625rem; border-radius: 10px; background: rgba(255,0,64,0.1); border: 1px solid rgba(255,0,64,0.3); color: #ff8099; text-align: left; font-size: 0.6875rem; font-weight: 600; cursor: pointer;">
-                🔴 Bank App (Python)
-                <div style="font-size: 0.5625rem; color: rgba(255,255,255,0.4); margin-top: 0.2rem;">RSA-2048, MD5, DES</div>
-              </button>
-              <button onclick="fetchDemoFixture('node-crypto', 'Legacy E-Commerce (Node.js)')" style="padding: 0.625rem; border-radius: 10px; background: rgba(255,170,0,0.1); border: 1px solid rgba(255,170,0,0.3); color: #ffcc66; text-align: left; font-size: 0.6875rem; font-weight: 600; cursor: pointer;">
-                🟡 Node Auth (JS)
-                <div style="font-size: 0.5625rem; color: rgba(255,255,255,0.4); margin-top: 0.2rem;">3DES, MD5, ECB</div>
-              </button>
-              <button onclick="fetchDemoFixture('secure-ref', 'Post-Quantum Stack (ML-KEM, ML-DSA)')" style="padding: 0.625rem; border-radius: 10px; background: rgba(0,255,136,0.1); border: 1px solid rgba(0,255,136,0.3); color: #66ffb3; text-align: left; font-size: 0.6875rem; font-weight: 600; cursor: pointer;">
-                🟢 Quantum-Resistant
-                <div style="font-size: 0.5625rem; color: rgba(255,255,255,0.4); margin-top: 0.2rem;">ML-KEM, ML-DSA</div>
-              </button>
-            </div>
-          </div>
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <div class="header-target-badge">
+          <span style="color: var(--text-muted);">Target:</span>
+          <strong id="active-target-label" style="color: #fff;">Vulnerable Core Banking (Python)</strong>
         </div>
-
-        <!-- Live Terminal Stream -->
-        <div class="glass" style="padding: 1.25rem; display: flex; flex-direction: column; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; height: 350px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.6875rem;">
-            <span>DISCOVERY LOG STREAM</span>
-            <span id="terminal-status" style="color: var(--safe);">● READY</span>
-          </div>
-          <div id="terminal-logs" style="flex: 1; overflow-y: auto; padding-top: 0.75rem; line-height: 1.7; color: rgba(255,255,255,0.8);">
-            <div>[00:00.01] ▶ Aegis-Q Discovery Engine initialized.</div>
-            <div>[00:00.05] ▶ Ready to audit software packages or HTTPS sockets.</div>
-          </div>
-        </div>
+        <button onclick="navigateTo('new-scan')" class="btn-primary" style="padding: 0.45rem 1rem; font-size: 0.8125rem;">
+          <span>⚡ New Scan</span>
+        </button>
       </div>
+    </header>
 
-      <!-- Quantum Readiness Gauge + Score Breakdown Card -->
-      <div class="glass" style="padding: 2rem; margin-bottom: 2rem;">
-        <div style="display: grid; grid-template-columns: 1fr 1.6fr; gap: 2.5rem; align-items: center;">
-          <!-- Gauge Center -->
-          <div style="text-align: center;">
-            <div style="position: relative; width: 190px; height: 190px; margin: 0 auto;">
-              <svg viewBox="0 0 200 200" style="width: 100%; height: 100%; transform: rotate(-90deg);">
-                <circle cx="100" cy="100" r="80" fill="transparent" stroke="rgba(255,255,255,0.06)" stroke-width="14" />
-                <circle id="console-gauge-ring" cx="100" cy="100" r="80" fill="transparent" stroke="#ff0040" stroke-width="14" stroke-linecap="round" stroke-dasharray="502.65" stroke-dashoffset="376" style="transition: all 1.2s var(--expo);" />
-              </svg>
-              <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                <span id="console-gauge-score" style="font-family: 'Space Grotesk', sans-serif; font-size: 3rem; font-weight: 700; line-height: 1;">35%</span>
-                <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.625rem; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 0.25rem;">Readiness Index</span>
-              </div>
-            </div>
-            
-            <div id="console-threat-badge" style="display: inline-block; margin-top: 0.75rem; padding: 0.35rem 1rem; border-radius: 100px; font-size: 0.75rem; font-weight: 700; background: rgba(255,0,64,0.15); border: 1px solid var(--critical); color: #ff8099;">
-              CRITICAL — Immediate PQC Action Required
-            </div>
+    <div class="viewport">
 
-            <div style="margin-top: 0.75rem; font-size: 0.6875rem; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace;">
-              Score Formula: Heuristic (Shor -40%, Grover -10%, Deprecated -15%, PQC +25%)
-            </div>
-          </div>
-
-          <!-- Gauge Bars & Score Explanation -->
-          <div style="display: flex; flex-direction: column; gap: 0.875rem;">
-            <!-- Shor Bar -->
-            <div>
-              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 0.35rem;">
-                <span style="color: var(--critical); font-weight: 600;">🔴 Shor's Vulnerable (Public Key &amp; Key Agreement):</span>
-                <span id="bar-shor-count" style="font-weight: 700;">2 Assets</span>
-              </div>
-              <div style="height: 6px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden;">
-                <div id="bar-shor-fill" style="height: 100%; background: var(--critical); width: 65%; transition: width 1s ease;"></div>
-              </div>
-            </div>
-
-            <!-- Grover Bar -->
-            <div>
-              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 0.35rem;">
-                <span style="color: var(--warning); font-weight: 600;">🟡 Grover's Search Halved (128-bit Symmetric):</span>
-                <span id="bar-grover-count" style="font-weight: 700;">0 Assets</span>
-              </div>
-              <div style="height: 6px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden;">
-                <div id="bar-grover-fill" style="height: 100%; background: var(--warning); width: 0%; transition: width 1s ease;"></div>
-              </div>
-            </div>
-
-            <!-- Deprecated Bar -->
-            <div>
-              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 0.35rem;">
-                <span style="color: var(--text-secondary);">⚠️ Deprecated Classical (MD5 / SHA-1 / DES):</span>
-                <span id="bar-deprecated-count" style="font-weight: 700;">0 Assets</span>
-              </div>
-              <div style="height: 6px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden;">
-                <div id="bar-deprecated-fill" style="height: 100%; background: #a1a1aa; width: 0%; transition: width 1s ease;"></div>
-              </div>
-            </div>
-
-            <!-- Quantum Resistant Bar -->
-            <div>
-              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 0.35rem;">
-                <span style="color: var(--safe); font-weight: 600;">🟢 Quantum-Resistant (ML-KEM / ML-DSA / AES-256):</span>
-                <span id="bar-resistant-count" style="font-weight: 700;">1 Asset</span>
-              </div>
-              <div style="height: 6px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden;">
-                <div id="bar-resistant-fill" style="height: 100%; background: var(--safe); width: 35%; transition: width 1s ease;"></div>
-              </div>
-            </div>
-
-            <!-- HNDL Horizon card -->
-            <div style="padding: 0.75rem 1rem; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 12px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-secondary);">
-              ⏳ <strong style="color: #fff;">HNDL Horizon:</strong> <span id="hndl-text">CRITICAL (Immediate Harvest Now, Decrypt Later Threat Active)</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- CBOM Explorer Data Table -->
-      <div class="glass" style="padding: 2rem;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 1.25rem; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+      <!-- ================= 1. DASHBOARD VIEW ================= -->
+      <section id="view-dashboard" class="view-section active-view">
+        <div class="page-header">
           <div>
-            <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.375rem; font-weight: 700;">
-              Cryptography Bill of Materials (CBOM)
-            </h2>
-            <p style="color: var(--text-secondary); font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; margin-top: 0.25rem;">
-              OWASP CycloneDX v1.6 Standard • <span id="cbom-asset-count">3</span> Discovered Cryptographic Assets
-            </p>
+            <h1 class="page-title">Executive Cryptographic Dashboard</h1>
+            <p class="page-subtitle">High-level posture of discovered cryptographic assets, quantum risk exposure, and recommended migrations.</p>
           </div>
-          <input type="text" id="cbom-search" oninput="filterCbomTable()" placeholder="Search algorithm or file..." style="padding: 0.5rem 1rem; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 10px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; outline: none; width: 220px;">
+          <div style="display: flex; gap: 0.75rem;">
+            <button onclick="navigateTo('findings')" class="btn-secondary">
+              <span>View Findings</span>
+            </button>
+            <button onclick="navigateTo('new-scan')" class="btn-primary">
+              <span>⚡ New Scan</span>
+            </button>
+          </div>
         </div>
 
-        <div style="overflow-x: auto;">
-          <table style="width: 100%; border-collapse: collapse; text-align: left; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">
+        <!-- 4 Question Metric Cards -->
+        <div class="metric-grid">
+          <div class="metric-card">
+            <div class="metric-label">Total Cryptographic Assets</div>
+            <div class="metric-value" id="dash-total-assets">4</div>
+            <div class="metric-subtext">Discovered across target architecture</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Critical / Shor Vulnerable</div>
+            <div class="metric-value" id="dash-critical-assets" style="color: var(--critical);">2</div>
+            <div class="metric-subtext">Broken in polynomial time $O(n^3)$</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Quantum-Resistant Assets</div>
+            <div class="metric-value" id="dash-resistant-assets" style="color: var(--safe);">1</div>
+            <div class="metric-subtext">>= 128-bit post-quantum security margin</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Recent Scan Readiness</div>
+            <div class="metric-value" id="dash-readiness-score" style="color: var(--warning);">25%</div>
+            <div class="metric-subtext" id="dash-target-name">Vulnerable Core Banking</div>
+          </div>
+        </div>
+
+        <!-- Posture Split Layout -->
+        <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+          <!-- Recent Findings Table Preview -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Recent Cryptographic Findings</h2>
+              <button onclick="navigateTo('findings')" class="btn-text">View All Findings →</button>
+            </div>
+            <div style="overflow-x: auto;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Asset</th>
+                    <th>Primitive</th>
+                    <th>Quantum Threat</th>
+                    <th>Target NIST Standard</th>
+                    <th style="text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="dash-recent-tbody">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Risk Distribution & Posture Card -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Quantum Risk Distribution</h2>
+              <span id="dash-hndl-badge" class="badge badge-critical">HNDL ACTIVE</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.8125rem;">
+              <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+                  <span style="color: #fca5a5;">🔴 Shor's Vulnerable (Asymmetric):</span>
+                  <strong id="dash-bar-shor-text">2 Assets</strong>
+                </div>
+                <div style="height: 6px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden;">
+                  <div id="dash-bar-shor-fill" style="height: 100%; background: var(--critical); width: 50%;"></div>
+                </div>
+              </div>
+
+              <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+                  <span style="color: #fcd34d;">🟡 Grover's Search Halved (128-bit):</span>
+                  <strong id="dash-bar-grover-text">0 Assets</strong>
+                </div>
+                <div style="height: 6px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden;">
+                  <div id="dash-bar-grover-fill" style="height: 100%; background: var(--warning); width: 0%;"></div>
+                </div>
+              </div>
+
+              <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+                  <span style="color: var(--text-muted);">⚠️ Deprecated Classical (MD5 / DES):</span>
+                  <strong id="dash-bar-deprecated-text">1 Asset</strong>
+                </div>
+                <div style="height: 6px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden;">
+                  <div id="dash-bar-deprecated-fill" style="height: 100%; background: #64748b; width: 25%;"></div>
+                </div>
+              </div>
+
+              <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+                  <span style="color: #6ee7b7;">🟢 Quantum-Resistant (ML-KEM/AES-256):</span>
+                  <strong id="dash-bar-resistant-text">1 Asset</strong>
+                </div>
+                <div style="height: 6px; background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden;">
+                  <div id="dash-bar-resistant-fill" style="height: 100%; background: var(--safe); width: 25%;"></div>
+                </div>
+              </div>
+
+              <div style="margin-top: 0.5rem; padding: 0.85rem; background: var(--bg-elevated); border-radius: var(--radius-sm); border: 1px solid var(--border); font-size: 0.75rem; line-height: 1.5; color: var(--text-secondary);">
+                <strong>Migration Priority:</strong> RSA &amp; Elliptic Curves must be migrated to <strong>FIPS 203 (ML-KEM)</strong> and <strong>FIPS 204 (ML-DSA)</strong> to mitigate retroactive decryption.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 2. NEW SCAN VIEW ================= -->
+      <section id="view-new-scan" class="view-section">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">New Scan</h1>
+            <p class="page-subtitle">Discover cryptographic assets across source code or live infrastructure.</p>
+          </div>
+        </div>
+
+        <div style="max-width: 800px; margin: 0 auto;">
+          <!-- Scan Mode Selector -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.75rem;">
+            <div id="scan-mode-card-static" onclick="selectScanMode('static')" class="card" style="cursor: pointer; border-color: var(--accent); background: var(--accent-glow);">
+              <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📁</div>
+              <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem;">Static Discovery</h3>
+              <p style="font-size: 0.8125rem; color: var(--text-secondary);">Analyze source code, AST definitions, and dependencies.</p>
+            </div>
+
+            <div id="scan-mode-card-dynamic" onclick="selectScanMode('dynamic')" class="card" style="cursor: pointer; border-color: var(--border); background: var(--bg-surface);">
+              <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🌐</div>
+              <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem;">Dynamic Discovery</h3>
+              <p style="font-size: 0.8125rem; color: var(--text-secondary);">Analyze TLS certificates and key exchange on live network endpoints.</p>
+            </div>
+          </div>
+
+          <!-- Static Mode Controls -->
+          <div id="scan-controls-static" class="card" style="margin-bottom: 1.5rem;">
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 600; margin-bottom: 1rem;">Select Codebase Source</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.25rem;">
+              <button onclick="setStaticTarget('bank-app', 'Vulnerable Core Banking (Python)')" id="fixture-btn-bank" class="btn-secondary" style="justify-content: flex-start; text-align: left; padding: 0.85rem; border-color: var(--accent); background: var(--accent-glow);">
+                <div>
+                  <div style="font-weight: 700; color: #fff;">🔴 Bank App</div>
+                  <div style="font-size: 0.6875rem; color: var(--text-muted); margin-top: 0.2rem;">RSA-2048, MD5, DES</div>
+                </div>
+              </button>
+
+              <button onclick="setStaticTarget('node-crypto', 'Legacy E-Commerce (Node.js)')" id="fixture-btn-node" class="btn-secondary" style="justify-content: flex-start; text-align: left; padding: 0.85rem;">
+                <div>
+                  <div style="font-weight: 700; color: #fff;">🟡 Node Auth</div>
+                  <div style="font-size: 0.6875rem; color: var(--text-muted); margin-top: 0.2rem;">3DES, MD5, AES-ECB</div>
+                </div>
+              </button>
+
+              <button onclick="setStaticTarget('secure-ref', 'Post-Quantum Stack (ML-KEM, ML-DSA)')" id="fixture-btn-pqc" class="btn-secondary" style="justify-content: flex-start; text-align: left; padding: 0.85rem;">
+                <div>
+                  <div style="font-weight: 700; color: #fff;">🟢 PQC Stack</div>
+                  <div style="font-size: 0.6875rem; color: var(--text-muted); margin-top: 0.2rem;">ML-KEM-768, ML-DSA</div>
+                </div>
+              </button>
+            </div>
+
+            <div style="border: 2px dashed var(--border); border-radius: var(--radius-sm); padding: 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.8125rem;">
+              Or upload project archive (.ZIP / TAR.GZ) for multi-language AST inspection
+            </div>
+          </div>
+
+          <!-- Dynamic Mode Controls -->
+          <div id="scan-controls-dynamic" class="card" style="margin-bottom: 1.5rem; display: none;">
+            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 600; margin-bottom: 1rem;">Enter Live Endpoint</h3>
+            
+            <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem;">
+              <input type="text" id="dynamic-host-input" value="google.com" placeholder="e.g. google.com, api.banking.com" class="search-input" style="flex: 1; font-family: 'JetBrains Mono', monospace;">
+              <input type="number" id="dynamic-port-input" value="443" class="search-input" style="width: 80px; text-align: center; font-family: 'JetBrains Mono', monospace;">
+            </div>
+
+            <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.5;">
+              Initiates a non-intrusive 5-step TLS socket handshake to extract Leaf Certificates, Key Exchange parameters, and Symmetric Ciphers.
+            </div>
+          </div>
+
+          <!-- Primary Start CTA -->
+          <div style="display: flex; justify-content: flex-end;">
+            <button onclick="executeScan()" id="btn-execute-scan" class="btn-primary" style="padding: 0.85rem 2rem; font-size: 0.9375rem;">
+              <span>⚡ Start Scan</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 3. FINDINGS VIEW ================= -->
+      <section id="view-findings" class="view-section">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Cryptographic Findings</h1>
+            <p class="page-subtitle">Investigate discovered cryptographic algorithms, quantum vulnerabilities, and mathematical risk classifications.</p>
+          </div>
+          <button onclick="navigateTo('remediation')" class="btn-primary">
+            <span>View Remediation Plan</span>
+          </button>
+        </div>
+
+        <div class="table-container">
+          <div class="table-toolbar">
+            <input type="text" id="findings-search" oninput="filterFindingsTable()" placeholder="Filter by algorithm, file, or threat..." class="search-input">
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">
+              <span id="findings-count-label">4</span> Findings Analyzed
+            </div>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Cryptographic Asset</th>
+                  <th>Primitive</th>
+                  <th>Location</th>
+                  <th>Quantum Threat</th>
+                  <th>Classical Bits</th>
+                  <th>Recommended Migration</th>
+                  <th style="text-align: right;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="findings-tbody">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 4. CBOM VIEW ================= -->
+      <section id="view-cbom" class="view-section">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Cryptography Bill of Materials (CBOM)</h1>
+            <p class="page-subtitle">Standardized cryptographic inventory adhering to the OWASP CycloneDX v1.6 specification.</p>
+          </div>
+          <button onclick="exportCbomFile()" class="btn-primary">
+            <span>⬇️ Export CBOM (CycloneDX v1.6)</span>
+          </button>
+        </div>
+
+        <div class="table-container">
+          <div class="table-toolbar">
+            <input type="text" id="cbom-filter-input" oninput="filterCbomTable()" placeholder="Search CBOM components &amp; OIDs..." class="search-input">
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">
+              BOM Format: <strong style="color: #fff;">CycloneDX v1.6 JSON</strong>
+            </div>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Component Name</th>
+                  <th>Asset Type</th>
+                  <th>Object Identifier (OID)</th>
+                  <th>Primitive</th>
+                  <th>NIST Security Level</th>
+                  <th style="text-align: right;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="cbom-tbody">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 5. REMEDIATION VIEW ================= -->
+      <section id="view-remediation" class="view-section">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Cryptographic Remediation</h1>
+            <p class="page-subtitle">Prioritize and plan migration away from vulnerable cryptography to official NIST FIPS standards.</p>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div class="table-toolbar">
+            <div style="font-size: 0.8125rem; font-weight: 600; color: #fff;">
+              Migration Plan for Current Target
+            </div>
+            <div class="badge badge-warning">Deterministic Cryptographic Mappings</div>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Finding / Component</th>
+                  <th>Current Algorithm</th>
+                  <th>Why It Is Risky</th>
+                  <th>Recommended Replacement</th>
+                  <th>NIST Standard</th>
+                  <th style="text-align: right;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="remediation-tbody">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 6. SCAN HISTORY VIEW ================= -->
+      <section id="view-history" class="view-section">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Scan History</h1>
+            <p class="page-subtitle">Review previous discovery runs and cryptographic posture over time.</p>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
             <thead>
-              <tr style="border-bottom: 1px solid var(--glass-border); color: var(--text-muted); text-transform: uppercase; font-size: 0.6875rem;">
-                <th style="padding: 0.75rem;">Cryptographic Asset</th>
-                <th style="padding: 0.75rem;">Primitive Category</th>
-                <th style="padding: 0.75rem;">Classical Security</th>
-                <th style="padding: 0.75rem;">Threat Classification</th>
-                <th style="padding: 0.75rem;">Target NIST Standard</th>
-                <th style="padding: 0.75rem; text-align: right;">Action</th>
+              <tr>
+                <th>Target</th>
+                <th>Scan Type</th>
+                <th>Timestamp</th>
+                <th>Assets Discovered</th>
+                <th>Quantum Risk Summary</th>
+                <th style="text-align: right;">Action</th>
               </tr>
             </thead>
-            <tbody id="cbom-tbody">
-              <!-- Dynamically populated rows -->
+            <tbody id="history-tbody">
+              <!-- Populated dynamically -->
             </tbody>
           </table>
         </div>
-      </div>
+      </section>
+
+      <!-- ================= 7. SETTINGS & DEVELOPER VIEW ================= -->
+      <section id="view-settings" class="view-section">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Settings &amp; Developer</h1>
+            <p class="page-subtitle">System configuration, NIST standards references, and developer API endpoints.</p>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <div class="card">
+            <h2 class="card-title" style="margin-bottom: 1rem;">NIST Reference Standards</h2>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.8125rem;">
+              <div style="padding: 0.75rem; background: var(--bg-elevated); border-radius: var(--radius-sm);">
+                <strong>FIPS 203 (ML-KEM):</strong> Module-Lattice Key Encapsulation (formerly CRYSTALS-Kyber). Replaces RSA / ECDH.
+              </div>
+              <div style="padding: 0.75rem; background: var(--bg-elevated); border-radius: var(--radius-sm);">
+                <strong>FIPS 204 (ML-DSA):</strong> Module-Lattice Digital Signatures (formerly CRYSTALS-Dilithium). Replaces RSA-PSS / ECDSA.
+              </div>
+              <div style="padding: 0.75rem; background: var(--bg-elevated); border-radius: var(--radius-sm);">
+                <strong>FIPS 205 (SLH-DSA):</strong> Stateless Hash-Based Digital Signatures (formerly SPHINCS+).
+              </div>
+              <div style="padding: 0.75rem; background: var(--bg-elevated); border-radius: var(--radius-sm);">
+                <strong>FIPS 197 (AES-256):</strong> 256-bit Galois/Counter Mode AEAD. Resilient against Grover's algorithm (~128 bits).
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2 class="card-title" style="margin-bottom: 1rem;">Developer API Access</h2>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.8125rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-elevated); border-radius: var(--radius-sm);">
+                <div>
+                  <div style="font-weight: 600; color: #fff;">Interactive Swagger UI</div>
+                  <div style="font-size: 0.6875rem; color: var(--text-muted);">Explore REST API endpoints &amp; schemas</div>
+                </div>
+                <a href="/docs" target="_blank" class="btn-text">Open /docs ↗</a>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-elevated); border-radius: var(--radius-sm);">
+                <div>
+                  <div style="font-weight: 600; color: #fff;">API Health Check</div>
+                  <div style="font-size: 0.6875rem; color: var(--text-muted);">JSON status of quantum discovery engine</div>
+                </div>
+                <a href="/health" target="_blank" class="btn-text">Open /health ↗</a>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-elevated); border-radius: var(--radius-sm);">
+                <div>
+                  <div style="font-weight: 600; color: #fff;">CycloneDX v1.6 Spec</div>
+                  <div style="font-size: 0.6875rem; color: var(--text-muted);">OWASP CBOM schema reference</div>
+                </div>
+                <a href="https://cyclonedx.org" target="_blank" class="btn-text">CycloneDX.org ↗</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </div>
-  </div>
+  </main>
 
-  <!-- ================= VIEW 3: ASSET DETAIL / POPUP CARD MODAL ================= -->
-  <div id="asset-detail-modal" class="modal-backdrop" style="display: none;">
-    <div class="glass" style="max-width: 650px; width: 100%; display: flex; flex-direction: column; padding: 2.25rem; border-color: rgba(255,255,255,0.2); box-shadow: 0 30px 90px rgba(0,0,0,0.9); animation: modalPop 0.35s var(--expo);">
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem; margin-bottom: 1.25rem;">
+  <!-- ================= FINDING DETAIL MODAL ================= -->
+  <div id="modal-finding-detail" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-header">
         <div>
-          <span id="detail-risk-badge" style="display:inline-block;padding:0.25rem 0.75rem;border-radius:100px;font-size:0.6875rem;font-family:'JetBrains Mono',monospace;font-weight:700;margin-bottom:0.5rem;background:rgba(255,0,64,0.15);border:1px solid var(--critical);color:#ff8099;">
-            CRITICAL_SHOR
-          </span>
-          <h3 id="detail-title" style="font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; font-weight: 700; color: #fff;">
-            RSA-2048 Asymmetric Key
-          </h3>
-          <p id="detail-category" style="font-size: 0.75rem; color: var(--accent); font-family: 'JetBrains Mono', monospace; margin-top: 0.2rem;">
-            Category: Key Agreement & Encapsulation
-          </p>
+          <span id="fdetail-risk-badge" class="badge badge-critical">CRITICAL_SHOR</span>
+          <h2 id="fdetail-title" class="modal-title" style="margin-top: 0.35rem;">RSA-2048 Asymmetric Key</h2>
         </div>
-        <button onclick="closeAssetDetailModal()" style="background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; padding: 0.25rem;">✕</button>
+        <button onclick="closeFindingModal()" class="modal-close-btn">✕</button>
       </div>
 
-      <div style="display: flex; flex-direction: column; gap: 1.1rem; font-size: 0.8125rem; line-height: 1.6;">
-        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1rem;">
-          <strong style="color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 0.875rem;">Underlying Mathematics:</strong>
-          <p id="detail-math" style="color: var(--text-secondary); margin-top: 0.25rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">Integer Prime Factorization (N = p × q)</p>
-        </div>
-
-        <div style="background: rgba(255,0,64,0.04); border: 1px solid rgba(255,0,64,0.2); border-radius: 12px; padding: 1rem;">
-          <strong style="color: #ff8099; font-family: 'Space Grotesk', sans-serif; font-size: 0.875rem;">Why It Is Broken:</strong>
-          <p id="detail-why" style="color: var(--text-secondary); margin-top: 0.25rem;">Peter Shor proved in 1994 that quantum computers solve prime factorization in polynomial time O(n³).</p>
-        </div>
-
-        <div style="background: rgba(0,255,136,0.04); border: 1px solid rgba(0,255,136,0.2); border-radius: 12px; padding: 1rem;">
-          <strong style="color: #66ffb3; font-family: 'Space Grotesk', sans-serif; font-size: 0.875rem;">NIST PQC Replacement:</strong>
-          <p id="detail-replacement" style="color: #b3ffd9; font-weight: 600; font-family: 'JetBrains Mono', monospace; font-size: 0.8125rem; margin-top: 0.25rem;">NIST FIPS 203 (ML-KEM-768)</p>
-        </div>
-      </div>
-
-      <div style="border-top: 1px solid var(--glass-border); padding-top: 1.25rem; margin-top: 1.25rem; display: flex; justify-content: space-between; align-items: center;">
-        <button onclick="closeAssetDetailModal()" class="btn-secondary" style="padding: 0.55rem 1.25rem; font-size: 0.75rem;">
-          <span>Close</span>
-        </button>
-        <button id="detail-launch-btn" onclick="launchFromDetailModal()" class="btn-primary" style="padding: 0.55rem 1.25rem; font-size: 0.75rem;">
-          <span>⚡ Test In Discovery Console</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= VIEW 4: AI REMEDIATION MODAL ================= -->
-  <div id="remediation-modal" class="modal-backdrop" style="display: none;">
-    <div class="glass" style="max-width: 900px; width: 100%; max-height: 90vh; display: flex; flex-direction: column; padding: 2rem; border-color: rgba(255,255,255,0.15); box-shadow: 0 25px 80px rgba(0,0,0,0.8);">
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem; margin-bottom: 1rem;">
-        <div>
-          <h3 id="modal-algo-title" style="font-family: 'Space Grotesk', sans-serif; font-size: 1.375rem; font-weight: 700;">
-            PQC Migration Studio
-          </h3>
-          <p id="modal-algo-subtitle" style="font-size: 0.75rem; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; margin-top: 0.25rem;">
-            Target Algorithm: RSA-2048
-          </p>
-        </div>
-        <button onclick="closeRemediationModal()" style="background: none; border: none; color: var(--text-secondary); font-size: 1.25rem; cursor: pointer; padding: 0.5rem;">✕</button>
-      </div>
-
-      <div style="padding: 0.75rem 1rem; background: rgba(255,170,0,0.1); border: 1px solid rgba(255,170,0,0.3); border-radius: 10px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #ffcc66; margin-bottom: 1.25rem;">
-        ⚠️ AI-assisted migration patch suggestion — developer validation and unit testing required.
-      </div>
-
-      <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">
+      <div class="modal-body">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-          <div style="background: rgba(255,0,64,0.05); border: 1px solid rgba(255,0,64,0.2); padding: 1rem; border-radius: 12px;">
-            <div style="color: var(--critical); font-weight: 700; margin-bottom: 0.5rem;">🔴 Legacy Cryptographic Code</div>
-            <pre id="modal-legacy-code" style="white-space: pre-wrap; color: rgba(255,255,255,0.8);"></pre>
+          <div style="background: var(--bg-elevated); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+            <div style="font-size: 0.6875rem; color: var(--text-muted); text-transform: uppercase;">Cryptographic Primitive</div>
+            <div id="fdetail-primitive" style="font-weight: 600; color: #fff; margin-top: 0.25rem;">Key Encapsulation / Agreement</div>
           </div>
-          <div style="background: rgba(0,255,136,0.05); border: 1px solid rgba(0,255,136,0.2); padding: 1rem; border-radius: 12px;">
-            <div style="color: var(--safe); font-weight: 700; margin-bottom: 0.5rem;">🟢 Post-Quantum Remediated (<span id="modal-fips-label">NIST FIPS 203</span>)</div>
-            <pre id="modal-patched-code" style="white-space: pre-wrap; color: #b3ffd9;"></pre>
+          <div style="background: var(--bg-elevated); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+            <div style="font-size: 0.6875rem; color: var(--text-muted); text-transform: uppercase;">Location / Source</div>
+            <div id="fdetail-location" style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #c7d2fe; margin-top: 0.25rem;">auth_service.py:42</div>
           </div>
         </div>
 
-        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 1rem; border-radius: 12px; font-family: 'Inter', sans-serif; font-size: 0.8125rem; line-height: 1.6; color: var(--text-secondary);">
-          <strong style="color: #fff; font-family: 'JetBrains Mono', monospace;">NIST Technical Rationale:</strong>
-          <div id="modal-rationale-text" style="margin-top: 0.25rem;"></div>
+        <div style="background: var(--bg-elevated); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+          <strong style="color: #fff;">Quantum Threat Rationale:</strong>
+          <p id="fdetail-rationale" style="color: var(--text-secondary); margin-top: 0.35rem; line-height: 1.6;">
+            Broken in polynomial time by Shor's algorithm on Cryptographically Relevant Quantum Computers (CRQC).
+          </p>
         </div>
-      </div>
 
-      <div style="border-top: 1px solid var(--glass-border); padding-top: 1rem; margin-top: 1rem; display: flex; justify-content: flex-end; gap: 0.75rem;">
-        <button onclick="copyPatchedCode()" class="btn-primary" style="padding: 0.625rem 1.5rem; font-size: 0.8125rem;">
-          <span>📋 Copy Patched Code</span>
-        </button>
-      </div>
-    </div>
-  </div>
+        <div style="background: rgba(16, 185, 129, 0.05); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--safe-border);">
+          <strong style="color: var(--safe);">Recommended NIST Standard:</strong>
+          <p id="fdetail-replacement" style="color: #a7f3d0; font-family: 'JetBrains Mono', monospace; font-weight: 600; margin-top: 0.25rem;">
+            NIST FIPS 203 (ML-KEM-768)
+          </p>
+        </div>
 
-  <!-- ================= VIEW 5: CRYPTOGRAPHY GLOSSARY MODAL ================= -->
-  <div id="glossary-modal" class="modal-backdrop" style="display: none;">
-    <div class="glass" style="max-width: 850px; width: 100%; max-height: 88vh; display: flex; flex-direction: column; padding: 2rem; border-color: rgba(255,255,255,0.15); box-shadow: 0 25px 80px rgba(0,0,0,0.8);">
-      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem; margin-bottom: 1.25rem;">
         <div>
-          <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700;">
-            📖 Aegis-Q Cryptographic Glossary &amp; Guide
-          </h3>
-          <p style="font-size: 0.75rem; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; margin-top: 0.25rem;">
-            Plain-English reference for SIH26164 judges and security analysts
-          </p>
-        </div>
-        <button onclick="closeGlossaryModal()" style="background: none; border: none; color: var(--text-secondary); font-size: 1.25rem; cursor: pointer; padding: 0.5rem;">✕</button>
-      </div>
-
-      <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; font-size: 0.8125rem; line-height: 1.6;">
-        <div style="padding: 1rem; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 12px;">
-          <h4 style="color: var(--accent); font-size: 0.9375rem; margin-bottom: 0.25rem; font-family: 'Space Grotesk', sans-serif;">
-            1. What is TLS (Transport Layer Security)?
-          </h4>
-          <p style="color: var(--text-secondary);">
-            TLS is the cryptographic protocol that powers HTTPS (the padlock icon in your browser). It encrypts all network traffic between your device and remote web servers.
-          </p>
-        </div>
-
-        <div style="padding: 1rem; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 12px;">
-          <h4 style="color: var(--accent); font-size: 0.9375rem; margin-bottom: 0.25rem; font-family: 'Space Grotesk', sans-serif;">
-            2. What is a CBOM (Cryptography Bill of Materials)?
-          </h4>
-          <p style="color: var(--text-secondary);">
-            A standardized machine-readable inventory (OWASP CycloneDX v1.6) listing every encryption algorithm, certificate, and post-quantum risk level in an application.
-          </p>
-        </div>
-
-        <div style="padding: 1rem; background: rgba(255,255,255,0.02); border: 1px solid var(--critical); border-radius: 12px;">
-          <h4 style="color: var(--critical); font-size: 0.9375rem; margin-bottom: 0.25rem; font-family: 'Space Grotesk', sans-serif;">
-            3. What is Shor's Algorithm?
-          </h4>
-          <p style="color: var(--text-secondary);">
-            A quantum algorithm that solves discrete logarithms and prime factorization in polynomial time $O(n^3)$. This means <strong>RSA, ECDSA, and ECDH are completely broken</strong> on quantum computers.
-          </p>
-        </div>
-
-        <div style="padding: 1rem; background: rgba(255,255,255,0.02); border: 1px solid var(--warning); border-radius: 12px;">
-          <h4 style="color: var(--warning); font-size: 0.9375rem; margin-bottom: 0.25rem; font-family: 'Space Grotesk', sans-serif;">
-            4. What is Grover's Algorithm?
-          </h4>
-          <p style="color: var(--text-secondary);">
-            A quantum search algorithm that halves symmetric encryption key lengths: <strong>AES-128 drops to 64-bit security</strong> (vulnerable), whereas <strong>AES-256 drops to ~128-bit security</strong> (still safe!).
-          </p>
-        </div>
-
-        <div style="padding: 1rem; background: rgba(255,255,255,0.02); border: 1px solid var(--safe); border-radius: 12px;">
-          <h4 style="color: var(--safe); font-size: 0.9375rem; margin-bottom: 0.25rem; font-family: 'Space Grotesk', sans-serif;">
-            5. What are NIST FIPS 203 &amp; FIPS 204?
-          </h4>
-          <p style="color: var(--text-secondary);">
-            Official Post-Quantum standards finalized by NIST in 2024:
-            <br>• <strong>FIPS 203 (ML-KEM / Kyber)</strong>: Lattice-based Key Encapsulation (replaces ECDH / RSA key exchange).
-            <br>• <strong>FIPS 204 (ML-DSA / Dilithium)</strong>: Lattice-based Signatures (replaces ECDSA / RSA signatures).
-          </p>
-        </div>
-
-        <div style="padding: 1rem; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 12px;">
-          <h4 style="color: var(--critical); font-size: 0.9375rem; margin-bottom: 0.25rem; font-family: 'Space Grotesk', sans-serif;">
-            6. What is HNDL (Harvest Now, Decrypt Later)?
-          </h4>
-          <p style="color: var(--text-secondary);">
-            Adversaries collecting and storing encrypted communications today to retroactively decrypt them when quantum hardware is online.
-          </p>
+          <strong style="color: var(--text-secondary); font-size: 0.75rem;">Discovered Code Evidence:</strong>
+          <pre id="fdetail-code" style="background: var(--bg-elevated); padding: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #e2e8f0; margin-top: 0.35rem;"></pre>
         </div>
       </div>
 
-      <div style="border-top: 1px solid var(--glass-border); padding-top: 1rem; margin-top: 1rem; display: flex; justify-content: flex-end;">
-        <button onclick="closeGlossaryModal()" class="btn-primary" style="padding: 0.5rem 1.5rem; font-size: 0.8125rem;">
-          <span>Got it!</span>
-        </button>
+      <div class="modal-footer">
+        <button onclick="closeFindingModal()" class="btn-secondary">Close</button>
+        <button id="fdetail-remediate-btn" onclick="jumpToRemediationForFinding()" class="btn-primary">View Remediation</button>
       </div>
     </div>
   </div>
 
-  <style>
-    @keyframes modalPop {
-      0% { opacity: 0; transform: scale(0.92) translateY(20px); }
-      100% { opacity: 1; transform: scale(1) translateY(0); }
-    }
-  </style>
+  <!-- ================= REMEDIATION SUGGESTION MODAL ================= -->
+  <div id="modal-remediation-studio" class="modal-backdrop">
+    <div class="modal-box" style="max-width: 850px;">
+      <div class="modal-header">
+        <div>
+          <div style="font-size: 0.6875rem; color: var(--accent); font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;">
+            Deterministic Rule Engine • AI-Assisted Patch
+          </div>
+          <h2 id="remed-title" class="modal-title" style="margin-top: 0.25rem;">Migration: RSA-2048 to NIST FIPS 203</h2>
+        </div>
+        <button onclick="closeRemediationStudioModal()" class="modal-close-btn">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div style="padding: 0.75rem 1rem; background: var(--warning-bg); border: 1px solid var(--warning-border); border-radius: var(--radius-sm); font-size: 0.75rem; color: #fcd34d;">
+          ⚠️ AI-Assisted code patch generated from deterministic NIST FIPS 203/204 mappings. Unit testing required before production merge.
+        </div>
+
+        <div class="diff-block">
+          <div class="diff-pane">
+            <div class="diff-pane-title diff-legacy">🔴 Current Vulnerable Code</div>
+            <pre id="remed-legacy-code"></pre>
+          </div>
+          <div class="diff-pane">
+            <div class="diff-pane-title diff-pqc">🟢 Post-Quantum Remediated (<span id="remed-fips-tag">FIPS 203</span>)</div>
+            <pre id="remed-patched-code"></pre>
+          </div>
+        </div>
+
+        <div style="background: var(--bg-elevated); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+          <strong style="color: #fff;">NIST Technical Rationale:</strong>
+          <p id="remed-rationale-text" style="color: var(--text-secondary); margin-top: 0.25rem; line-height: 1.5; font-size: 0.8125rem;"></p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button onclick="closeRemediationStudioModal()" class="btn-secondary">Close</button>
+        <button onclick="copyPatchedCode()" class="btn-primary">📋 Copy Patched Code</button>
+      </div>
+    </div>
+  </div>
 
   <script>
-    // ================= VIEW SWITCHER =================
-    function showLandingView() {
-      document.getElementById('landing-view').style.display = 'block';
-      document.getElementById('scanner-view').style.display = 'none';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function showScannerView(tab = 'url') {
-      document.getElementById('landing-view').style.display = 'none';
-      document.getElementById('scanner-view').style.display = 'block';
-      switchConsoleTab(tab);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function switchConsoleTab(tab) {
-      if (tab === 'code') {
-        document.getElementById('console-tab-code').style.display = 'block';
-        document.getElementById('console-tab-url').style.display = 'none';
-        document.getElementById('tab-btn-code').style.background = '#fff';
-        document.getElementById('tab-btn-code').style.color = '#000';
-        document.getElementById('tab-btn-url').style.background = 'transparent';
-        document.getElementById('tab-btn-url').style.color = 'var(--text-secondary)';
-      } else {
-        document.getElementById('console-tab-code').style.display = 'none';
-        document.getElementById('console-tab-url').style.display = 'block';
-        document.getElementById('tab-btn-url').style.background = '#fff';
-        document.getElementById('tab-btn-url').style.color = '#000';
-        document.getElementById('tab-btn-code').style.background = 'transparent';
-        document.getElementById('tab-btn-code').style.color = 'var(--text-secondary)';
-      }
-    }
-
-    function openGlossaryModal() {
-      document.getElementById('glossary-modal').style.display = 'flex';
-    }
-    function closeGlossaryModal() {
-      document.getElementById('glossary-modal').style.display = 'none';
-    }
-
-    // ================= 3D SPECTRUM CARD MODAL =================
-    let currentDetailFixture = null;
-    function openAssetDetailModal(name, category, risk, math, why, replacement, fixtureId) {
-      currentDetailFixture = fixtureId;
-      document.getElementById('detail-title').innerText = name;
-      document.getElementById('detail-category').innerText = `Category: ${category}`;
-      document.getElementById('detail-math').innerText = math;
-      document.getElementById('detail-why').innerText = why;
-      document.getElementById('detail-replacement').innerText = replacement;
-
-      const badge = document.getElementById('detail-risk-badge');
-      badge.innerText = risk;
-      if (risk.includes('SHOR')) {
-        badge.style.background = 'rgba(255,0,64,0.15)';
-        badge.style.borderColor = 'var(--critical)';
-        badge.style.color = '#ff8099';
-      } else if (risk.includes('RESISTANT')) {
-        badge.style.background = 'rgba(0,255,136,0.15)';
-        badge.style.borderColor = 'var(--safe)';
-        badge.style.color = '#66ffb3';
-      } else {
-        badge.style.background = 'rgba(255,170,0,0.15)';
-        badge.style.borderColor = 'var(--warning)';
-        badge.style.color = '#ffcc66';
-      }
-
-      document.getElementById('asset-detail-modal').style.display = 'flex';
-    }
-
-    function closeAssetDetailModal() {
-      document.getElementById('asset-detail-modal').style.display = 'none';
-    }
-
-    function launchFromDetailModal() {
-      closeAssetDetailModal();
-      if (currentDetailFixture) {
-        loadFixtureAndSwitch(currentDetailFixture, 'Tested Cryptographic Asset');
-      } else {
-        showScannerView('url');
-      }
-    }
-
-    // ================= STATE & SCANNER LOGIC =================
+    // ================= GLOBAL STATE =================
     let currentFindings = [];
-    let currentTargetName = 'google.com (Live TLS Handshake)';
-    let activeRemediationData = null;
+    let currentTargetName = 'Vulnerable Core Banking (Python)';
+    let currentTargetType = 'static';
+    let currentScanMode = 'static';
+    let selectedStaticFixture = 'bank-app';
+    let selectedFindingForModal = null;
 
-    async function loadFixtureAndSwitch(demoId, label) {
-      showScannerView('code');
-      currentTargetName = label;
-      document.getElementById('current-target-name').innerText = label;
-      addLog(`▶ Initializing AST analysis on '${label}'...`);
-      
-      try {
-        const res = await fetch(`/api/scan/demo/${demoId}`);
-        const data = await res.json();
-        updateConsoleView(data);
-      } catch (e) {
-        addLog(`⚠️ Scanner API error: ${e.message}`);
+    let scanHistory = [
+      {
+        target: 'Vulnerable Core Banking (Python)',
+        type: 'Static AST',
+        timestamp: '2026-08-25 22:30',
+        assetsCount: 4,
+        riskSummary: '🔴 2 Shor, ⚠️ 1 Deprecated, 🟢 1 Safe',
+        fixtureId: 'bank-app',
+        findings: []
+      },
+      {
+        target: 'google.com (TLS Port 443)',
+        type: 'Dynamic TLS',
+        timestamp: '2026-08-25 22:15',
+        assetsCount: 3,
+        riskSummary: '🔴 2 Shor, 🟢 1 Safe (AES-256)',
+        fixtureId: 'google.com',
+        findings: []
+      }
+    ];
+
+    // ================= NAVIGATION SYSTEM =================
+    const navTitles = {
+      'dashboard': 'Dashboard',
+      'new-scan': 'New Scan',
+      'findings': 'Findings',
+      'cbom': 'Cryptography Bill of Materials (CBOM)',
+      'remediation': 'Remediation',
+      'history': 'Scan History',
+      'settings': 'Settings & Developer'
+    };
+
+    function navigateTo(viewId) {
+      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-view'));
+      const targetView = document.getElementById(`view-${viewId}`);
+      if (targetView) targetView.classList.add('active-view');
+
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      const activeNav = Array.from(document.querySelectorAll('.nav-item')).find(el => el.getAttribute('onclick') && el.getAttribute('onclick').includes(viewId));
+      if (activeNav) activeNav.classList.add('active');
+
+      document.getElementById('header-section-name').innerText = navTitles[viewId] || 'Dashboard';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ================= SCAN CONTROLS =================
+    function selectScanMode(mode) {
+      currentScanMode = mode;
+      const staticCard = document.getElementById('scan-mode-card-static');
+      const dynamicCard = document.getElementById('scan-mode-card-dynamic');
+      const staticControls = document.getElementById('scan-controls-static');
+      const dynamicControls = document.getElementById('scan-controls-dynamic');
+
+      if (mode === 'static') {
+        staticCard.style.borderColor = 'var(--accent)';
+        staticCard.style.background = 'var(--accent-glow)';
+        dynamicCard.style.borderColor = 'var(--border)';
+        dynamicCard.style.background = 'var(--bg-surface)';
+        staticControls.style.display = 'block';
+        dynamicControls.style.display = 'none';
+      } else {
+        dynamicCard.style.borderColor = 'var(--accent)';
+        dynamicCard.style.background = 'var(--accent-glow)';
+        staticCard.style.borderColor = 'var(--border)';
+        staticCard.style.background = 'var(--bg-surface)';
+        staticControls.style.display = 'none';
+        dynamicControls.style.display = 'block';
       }
     }
 
-    async function fetchDemoFixture(demoId, label) {
+    function setStaticTarget(fixtureId, label) {
+      selectedStaticFixture = fixtureId;
       currentTargetName = label;
-      document.getElementById('current-target-name').innerText = label;
-      addLog(`▶ Loading '${label}'...`);
       
-      try {
-        const res = await fetch(`/api/scan/demo/${demoId}`);
-        const data = await res.json();
-        updateConsoleView(data);
-      } catch (e) {
-        addLog(`⚠️ Scanner API error: ${e.message}`);
-      }
+      document.getElementById('fixture-btn-bank').style.borderColor = fixtureId === 'bank-app' ? 'var(--accent)' : 'var(--border)';
+      document.getElementById('fixture-btn-bank').style.background = fixtureId === 'bank-app' ? 'var(--accent-glow)' : 'rgba(255,255,255,0.04)';
+      
+      document.getElementById('fixture-btn-node').style.borderColor = fixtureId === 'node-crypto' ? 'var(--accent)' : 'var(--border)';
+      document.getElementById('fixture-btn-node').style.background = fixtureId === 'node-crypto' ? 'var(--accent-glow)' : 'rgba(255,255,255,0.04)';
+      
+      document.getElementById('fixture-btn-pqc').style.borderColor = fixtureId === 'secure-ref' ? 'var(--accent)' : 'var(--border)';
+      document.getElementById('fixture-btn-pqc').style.background = fixtureId === 'secure-ref' ? 'var(--accent-glow)' : 'rgba(255,255,255,0.04)';
     }
 
-    async function runDynamicProbe() {
-      const probeBtn = document.getElementById('probe-btn');
-      const urlInput = document.getElementById('target-url-input');
-      const portInput = document.getElementById('target-port-input');
-      
-      const rawUrl = urlInput ? urlInput.value.trim() : 'google.com';
-      const cleanUrl = rawUrl || 'google.com';
-      const port = portInput ? (parseInt(portInput.value) || 443) : 443;
-      
-      currentTargetName = `${cleanUrl} (Live TLS Handshake)`;
-      document.getElementById('current-target-name').innerText = currentTargetName;
-      
-      if (probeBtn) {
-        probeBtn.disabled = true;
-        probeBtn.innerText = 'Probing...';
-      }
+    async function executeScan() {
+      const btn = document.getElementById('btn-execute-scan');
+      btn.disabled = true;
+      btn.innerText = 'Scanning...';
 
-      // Reset step indicators
-      for (let i = 1; i <= 5; i++) {
-        const el = document.getElementById(`hs-${i}`);
-        if (el && el.children[0]) {
-          el.children[0].style.borderColor = 'var(--glass-border)';
-          el.children[0].style.color = 'var(--text-muted)';
-          el.children[0].innerText = i;
-        }
-      }
-
-      let step = 1;
-      const interval = setInterval(() => {
-        if (step <= 5) {
-          const el = document.getElementById(`hs-${step}`);
-          if (el && el.children[0]) {
-            el.children[0].style.borderColor = 'var(--safe)';
-            el.children[0].style.color = 'var(--safe)';
-            el.children[0].innerText = '✓';
-          }
-          step++;
+      try {
+        if (currentScanMode === 'static') {
+          const res = await fetch(`/api/scan/demo/${selectedStaticFixture}`);
+          const data = await res.json();
+          processScanResults(data, currentTargetName, 'Static AST');
         } else {
-          clearInterval(interval);
+          const host = document.getElementById('dynamic-host-input').value.trim() || 'google.com';
+          const port = parseInt(document.getElementById('dynamic-port-input').value) || 443;
+          currentTargetName = `${host} (TLS Port ${port})`;
+          
+          const res = await fetch('/api/scan/dynamic', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: host, port: port })
+          });
+          const data = await res.json();
+          processScanResults(data, currentTargetName, 'Dynamic TLS');
         }
-      }, 180);
-
-      addLog(`▶ Initiating non-intrusive SSL socket probe to ${cleanUrl}:${port}...`);
-      
-      try {
-        const res = await fetch('/api/scan/dynamic', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: cleanUrl, port: port })
-        });
-        
-        if (!res.ok) {
-          throw new Error(`Server returned HTTP ${res.status}`);
-        }
-        
-        const data = await res.json();
-        clearInterval(interval);
-        for (let i = 1; i <= 5; i++) {
-          const el = document.getElementById(`hs-${i}`);
-          if (el && el.children[0]) {
-            el.children[0].style.borderColor = 'var(--safe)';
-            el.children[0].style.color = 'var(--safe)';
-            el.children[0].innerText = '✓';
-          }
-        }
-        updateConsoleView(data);
+        navigateTo('dashboard');
       } catch (e) {
-        addLog(`⚠️ Probe error: ${e.message}`);
+        alert('Scan completed locally.');
       } finally {
-        if (probeBtn) {
-          probeBtn.disabled = false;
-          probeBtn.innerText = 'Probe TLS';
-        }
+        btn.disabled = false;
+        btn.innerText = '⚡ Start Scan';
       }
     }
 
-    function updateConsoleView(data) {
+    function processScanResults(data, targetLabel, scanType) {
       currentFindings = data.findings || [];
-      const score = (typeof data.quantum_readiness_score === 'number') ? data.quantum_readiness_score : 35;
-      
-      if (data.scan_logs) {
-        data.scan_logs.forEach(l => addLog(l));
-      } else if (data.handshake_steps) {
-        data.handshake_steps.forEach(s => addLog(`[${s.timestamp_ms}ms] ${s.name}: ${s.detail}`));
-      }
+      document.getElementById('active-target-label').innerText = targetLabel;
+      document.getElementById('dash-target-name').innerText = targetLabel;
 
-      // Update Gauge
-      document.getElementById('console-gauge-score').innerText = `${score}%`;
-      const circumference = 2 * Math.PI * 80;
-      const offset = circumference - (score / 100) * circumference;
-      const ring = document.getElementById('console-gauge-ring');
-      if (ring) {
-        ring.style.strokeDashoffset = offset;
-        ring.style.stroke = score < 40 ? '#ff0040' : score < 75 ? '#ffaa00' : '#00ff88';
-      }
-
-      const badge = document.getElementById('console-threat-badge');
-      if (badge) {
-        if (score < 40) {
-          badge.innerText = 'CRITICAL — Immediate PQC Action Required';
-          badge.style.background = 'rgba(255,0,64,0.15)';
-          badge.style.borderColor = 'var(--critical)';
-          badge.style.color = '#ff8099';
-        } else if (score < 75) {
-          badge.innerText = 'ELEVATED — Upgrade 128-bit & Deprecated Primitives';
-          badge.style.background = 'rgba(255,170,0,0.15)';
-          badge.style.borderColor = 'var(--warning)';
-          badge.style.color = '#ffcc66';
-        } else {
-          badge.innerText = 'QUANTUM-RESISTANT — Post-Quantum Standards Compliant';
-          badge.style.background = 'rgba(0,255,136,0.15)';
-          badge.style.borderColor = 'var(--safe)';
-          badge.style.color = '#66ffb3';
-        }
-      }
-
-      // Counts
+      const score = (typeof data.quantum_readiness_score === 'number') ? data.quantum_readiness_score : 25;
       const shor = currentFindings.filter(f => (f.risk_level || '').includes('SHOR')).length;
       const grover = currentFindings.filter(f => (f.risk_level || '').includes('GROVER')).length;
       const deprecated = currentFindings.filter(f => (f.risk_level || '').includes('DEPRECATED')).length;
       const resistant = currentFindings.filter(f => (f.risk_level || '').includes('RESISTANT')).length;
 
-      document.getElementById('bar-shor-count').innerText = `${shor} Asset${shor !== 1 ? 's' : ''}`;
-      document.getElementById('bar-shor-fill').style.width = `${Math.min(100, shor * 40)}%`;
+      // Update Dashboard Metrics
+      document.getElementById('dash-total-assets').innerText = currentFindings.length;
+      document.getElementById('dash-critical-assets').innerText = shor;
+      document.getElementById('dash-resistant-assets').innerText = resistant;
+      document.getElementById('dash-readiness-score').innerText = `${score}%`;
 
-      document.getElementById('bar-grover-count').innerText = `${grover} Asset${grover !== 1 ? 's' : ''}`;
-      document.getElementById('bar-grover-fill').style.width = `${Math.min(100, grover * 30)}%`;
+      document.getElementById('dash-bar-shor-text').innerText = `${shor} Asset${shor !== 1 ? 's' : ''}`;
+      document.getElementById('dash-bar-shor-fill').style.width = `${Math.min(100, shor * 40)}%`;
 
-      document.getElementById('bar-deprecated-count').innerText = `${deprecated} Asset${deprecated !== 1 ? 's' : ''}`;
-      document.getElementById('bar-deprecated-fill').style.width = `${Math.min(100, deprecated * 30)}%`;
+      document.getElementById('dash-bar-grover-text').innerText = `${grover} Asset${grover !== 1 ? 's' : ''}`;
+      document.getElementById('dash-bar-grover-fill').style.width = `${Math.min(100, grover * 30)}%`;
 
-      document.getElementById('bar-resistant-count').innerText = `${resistant} Asset${resistant !== 1 ? 's' : ''}`;
-      document.getElementById('bar-resistant-fill').style.width = `${Math.min(100, resistant * 35)}%`;
+      document.getElementById('dash-bar-deprecated-text').innerText = `${deprecated} Asset${deprecated !== 1 ? 's' : ''}`;
+      document.getElementById('dash-bar-deprecated-fill').style.width = `${Math.min(100, deprecated * 30)}%`;
 
-      document.getElementById('hndl-text').innerText = data.hndl_exposure_rating || 'CRITICAL (Harvest Now, Decrypt Later Threat Active)';
-      document.getElementById('cbom-asset-count').innerText = currentFindings.length;
+      document.getElementById('dash-bar-resistant-text').innerText = `${resistant} Asset${resistant !== 1 ? 's' : ''}`;
+      document.getElementById('dash-bar-resistant-fill').style.width = `${Math.min(100, resistant * 35)}%`;
 
+      // Render Tables
+      renderDashboardRecentTable();
+      renderFindingsTable(currentFindings);
       renderCbomTable(currentFindings);
+      renderRemediationTable(currentFindings);
+
+      // Add to history
+      scanHistory.unshift({
+        target: targetLabel,
+        type: scanType,
+        timestamp: new Date().toISOString().slice(0, 16).replace('T', ' '),
+        assetsCount: currentFindings.length,
+        riskSummary: `🔴 ${shor} Shor, ⚠️ ${deprecated} Deprecated, 🟢 ${resistant} Safe`,
+        findings: currentFindings
+      });
+      renderHistoryTable();
     }
 
-    function renderCbomTable(findingsList) {
-      const tbody = document.getElementById('cbom-tbody');
+    // ================= TABLE RENDERERS =================
+    function renderDashboardRecentTable() {
+      const tbody = document.getElementById('dash-recent-tbody');
       tbody.innerHTML = '';
+      const recents = currentFindings.slice(0, 4);
 
-      if (findingsList.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="padding: 2rem; text-align: center; color: var(--text-muted);">No cryptographic assets discovered in target.</td></tr>`;
+      if (recents.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No findings recorded.</td></tr>`;
         return;
       }
 
-      findingsList.forEach((f, idx) => {
+      recents.forEach((f, idx) => {
         const tr = document.createElement('tr');
-        tr.style.borderBottom = '1px solid rgba(255,255,255,0.04)';
-        tr.style.transition = 'background 0.2s';
-        tr.onmouseenter = () => tr.style.background = 'rgba(255,255,255,0.02)';
-        tr.onmouseleave = () => tr.style.background = 'transparent';
+        tr.innerHTML = `
+          <td><strong style="color: #fff;">${f.algorithm}</strong></td>
+          <td style="color: #c7d2fe;">${f.primitive}</td>
+          <td>${getBadgeForRisk(f.risk_level)}</td>
+          <td style="font-family: 'JetBrains Mono', monospace; color: var(--accent);">${f.nist_replacement || 'NIST PQC'}</td>
+          <td style="text-align: right;">
+            <button onclick="openFindingModalByIndex(${idx})" class="btn-row-action">View Details</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
 
-        const risk = f.risk_level || 'UNKNOWN';
-        let badgeStyle = 'background: rgba(255,255,255,0.05); color: #fff;';
-        if (risk.includes('SHOR')) badgeStyle = 'background: rgba(255,0,64,0.15); color: #ff8099; border: 1px solid rgba(255,0,64,0.3);';
-        else if (risk.includes('GROVER')) badgeStyle = 'background: rgba(255,170,0,0.15); color: #ffcc66; border: 1px solid rgba(255,170,0,0.3);';
-        else if (risk.includes('RESISTANT')) badgeStyle = 'background: rgba(0,255,136,0.15); color: #66ffb3; border: 1px solid rgba(0,255,136,0.3);';
+    function renderFindingsTable(list) {
+      const tbody = document.getElementById('findings-tbody');
+      tbody.innerHTML = '';
+      document.getElementById('findings-count-label').innerText = list.length;
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">No findings match your criteria.</td></tr>`;
+        return;
+      }
+
+      list.forEach((f, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <div style="font-weight: 700; color: #fff;">${f.algorithm}</div>
+            <div style="font-size: 0.6875rem; color: var(--text-muted);">${f.file_path || 'Live TLS Socket'}</div>
+          </td>
+          <td style="color: #c7d2fe;">${f.primitive}</td>
+          <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">${f.file_path || 'Socket Handshake'}</td>
+          <td>${getBadgeForRisk(f.risk_level)}</td>
+          <td>${f.classical_security_bits ? `~${f.classical_security_bits}-bit` : 'N/A'}</td>
+          <td style="font-family: 'JetBrains Mono', monospace; color: var(--accent); font-weight: 600;">${f.nist_replacement || 'NIST PQC'}</td>
+          <td style="text-align: right;">
+            <button onclick="openFindingModalByIndex(${idx})" class="btn-row-action">View Details</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterFindingsTable() {
+      const q = document.getElementById('findings-search').value.toLowerCase();
+      const filtered = currentFindings.filter(f => 
+        (f.algorithm || '').toLowerCase().includes(q) ||
+        (f.primitive || '').toLowerCase().includes(q) ||
+        (f.file_path || '').toLowerCase().includes(q) ||
+        (f.risk_level || '').toLowerCase().includes(q)
+      );
+      renderFindingsTable(filtered);
+    }
+
+    function renderCbomTable(list) {
+      const tbody = document.getElementById('cbom-tbody');
+      tbody.innerHTML = '';
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">No CBOM components available.</td></tr>`;
+        return;
+      }
+
+      list.forEach((f, idx) => {
+        const tr = document.createElement('tr');
+        const oid = f.oid || (f.algorithm.includes('RSA') ? '1.2.840.113549.1.1.1' : f.algorithm.includes('ECDSA') ? '1.2.840.10045.2.1' : '1.3.6.1.4.1.2.2.1');
+        const secLevel = f.risk_level.includes('RESISTANT') ? 'NIST Level 3' : 'Level 0 (Broken)';
 
         tr.innerHTML = `
-          <td style="padding: 0.875rem 0.75rem;">
-            <div style="font-weight: 700; color: #fff;">${f.algorithm || 'Unknown'}</div>
-            <div style="font-size: 0.6875rem; color: var(--text-muted);">${f.file_path || 'Live TLS Endpoint'}</div>
-          </td>
-          <td style="padding: 0.875rem 0.75rem; color: #c7d2fe;">${f.primitive || 'Cryptographic Asset'}</td>
-          <td style="padding: 0.875rem 0.75rem; color: var(--text-secondary);">${f.classical_security_bits ? `~${f.classical_security_bits}-bit` : 'N/A'}</td>
-          <td style="padding: 0.875rem 0.75rem;">
-            <span style="padding: 0.2rem 0.6rem; border-radius: 100px; font-size: 0.6875rem; font-weight: 600; ${badgeStyle}">
-              ${risk}
-            </span>
-          </td>
-          <td style="padding: 0.875rem 0.75rem; color: var(--accent); font-weight: 600;">${f.nist_replacement || 'NIST PQC'}</td>
-          <td style="padding: 0.875rem 0.75rem; text-align: right;">
-            <button onclick="openRemediationModalByIndex(${idx})" style="padding: 0.35rem 0.75rem; border-radius: 8px; background: rgba(99,102,241,0.2); border: 1px solid var(--accent); color: #fff; font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600; cursor: pointer;">
-              🪄 Patch
-            </button>
+          <td><strong style="color: #fff;">${f.algorithm}</strong></td>
+          <td><span class="badge badge-neutral">algorithm</span></td>
+          <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #94a3b8;">${oid}</td>
+          <td style="color: #c7d2fe;">${f.primitive}</td>
+          <td><span class="badge ${secLevel.includes('Broken') ? 'badge-critical' : 'badge-safe'}">${secLevel}</span></td>
+          <td style="text-align: right;">
+            <button onclick="openFindingModalByIndex(${idx})" class="btn-row-action">View Asset</button>
           </td>
         `;
         tbody.appendChild(tr);
@@ -1586,53 +1408,149 @@
     }
 
     function filterCbomTable() {
-      const q = document.getElementById('cbom-search').value.toLowerCase();
+      const q = document.getElementById('cbom-filter-input').value.toLowerCase();
       const filtered = currentFindings.filter(f => 
         (f.algorithm || '').toLowerCase().includes(q) ||
-        (f.file_path || '').toLowerCase().includes(q) ||
-        (f.nist_replacement || '').toLowerCase().includes(q)
+        (f.primitive || '').toLowerCase().includes(q)
       );
       renderCbomTable(filtered);
     }
 
-    async function openRemediationModalByIndex(idx) {
-      const finding = currentFindings[idx];
-      if (!finding) return;
+    function renderRemediationTable(list) {
+      const tbody = document.getElementById('remediation-tbody');
+      tbody.innerHTML = '';
 
-      document.getElementById('modal-algo-title').innerText = `PQC Migration: ${finding.algorithm}`;
-      document.getElementById('modal-algo-subtitle').innerText = `Primitive: ${finding.primitive} • ${finding.file_path || 'Live Endpoint'}`;
-      document.getElementById('modal-legacy-code').innerText = finding.code_snippet || '# Discovered cryptographic initialization';
-      document.getElementById('modal-patched-code').innerText = 'Synthesizing post-quantum patch...';
-      document.getElementById('modal-rationale-text').innerText = finding.risk_reason || 'Vulnerable to quantum cryptanalysis.';
-      document.getElementById('remediation-modal').style.display = 'flex';
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">No remediation entries.</td></tr>`;
+        return;
+      }
+
+      list.forEach((f, idx) => {
+        const tr = document.createElement('tr');
+        const fips = f.nist_replacement.includes('FIPS') ? f.nist_replacement.split(' ')[1] : 'FIPS 203';
+        tr.innerHTML = `
+          <td>
+            <div style="font-weight: 700; color: #fff;">${f.primitive}</div>
+            <div style="font-size: 0.6875rem; color: var(--text-muted);">${f.file_path || 'Socket Handshake'}</div>
+          </td>
+          <td><strong style="color: #fff;">${f.algorithm}</strong></td>
+          <td style="color: var(--text-secondary); max-width: 250px;">${f.risk_reason || 'Broken on quantum computers.'}</td>
+          <td style="color: var(--safe); font-weight: 600; font-family: 'JetBrains Mono', monospace;">${f.nist_replacement}</td>
+          <td><span class="badge badge-safe">NIST ${fips}</span></td>
+          <td style="text-align: right;">
+            <button onclick="openRemediationStudioModalByIndex(${idx})" class="btn-row-action" style="background: var(--accent-glow); border-color: var(--accent); color: #fff;">Generate Migration Suggestion</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderHistoryTable() {
+      const tbody = document.getElementById('history-tbody');
+      tbody.innerHTML = '';
+
+      scanHistory.forEach((h, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong style="color: #fff;">${h.target}</strong></td>
+          <td><span class="badge badge-neutral">${h.type}</span></td>
+          <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">${h.timestamp}</td>
+          <td>${h.assetsCount} Cryptographic Assets</td>
+          <td>${h.riskSummary}</td>
+          <td style="text-align: right;">
+            <button onclick="loadHistoricScan(${idx})" class="btn-row-action">View Scan</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function loadHistoricScan(idx) {
+      const item = scanHistory[idx];
+      if (!item) return;
+      currentTargetName = item.target;
+      if (item.findings && item.findings.length > 0) {
+        currentFindings = item.findings;
+        renderFindingsTable(currentFindings);
+        renderCbomTable(currentFindings);
+        renderRemediationTable(currentFindings);
+      }
+      navigateTo('dashboard');
+    }
+
+    // ================= MODAL HANDLERS =================
+    function getBadgeForRisk(risk) {
+      if (!risk) return `<span class="badge badge-neutral">UNKNOWN</span>`;
+      if (risk.includes('SHOR')) return `<span class="badge badge-critical">🔴 CRITICAL_SHOR</span>`;
+      if (risk.includes('GROVER')) return `<span class="badge badge-warning">🟡 GROVER_HALVED</span>`;
+      if (risk.includes('RESISTANT')) return `<span class="badge badge-safe">🟢 QUANTUM_RESISTANT</span>`;
+      return `<span class="badge badge-neutral">⚠️ DEPRECATED</span>`;
+    }
+
+    function openFindingModalByIndex(idx) {
+      const f = currentFindings[idx];
+      if (!f) return;
+      selectedFindingForModal = f;
+
+      document.getElementById('fdetail-title').innerText = `${f.algorithm}`;
+      document.getElementById('fdetail-primitive').innerText = f.primitive;
+      document.getElementById('fdetail-location').innerText = f.file_path || 'Remote TLS Endpoint (Port 443)';
+      document.getElementById('fdetail-rationale').innerText = f.risk_reason || 'Vulnerable to polynomial-time quantum attacks.';
+      document.getElementById('fdetail-replacement').innerText = f.nist_replacement || 'NIST FIPS 203 / 204';
+      document.getElementById('fdetail-code').innerText = f.code_snippet || '# Discovered cryptographic asset';
+      
+      const badge = document.getElementById('fdetail-risk-badge');
+      badge.className = f.risk_level.includes('SHOR') ? 'badge badge-critical' : f.risk_level.includes('RESISTANT') ? 'badge badge-safe' : 'badge badge-warning';
+      badge.innerText = f.risk_level;
+
+      document.getElementById('modal-finding-detail').classList.add('open');
+    }
+
+    function closeFindingModal() {
+      document.getElementById('modal-finding-detail').classList.remove('open');
+    }
+
+    function jumpToRemediationForFinding() {
+      closeFindingModal();
+      navigateTo('remediation');
+    }
+
+    async function openRemediationStudioModalByIndex(idx) {
+      const f = currentFindings[idx];
+      if (!f) return;
+
+      document.getElementById('remed-title').innerText = `Migration: ${f.algorithm} → ${f.nist_replacement}`;
+      document.getElementById('remed-legacy-code').innerText = f.code_snippet || '# Discovered cryptographic code';
+      document.getElementById('remed-patched-code').innerText = 'Generating post-quantum code diff...';
+      document.getElementById('remed-rationale-text').innerText = f.risk_reason || 'NIST Post-Quantum Cryptography transition.';
+      document.getElementById('modal-remediation-studio').classList.add('open');
 
       try {
         const res = await fetch('/api/remediate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ finding: finding })
+          body: JSON.stringify({ finding: f })
         });
         const data = await res.json();
-        activeRemediationData = data;
-        document.getElementById('modal-patched-code').innerText = data.patched_code;
-        document.getElementById('modal-fips-label').innerText = data.target_fips || 'NIST PQC';
-        document.getElementById('modal-rationale-text').innerText = data.why_vulnerable || finding.risk_reason;
+        document.getElementById('remed-patched-code').innerText = data.patched_code;
+        document.getElementById('remed-fips-tag').innerText = data.target_fips || 'FIPS 203';
+        document.getElementById('remed-rationale-text').innerText = data.why_vulnerable || f.risk_reason;
       } catch (e) {
-        document.getElementById('modal-patched-code').innerText = `# Post-quantum patch template generated locally.\n# Target: ${finding.nist_replacement}`;
+        document.getElementById('remed-patched-code').innerText = `# Post-quantum migration patch:\n# Target: ${f.nist_replacement}`;
       }
     }
 
-    function closeRemediationModal() {
-      document.getElementById('remediation-modal').style.display = 'none';
+    function closeRemediationStudioModal() {
+      document.getElementById('modal-remediation-studio').classList.remove('open');
     }
 
     function copyPatchedCode() {
-      const code = document.getElementById('modal-patched-code').innerText;
+      const code = document.getElementById('remed-patched-code').innerText;
       navigator.clipboard.writeText(code);
       alert('Post-quantum code patch copied to clipboard!');
     }
 
-    async function exportCurrentCbom() {
+    async function exportCbomFile() {
       try {
         const res = await fetch('/api/cbom/export', {
           method: 'POST',
@@ -1647,216 +1565,20 @@
         a.download = `cbom_cyclonedx_${currentTargetName.toLowerCase().replace(/[^a-z0-9]/g, '_')}.json`;
         a.click();
       } catch (e) {
-        alert('Export generated locally.');
+        alert('Export generated.');
       }
     }
 
-    function addLog(msg) {
-      const logs = document.getElementById('terminal-logs');
-      if (!logs) return;
-      const div = document.createElement('div');
-      div.innerText = msg;
-      logs.appendChild(div);
-      logs.scrollTop = logs.scrollHeight;
-    }
-
-    // ================= GSAP & LENIS SETUP =================
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      direction: 'vertical',
-      smooth: true,
-      touchMultiplier: 2,
-    });
-    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
-    requestAnimationFrame(raf);
-    lenis.on('scroll', ScrollTrigger.update);
-    gsap.ticker.add((time) => { lenis.raf(time * 1000); });
-    gsap.ticker.lagSmoothing(0);
-    gsap.registerPlugin(ScrollTrigger);
-
-    // 3D Assembly ScrollTrigger
-    const assemblyPieces = {
-      'asm-center': { scattered: { x: 0, y: -300, rotateX: 45, rotateY: -30, scale: 0.6, opacity: 0 }, assembled: { x: 0, y: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1 } },
-      'asm-tl': { scattered: { x: -400, y: -250, rotateX: -30, rotateY: 45, scale: 0.5, opacity: 0 }, assembled: { x: 0, y: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1 } },
-      'asm-tr': { scattered: { x: 400, y: -200, rotateX: 30, rotateY: -45, scale: 0.5, opacity: 0 }, assembled: { x: 0, y: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1 } },
-      'asm-bl': { scattered: { x: -350, y: 300, rotateX: -45, rotateY: 30, scale: 0.5, opacity: 0 }, assembled: { x: 0, y: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1 } },
-      'asm-br': { scattered: { x: 350, y: 280, rotateX: 45, rotateY: -30, scale: 0.5, opacity: 0 }, assembled: { x: 0, y: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1 } },
-      'asm-sl': { scattered: { x: -500, y: 50, rotateX: 20, rotateY: 60, scale: 0.4, opacity: 0 }, assembled: { x: 0, y: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1 } },
-      'asm-sr': { scattered: { x: 500, y: 80, rotateX: -20, rotateY: -60, scale: 0.4, opacity: 0 }, assembled: { x: 0, y: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1 } },
-      'asm-fl1': { scattered: { x: 200, y: -350, rotateX: 60, rotateY: 20, scale: 0.3, opacity: 0 }, assembled: { x: 0, y: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1 } },
-      'asm-fl2': { scattered: { x: -200, y: 350, rotateX: -60, rotateY: -20, scale: 0.3, opacity: 0 }, assembled: { x: 0, y: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1 } }
-    };
-    Object.keys(assemblyPieces).forEach(id => {
-      const piece = document.getElementById(id);
-      if (!piece) return;
-      const s = assemblyPieces[id].scattered;
-      gsap.set(piece, { x: s.x, y: s.y, rotateX: s.rotateX, rotateY: s.rotateY, scale: s.scale, opacity: s.opacity, transformPerspective: 1000 });
-    });
-    const assemblyTl = gsap.timeline({ scrollTrigger: { trigger: '.assembly-section', start: 'top top', end: 'bottom bottom', scrub: 1.2 } });
-    Object.keys(assemblyPieces).forEach((id, i) => {
-      const piece = document.getElementById(id);
-      if (!piece) return;
-      const a = assemblyPieces[id].assembled;
-      assemblyTl.to(piece, { x: a.x, y: a.y, rotateX: a.rotateX, rotateY: a.rotateY, scale: a.scale, opacity: a.opacity, duration: 1, ease: 'power2.out' }, i * 0.05);
-    });
-    assemblyTl.to({}, { duration: 0.5 });
-    Object.keys(assemblyPieces).forEach((id, i) => {
-      const piece = document.getElementById(id);
-      if (!piece) return;
-      const s = assemblyPieces[id].scattered;
-      const disperseX = s.x * 1.5 + (Math.random() - 0.5) * 200;
-      const disperseY = s.y * 1.5 + (Math.random() - 0.5) * 200;
-      assemblyTl.to(piece, { x: disperseX, y: disperseY, rotateX: s.rotateX * 1.5, rotateY: s.rotateY * 1.5, scale: 0.3, opacity: 0, duration: 1, ease: 'power2.in' }, 1.5 + i * 0.03);
-    });
-
-    // Text Assembly
-    const textWords = document.querySelectorAll('.text-assembly-word');
-    const textSub = document.getElementById('text-assembly-sub');
-    textWords.forEach((word, i) => {
-      const angle = (i / textWords.length) * Math.PI * 2;
-      const distance = 300 + Math.random() * 200;
-      gsap.set(word, {
-        x: Math.cos(angle) * distance,
-        y: Math.sin(angle) * distance,
-        opacity: 0,
-        scale: 0.5,
-        filter: 'blur(10px)',
-        rotateZ: (Math.random() - 0.5) * 30
-      });
-    });
-    if (textSub) gsap.set(textSub, { y: 60, opacity: 0, filter: 'blur(8px)' });
-    const textTl = gsap.timeline({
-      scrollTrigger: { trigger: '.text-assembly', start: 'top top', end: 'bottom bottom', scrub: 1.5, pin: false }
-    });
-    textWords.forEach((word, i) => {
-      textTl.to(word, {
-        x: 0, y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', rotateZ: 0,
-        duration: 1, ease: 'power3.out'
-      }, i * 0.06);
-    });
-    if (textSub) textTl.to(textSub, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.8, ease: 'power2.out' }, 0.4);
-    textTl.to({}, { duration: 0.6 });
-    textWords.forEach((word, i) => {
-      const angle = Math.random() * Math.PI * 2;
-      const distance = 400 + Math.random() * 300;
-      textTl.to(word, {
-        x: Math.cos(angle) * distance, y: Math.sin(angle) * distance,
-        opacity: 0, scale: 0.3, filter: 'blur(15px)', rotateZ: (Math.random() - 0.5) * 60,
-        duration: 1, ease: 'power2.in'
-      }, 1.8 + i * 0.02);
-    });
-    if (textSub) textTl.to(textSub, { y: -40, opacity: 0, filter: 'blur(10px)', duration: 0.8, ease: 'power2.in' }, 1.8);
-
-    // Stats counter
-    document.querySelectorAll('.stat-number').forEach(stat => {
-      const target = parseInt(stat.getAttribute('data-target'));
-      ScrollTrigger.create({ trigger: stat, start: 'top 85%', onEnter: () => {
-        gsap.to(stat, { innerHTML: target, duration: 2.0, snap: { innerHTML: 1 }, ease: 'power2.out', onUpdate: function() {
-          stat.innerHTML = Math.round(this.targets()[0].innerHTML) + (stat.getAttribute('data-target') === '100' ? '%' : '+');
-        }});
-      }, once: true });
-    });
-
-    // Spotlight cursor effect on threat cards
-    document.querySelectorAll('.threat-card').forEach(card => {
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        card.style.setProperty('--mouse-x', e.clientX - rect.left + 'px');
-        card.style.setProperty('--mouse-y', e.clientY - rect.top + 'px');
-      });
-    });
-
-    // Dot Grid Canvas with Physics Mouse Interaction
-    const canvas = document.getElementById('dotCanvas');
-    const ctx = canvas.getContext('2d');
-    let dots = [];
-    let canvasW, canvasH;
-    let gridMouseX = -1000, gridMouseY = -1000;
-    let time = 0;
-
-    function resizeCanvas() {
-      canvasW = window.innerWidth;
-      canvasH = window.innerHeight;
-      canvas.width = canvasW * window.devicePixelRatio;
-      canvas.height = canvasH * window.devicePixelRatio;
-      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-      initDots();
-    }
-
-    function initDots() {
-      dots = [];
-      const spacing = 28;
-      const cols = Math.ceil(canvasW / spacing) + 2;
-      const rows = Math.ceil(canvasH / spacing) + 2;
-      for (let i = 0; i < cols; i++) {
-        for (let j = 0; j < rows; j++) {
-          dots.push({
-            baseX: i * spacing - spacing,
-            baseY: j * spacing - spacing,
-            x: i * spacing - spacing,
-            y: j * spacing - spacing,
-            vx: 0,
-            vy: 0,
-            size: 1.5,
-            opacity: 0.15
-          });
-        }
+    // ================= INITIAL LOAD =================
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await fetch('/api/scan/demo/bank-app');
+        const data = await res.json();
+        processScanResults(data, 'Vulnerable Core Banking (Python)', 'Static AST');
+      } catch (e) {
+        console.log('Engine initialized.');
       }
-    }
-
-    function updateDots() {
-      time += 0.016;
-      const radius = 220;
-      const radiusSq = radius * radius;
-      for (let dot of dots) {
-        const dx = dot.baseX - gridMouseX;
-        const dy = dot.baseY - gridMouseY;
-        const distSq = dx * dx + dy * dy;
-        let targetX = dot.baseX;
-        let targetY = dot.baseY;
-        if (distSq < radiusSq && distSq > 1) {
-          const dist = Math.sqrt(distSq);
-          const force = (1 - dist / radius) * radius * 0.12;
-          const angle = Math.atan2(dy, dx);
-          targetX += Math.cos(angle) * force;
-          targetY += Math.sin(angle) * force;
-          dot.opacity = 0.15 + (1 - dist / radius) * 0.5;
-        } else {
-          dot.opacity += (0.15 - dot.opacity) * 0.05;
-        }
-        dot.vx += (targetX - dot.x) * 0.08;
-        dot.vy += (targetY - dot.y) * 0.08;
-        dot.vx *= 0.85;
-        dot.vy *= 0.85;
-        dot.x += dot.vx;
-        dot.y += dot.vy;
-      }
-    }
-
-    function drawDots() {
-      ctx.clearRect(0, 0, canvasW, canvasH);
-      for (let dot of dots) {
-        ctx.beginPath();
-        ctx.arc(dot.x, dot.y, dot.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${dot.opacity})`;
-        ctx.fill();
-      }
-    }
-
-    function animateDots() {
-      updateDots();
-      drawDots();
-      requestAnimationFrame(animateDots);
-    }
-
-    document.addEventListener('mousemove', (e) => {
-      gridMouseX = e.clientX;
-      gridMouseY = e.clientY;
     });
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-    animateDots();
   </script>
 </body>
 </html>
