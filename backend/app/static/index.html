@@ -21,11 +21,11 @@
       --bg: #030305;
       --bg-elevated: #08080c;
       --glass: rgba(255,255,255,0.025);
-      --glass-border: rgba(255,255,255,0.07);
-      --glass-border-hover: rgba(255,255,255,0.15);
+      --glass-border: rgba(255,255,255,0.08);
+      --glass-border-hover: rgba(255,255,255,0.18);
       --text: #ffffff;
-      --text-secondary: rgba(255,255,255,0.60);
-      --text-muted: rgba(255,255,255,0.30);
+      --text-secondary: rgba(255,255,255,0.65);
+      --text-muted: rgba(255,255,255,0.35);
       --accent: #6366f1;
       --accent-2: #a855f7;
       --accent-3: #ec4899;
@@ -45,30 +45,52 @@
       -webkit-font-smoothing: antialiased;
     }
     
-    /* Loader */
-    .loader {
-      position: fixed; inset: 0;
-      background: var(--bg);
-      z-index: 100000;
-      display: flex;
-      align-items: center; justify-content: center;
-      flex-direction: column;
+    /* Permanent Fixed Nav */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 9999;
+      padding: 0.85rem 2.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(3,3,5,0.85);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border-bottom: 1px solid var(--glass-border);
     }
-    .loader-ring {
-      width: 50px; height: 50px;
-      border: 2px solid var(--glass-border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .loader-text {
+    .nav-logo {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.8125rem;
-      color: var(--text-muted);
-      margin-top: 1.25rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
+      font-size: 1.35rem; font-weight: 700;
+      letter-spacing: -0.02em; color: var(--text);
+      text-decoration: none;
+      display: flex; align-items: center; gap: 0.5rem;
+      cursor: pointer;
+    }
+    .nav-logo-badge {
+      font-size: 0.625rem; font-family: 'JetBrains Mono', monospace;
+      padding: 0.2rem 0.5rem; border-radius: 100px;
+      background: rgba(99,102,241,0.15); color: var(--accent);
+      border: 1px solid rgba(99,102,241,0.25);
+    }
+    .nav-links { display: flex; gap: 1.75rem; list-style: none; align-items: center; }
+    .nav-links a {
+      color: var(--text-secondary); text-decoration: none;
+      font-size: 0.8125rem; font-weight: 500;
+      letter-spacing: 0.04em; transition: color 0.3s ease;
+      cursor: pointer;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      padding: 0.55rem 1.3rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #ffffff;
+      border: none; border-radius: 100px;
+      font-family: 'Inter', sans-serif; font-size: 0.8125rem;
+      font-weight: 600; cursor: pointer;
+      transition: all 0.3s var(--expo);
+      box-shadow: 0 0 20px rgba(99,102,241,0.35);
+    }
+    .nav-cta:hover {
+      transform: scale(1.04);
+      box-shadow: 0 0 30px rgba(99,102,241,0.6);
     }
 
     #dotCanvas {
@@ -81,7 +103,7 @@
       position: fixed; inset: 0;
       background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
       pointer-events: none;
-      z-index: 9999;
+      z-index: 9998;
     }
     .perspective-grid {
       position: fixed; inset: 0;
@@ -112,70 +134,12 @@
       border-color: var(--glass-border-hover);
       box-shadow: 0 25px 70px rgba(0,0,0,0.4);
     }
-    .nav {
-      position: fixed; top: 0; left: 0; right: 0;
-      z-index: 1000;
-      padding: 1rem 2.5rem;
-      display: flex; justify-content: space-between; align-items: center;
-      transition: all 0.4s var(--expo);
-      background: rgba(3,3,5,0.85);
-      backdrop-filter: blur(30px);
-      border-bottom: 1px solid var(--glass-border);
-    }
-    .nav-logo {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.4rem; font-weight: 700;
-      letter-spacing: -0.02em; color: var(--text);
-      text-decoration: none;
-      display: flex; align-items: center; gap: 0.5rem;
-      cursor: pointer;
-    }
-    .nav-logo-badge {
-      font-size: 0.625rem; font-family: 'JetBrains Mono', monospace;
-      padding: 0.2rem 0.5rem; border-radius: 100px;
-      background: rgba(99,102,241,0.15); color: var(--accent);
-      border: 1px solid rgba(99,102,241,0.25);
-    }
-    .nav-links { display: flex; gap: 1.75rem; list-style: none; align-items: center; }
-    .nav-links a {
-      color: var(--text-secondary); text-decoration: none;
-      font-size: 0.8125rem; font-weight: 500;
-      letter-spacing: 0.04em; transition: color 0.3s ease;
-      cursor: pointer;
-    }
-    .nav-links a:hover { color: var(--text); }
-    .nav-cta {
-      padding: 0.625rem 1.4rem;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: #ffffff;
-      border: none; border-radius: 100px;
-      font-family: 'Inter', sans-serif; font-size: 0.8125rem;
-      font-weight: 600; cursor: pointer;
-      transition: all 0.3s var(--expo);
-      box-shadow: 0 0 25px rgba(99,102,241,0.35);
-    }
-    .nav-cta:hover {
-      transform: scale(1.04);
-      box-shadow: 0 0 35px rgba(99,102,241,0.6);
-    }
-    .status-orb {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--safe); position: relative;
-    }
-    .status-orb::after {
-      content: ''; position: absolute; inset: -4px;
-      border-radius: 50%; border: 1px solid var(--safe);
-      animation: orbPulse 2s ease-in-out infinite;
-    }
-    @keyframes orbPulse {
-      0%, 100% { transform: scale(1); opacity: 0.5; }
-      50% { transform: scale(1.8); opacity: 0; }
-    }
 
+    /* Hero */
     .hero {
-      min-height: 90vh; display: flex;
+      min-height: 88vh; display: flex;
       align-items: center; justify-content: center;
-      position: relative; padding: 7rem 1.5rem 3rem; z-index: 1;
+      position: relative; padding: 7.5rem 1.5rem 2.5rem; z-index: 1;
     }
     .hero-content {
       position: relative; z-index: 2;
@@ -298,16 +262,22 @@
     }
     .assembly-piece {
       position: absolute; border-radius: 16px; overflow: hidden;
-      will-change: transform; box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-      cursor: pointer;
+      will-change: transform; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      cursor: pointer; transition: filter 0.3s ease, border-color 0.3s ease;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .assembly-piece:hover {
+      filter: brightness(1.2) drop-shadow(0 0 25px rgba(99,102,241,0.5));
+      border-color: rgba(255,255,255,0.4);
+      z-index: 50;
     }
     .assembly-piece-overlay {
       position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(168,85,247,0.3));
+      background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.2));
       mix-blend-mode: overlay;
     }
     .assembly-label {
-      position: absolute; top: 2.5rem; left: 50%;
+      position: absolute; top: 5.5rem; left: 50%;
       transform: translateX(-50%); z-index: 10; text-align: center;
     }
     .assembly-label span {
@@ -341,7 +311,7 @@
     }
     .threat-card::before {
       content: ''; position: absolute; inset: 0;
-      background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(99, 102, 241, 0.08), transparent 40%);
+      background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(99, 102, 241, 0.1), transparent 50%);
       opacity: 0; transition: opacity 0.3s ease;
     }
     .threat-card:hover::before { opacity: 1; }
@@ -372,7 +342,7 @@
       position: relative; z-index: 1;
     }
 
-    /* Showcase Parallax Grid */
+    /* Showcase Section */
     .showcase-section {
       padding: 6rem 1.5rem;
       position: relative; z-index: 1; background: var(--bg);
@@ -381,7 +351,7 @@
     .showcase-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 1.5rem;
+      gap: 1.75rem;
       max-width: 1100px;
       margin: 0 auto;
     }
@@ -389,30 +359,15 @@
       position: relative;
       border-radius: 20px;
       overflow: hidden;
-      aspect-ratio: 4/3;
-      cursor: pointer;
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      padding: 2rem;
+      transition: all 0.4s var(--expo);
     }
-    .showcase-card:nth-child(2) { margin-top: 2.5rem; }
-    .showcase-card:nth-child(3) { margin-top: -2.5rem; }
-    .showcase-card-inner {
-      position: absolute; inset: 0;
-      transition: transform 0.6s var(--expo);
-    }
-    .showcase-card:hover .showcase-card-inner { transform: scale(1.05); }
-    .showcase-card-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%);
-      z-index: 2;
-    }
-    .showcase-card-content {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      padding: 1.75rem; z-index: 3;
-    }
-    .showcase-card-tag {
-      display: inline-block; padding: 0.25rem 0.75rem;
-      background: rgba(255,255,255,0.1); border-radius: 100px;
-      font-size: 0.6875rem; font-weight: 500; margin-bottom: 0.5rem;
-      backdrop-filter: blur(10px);
+    .showcase-card:hover {
+      border-color: var(--glass-border-hover);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      transform: translateY(-4px);
     }
 
     /* Text Fragment Assembly */
@@ -445,14 +400,6 @@
     .text-assembly-sub {
       font-size: 1.05rem; color: var(--text-secondary);
       max-width: 550px; margin: 2rem auto 0; line-height: 1.7;
-    }
-
-    /* Explainer Card */
-    .explainer-card {
-      max-width: 1100px; margin: 0 auto 3rem;
-      padding: 2rem; border-radius: 20px;
-      background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(168,85,247,0.06));
-      border: 1px solid rgba(99,102,241,0.25);
     }
 
     /* Stats */
@@ -492,13 +439,6 @@
       font-weight: 500;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-    }
-
-    /* CTA */
-    .cta-section {
-      padding: 5rem 1.5rem;
-      text-align: center;
-      position: relative; z-index: 1; background: var(--bg);
     }
 
     /* Footer */
@@ -569,7 +509,6 @@
     @media (max-width: 1024px) {
       .threats-grid { grid-template-columns: repeat(2, 1fr); }
       .showcase-grid { grid-template-columns: 1fr; }
-      .showcase-card:nth-child(2), .showcase-card:nth-child(3) { margin-top: 0; }
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
       .stat-item:not(:last-child)::after { display: none; }
       .footer-grid { grid-template-columns: repeat(2, 1fr); }
@@ -586,20 +525,15 @@
   </style>
 </head>
 <body>
-  
-  <div class="loader">
-    <div class="loader-ring"></div>
-    <div class="loader-text">Initializing Aegis-Q</div>
-  </div>
 
   <canvas id="dotCanvas"></canvas>
   <div class="perspective-grid"></div>
   <div class="scanlines"></div>
 
-  <!-- Global Nav -->
+  <!-- Always Visible Fixed Nav -->
   <nav class="nav">
     <a onclick="showLandingView()" class="nav-logo">
-      <span style="font-size:1.5rem;">🛡️</span> AEGIS-Q
+      <span style="font-size:1.4rem;">🛡️</span> AEGIS-Q
       <span class="nav-logo-badge">SIH26164</span>
     </a>
     <ul class="nav-links">
@@ -610,7 +544,7 @@
       <li><a href="#threats" onclick="showLandingView()">Threat Matrix</a></li>
     </ul>
     <div style="display:flex;align-items:center;gap:0.75rem;">
-      <button onclick="openGlossaryModal()" class="btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+      <button onclick="openGlossaryModal()" class="btn-secondary" style="padding: 0.45rem 0.9rem; font-size: 0.75rem;">
         <span>❓ Terms Guide</span>
       </button>
       <button onclick="showScannerView('url')" class="nav-cta">
@@ -689,62 +623,63 @@
     <!-- 3D Discovered Assets Assembly / Disassembly -->
     <section class="assembly-section" id="assembly">
       <div class="assembly-sticky">
-        <div class="assembly-label"><span>Discovered Cryptographic Assets Spectrum</span></div>
+        <div class="assembly-label"><span>Discovered Cryptographic Assets Spectrum (Click any card to inspect)</span></div>
         <div class="assembly-container">
-          <div class="assembly-piece" id="asm-center" onclick="loadFixtureAndSwitch('bank-app', 'Vulnerable Core Banking (Python)')" style="width:380px;height:280px;top:160px;left:310px;">
+          <div class="assembly-piece" id="asm-center" onclick="openAssetDetailModal('RSA-2048 Asymmetric Key', 'Key Agreement & Encapsulation', 'CRITICAL_SHOR', 'Integer Prime Factorization (N = p × q)', 'Peter Shor proved in 1994 that quantum computers solve prime factorization in polynomial time O(n³). RSA-2048 is completely broken.', 'NIST FIPS 203 (ML-KEM-768) / FIPS 204 (ML-DSA)', 'bank-app')" style="width:380px;height:280px;top:160px;left:310px;">
             <div style="width:100%;height:100%;background:linear-gradient(135deg,#1e1b4b,#312e81);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.875rem;color:white;padding:1.5rem;text-align:center;">
               <span style="color:#ff0040;font-weight:700;font-size:1.1rem;margin-bottom:0.25rem;">🔴 RSA-2048 Asymmetric Key</span>
               <span style="font-size:0.75rem;color:rgba(255,255,255,0.6);">Broken by Shor's Algorithm • Target: ML-KEM-768</span>
+              <span style="font-size:0.6875rem;color:var(--accent);margin-top:0.75rem;text-decoration:underline;">Click to inspect primitive</span>
             </div>
             <div class="assembly-piece-overlay"></div>
           </div>
-          <div class="assembly-piece" id="asm-tl" onclick="loadFixtureAndSwitch('bank-app', 'Vulnerable Core Banking (Python)')" style="width:160px;height:120px;top:30px;left:90px;">
+          <div class="assembly-piece" id="asm-tl" onclick="openAssetDetailModal('MD5 Message Digest', 'Cryptographic Hash Function', 'DEPRECATED_CLASSICAL', '128-bit Merkle–Damgård hash structure', 'MD5 is mathematically broken by classical collision attacks (e.g. Flame malware). Must never be used for digital signatures or authentication.', 'SHA-256 or NIST FIPS 202 SHA3-512', 'bank-app')" style="width:160px;height:120px;top:30px;left:90px;">
             <div style="width:100%;height:100%;background:linear-gradient(135deg,#4c0519,#881337);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:white;text-align:center;padding:0.5rem;">
               <span style="color:#ff0040;font-weight:bold;">MD5 Hash</span>
               <span style="font-size:0.6rem;color:rgba(255,255,255,0.5);">Deprecated Classical</span>
             </div>
             <div class="assembly-piece-overlay"></div>
           </div>
-          <div class="assembly-piece" id="asm-tr" onclick="loadFixtureAndSwitch('secure-ref', 'Post-Quantum Stack')" style="width:140px;height:110px;top:50px;left:720px;">
+          <div class="assembly-piece" id="asm-tr" onclick="openAssetDetailModal('AES-256-GCM', 'Symmetric Authenticated Cipher', 'QUANTUM_RESISTANT', '256-bit Galois/Counter Mode (AEAD)', 'Grover\'s quantum algorithm halves brute force search time, leaving AES-256 with ~128 bits of quantum security margin—fully resilient.', 'NIST FIPS 197 (AES-256-GCM)', 'secure-ref')" style="width:140px;height:110px;top:50px;left:720px;">
             <div style="width:100%;height:100%;background:linear-gradient(135deg,#064e3b,#065f46);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:white;text-align:center;padding:0.5rem;">
               <span style="color:#00ff88;font-weight:bold;">AES-256-GCM</span>
               <span style="font-size:0.6rem;color:rgba(255,255,255,0.5);">Quantum-Resistant</span>
             </div>
             <div class="assembly-piece-overlay"></div>
           </div>
-          <div class="assembly-piece" id="asm-bl" onclick="loadFixtureAndSwitch('bank-app', 'Vulnerable Core Banking (Python)')" style="width:180px;height:140px;top:460px;left:70px;">
+          <div class="assembly-piece" id="asm-bl" onclick="openAssetDetailModal('DES (Data Encryption Standard)', 'Legacy Symmetric Feistel Cipher', 'DEPRECATED_CLASSICAL', '56-bit Key Space', 'DES can be cracked in a matter of hours by commodity GPUs. Modern security standards mandate immediate upgrade to AES-256.', 'AES-256-GCM (NIST FIPS 197)', 'bank-app')" style="width:180px;height:140px;top:460px;left:70px;">
             <div style="width:100%;height:100%;background:linear-gradient(135deg,#1c1917,#44403c);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:white;text-align:center;padding:0.5rem;">
               <span style="color:#ffaa00;font-weight:bold;">DES (56-bit)</span>
               <span style="font-size:0.6rem;color:rgba(255,255,255,0.5);">Insecure Cipher</span>
             </div>
             <div class="assembly-piece-overlay"></div>
           </div>
-          <div class="assembly-piece" id="asm-br" onclick="loadFixtureAndSwitch('bank-app', 'Vulnerable Core Banking (Python)')" style="width:150px;height:120px;top:440px;left:700px;">
+          <div class="assembly-piece" id="asm-br" onclick="openAssetDetailModal('SHA-1 Digest', 'Cryptographic Hash Function', 'DEPRECATED_CLASSICAL', '160-bit Hash Value', 'Classically vulnerable to practical collision generation (demonstrated in Google\'s SHAttered research). Deprecated by NIST.', 'SHA-256 / SHA3-512', 'bank-app')" style="width:150px;height:120px;top:440px;left:700px;">
             <div style="width:100%;height:100%;background:linear-gradient(135deg,#0c4a6e,#0369a1);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:white;text-align:center;padding:0.5rem;">
               <span style="color:#fbbf24;font-weight:bold;">SHA-1 Digest</span>
               <span style="font-size:0.6rem;color:rgba(255,255,255,0.5);">Collision Vulnerable</span>
             </div>
             <div class="assembly-piece-overlay"></div>
           </div>
-          <div class="assembly-piece" id="asm-sl" onclick="loadFixtureAndSwitch('bank-app', 'Vulnerable Core Banking (Python)')" style="width:130px;height:160px;top:220px;left:-10px;">
+          <div class="assembly-piece" id="asm-sl" onclick="openAssetDetailModal('ECDSA P-256', 'Elliptic Curve Digital Signature', 'CRITICAL_SHOR', 'Weierstrass Curve Discrete Logarithm', 'Shor\'s algorithm computes elliptic curve discrete logarithms in polynomial time, completely destroying ECDSA signature forgery resistance.', 'NIST FIPS 204 (ML-DSA-65)', 'bank-app')" style="width:130px;height:160px;top:220px;left:-10px;">
             <div style="width:100%;height:100%;background:linear-gradient(135deg,#581c87,#7c3aed);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:white;text-align:center;padding:0.5rem;">
               <span style="color:#ff3366;font-weight:bold;">ECDSA P-256</span>
               <span style="font-size:0.6rem;color:rgba(255,255,255,0.5);">Digital Signature</span>
             </div>
             <div class="assembly-piece-overlay"></div>
           </div>
-          <div class="assembly-piece" id="asm-sr" onclick="loadFixtureAndSwitch('node-crypto', 'Legacy E-Commerce')" style="width:140px;height:140px;top:240px;left:850px;">
+          <div class="assembly-piece" id="asm-sr" onclick="openAssetDetailModal('AES-ECB Mode', 'Symmetric Block Cipher Mode', 'INSECURE_MODE', 'Electronic Codebook without IV/Nonce', 'ECB mode preserves plaintext pattern entropy across ciphertext blocks (the infamous ECB Penguin leak).', 'AES-256-GCM Authenticated Encryption', 'node-crypto')" style="width:140px;height:140px;top:240px;left:850px;">
             <div style="width:100%;height:100%;background:linear-gradient(135deg,#7c2d12,#c2410c);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:white;text-align:center;padding:0.5rem;">
               <span style="color:#ffaa00;font-weight:bold;">AES-ECB</span>
               <span style="font-size:0.6rem;color:rgba(255,255,255,0.5);">Pattern Leakage</span>
             </div>
             <div class="assembly-piece-overlay"></div>
           </div>
-          <div class="assembly-piece" id="asm-fl1" onclick="showScannerView('url')" style="width:90px;height:90px;top:90px;left:520px;">
+          <div class="assembly-piece" id="asm-fl1" onclick="openAssetDetailModal('ECDH / X25519', 'Key Exchange & Agreement', 'CRITICAL_SHOR', 'Diffie-Hellman Key Agreement', 'ECDH shared secrets are vulnerable to Harvest Now, Decrypt Later (HNDL) quantum eavesdropping.', 'NIST FIPS 203 (ML-KEM-768)', 'bank-app')" style="width:90px;height:90px;top:90px;left:520px;">
             <div style="width:100%;height:100%;background:linear-gradient(135deg,#134e4a,#14b8a6);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.625rem;color:white;font-weight:bold;">ECDH</div>
             <div class="assembly-piece-overlay"></div>
           </div>
-          <div class="assembly-piece" id="asm-fl2" onclick="loadFixtureAndSwitch('node-crypto', 'Legacy E-Commerce')" style="width:80px;height:80px;top:400px;left:480px;">
+          <div class="assembly-piece" id="asm-fl2" onclick="openAssetDetailModal('RC4 Stream Cipher', 'Legacy Stream Cipher', 'DEPRECATED_CLASSICAL', 'Rivest Cipher 4 PRGA/KSA', 'Known statistical biases in the initial keystream bytes allow plaintext recovery attacks.', 'AES-256-GCM / ChaCha20', 'node-crypto')" style="width:80px;height:80px;top:400px;left:480px;">
             <div style="width:100%;height:100%;background:linear-gradient(135deg,#3f3f46,#71717a);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.625rem;color:white;font-weight:bold;">RC4</div>
             <div class="assembly-piece-overlay"></div>
           </div>
@@ -752,37 +687,7 @@
       </div>
     </section>
 
-    <!-- Why Do Sites Score Low Explainer Card -->
-    <section style="padding: 0 1.5rem 4rem; position: relative; z-index: 1;">
-      <div class="explainer-card">
-        <div style="display: flex; gap: 1rem; align-items: flex-start; flex-wrap: wrap;">
-          <div style="font-size: 2rem;">💡</div>
-          <div style="flex: 1; min-width: 280px;">
-            <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem;">
-              Why do almost all live websites (Google, Banks, Amazon) score ~25% to 35% today?
-            </h3>
-            <p style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.7;">
-              <strong>The Reality:</strong> Over <strong>99% of the web</strong> today still relies on classical public-key cryptography (<strong>RSA</strong> or <strong>ECDSA</strong> certificates, and <strong>ECDH</strong> key exchange). 
-              Because <em>Shor's quantum algorithm</em> completely breaks integer factorization and elliptic curves in polynomial time, their public key layers score <strong>0% quantum-safe</strong>.
-              The ~25% baseline comes solely from their symmetric record cipher (<strong>AES-256-GCM</strong>), which retains ~128 bits of security under Grover's algorithm.
-            </p>
-            <div style="margin-top: 1rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
-              <span style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; padding: 0.25rem 0.75rem; background: rgba(255,0,64,0.15); border: 1px solid var(--critical); border-radius: 6px; color: #ff8099;">
-                🔴 Certificate (ECDSA/RSA): Shor Broken
-              </span>
-              <span style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; padding: 0.25rem 0.75rem; background: rgba(255,0,64,0.15); border: 1px solid var(--critical); border-radius: 6px; color: #ff8099;">
-                🔴 Key Exchange (ECDH): Shor Broken
-              </span>
-              <span style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; padding: 0.25rem 0.75rem; background: rgba(0,255,136,0.15); border: 1px solid var(--safe); border-radius: 6px; color: #66ffb3;">
-                🟢 Symmetric Cipher (AES-256): Quantum-Resistant
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Threat Matrix -->
+    <!-- Threat Matrix (Populated & Visible) -->
     <section class="threats-section" id="threats">
       <div class="section-header" style="text-align:center;margin-bottom:3.5rem;">
         <span style="display:inline-block;padding:0.4rem 1rem;background:var(--glass);border:1px solid var(--glass-border);border-radius:100px;font-size:0.6875rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;font-family:'JetBrains Mono',monospace;">Threat Taxonomy</span>
@@ -793,17 +698,17 @@
         <div class="threat-card">
           <div class="threat-icon" style="background: rgba(255,0,64,0.15); color: var(--critical);">🔴</div>
           <h3 class="threat-title" style="color:var(--critical);">Shor's Algorithm</h3>
-          <p class="threat-desc">Breaks integer factorization and discrete logarithms in polynomial time $O(n^3)$. RSA, ECDSA, ECDH, and Ed25519 are completely broken.</p>
+          <p class="threat-desc">Breaks integer factorization and discrete logarithms in polynomial time $O(n^3)$. RSA, ECDSA, ECDH, and Ed25519 are completely broken on Cryptographically Relevant Quantum Computers.</p>
         </div>
         <div class="threat-card">
           <div class="threat-icon" style="background: rgba(255,170,0,0.15); color: var(--warning);">🟡</div>
           <h3 class="threat-title" style="color:var(--warning);">Grover's Algorithm</h3>
-          <p class="threat-desc">Provides quadratic speedup for brute force key search. Halves effective key space: AES-128 reduces to ~64-bit security margin.</p>
+          <p class="threat-desc">Provides quadratic speedup for brute force key search. Halves effective key space: AES-128 reduces to ~64-bit security margin, while AES-256 remains resilient with ~128 bits.</p>
         </div>
         <div class="threat-card">
           <div class="threat-icon" style="background: rgba(0,255,136,0.15); color: var(--safe);">🟢</div>
           <h3 class="threat-title" style="color:var(--safe);">Quantum-Resistant</h3>
-          <p class="threat-desc">NIST FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), and AES-256-GCM maintain >=128-bit quantum security.</p>
+          <p class="threat-desc">NIST FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), and AES-256-GCM maintain >=128-bit quantum security margin based on structured lattice math.</p>
         </div>
         <div class="threat-card">
           <div class="threat-icon" style="background: rgba(255,0,64,0.15); color: var(--critical);">⚡</div>
@@ -823,30 +728,53 @@
       </div>
     </section>
 
-    <!-- Showcase Cards -->
+    <!-- Showcase Section (Distinct Interactive Previews) -->
     <section class="showcase-section" id="showcase">
       <div class="section-header" style="text-align:center;margin-bottom:3.5rem;">
-        <span style="display:inline-block;padding:0.4rem 1rem;background:var(--glass);border:1px solid var(--glass-border);border-radius:100px;font-size:0.6875rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;font-family:'JetBrains Mono',monospace;">Analysis Tools</span>
+        <span style="display:inline-block;padding:0.4rem 1rem;background:var(--glass);border:1px solid var(--glass-border);border-radius:100px;font-size:0.6875rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;font-family:'JetBrains Mono',monospace;">Analysis Capabilities</span>
         <h2 style="font-family:'Space Grotesk',sans-serif;font-size:clamp(2rem,4.5vw,3rem);font-weight:700;line-height:1.1;letter-spacing:-0.02em;margin-bottom:1rem;">Enterprise Discovery Suite</h2>
       </div>
       <div class="showcase-grid">
-        <div class="showcase-card" onclick="showScannerView('code')">
-          <div class="showcase-card-inner" style="background: linear-gradient(135deg, #1e1b4b, #312e81);"></div>
-          <div class="showcase-card-overlay"></div>
-          <div class="showcase-card-content">
-            <span class="showcase-card-tag">CycloneDX v1.6</span>
-            <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.25rem;font-weight:600;margin-bottom:0.25rem;">Cryptography Bill of Materials (CBOM)</h3>
-            <p style="color:var(--text-secondary);font-size:0.8125rem;">Standardized cryptographic asset inventory tagging NIST security levels, OIDs, and classical strength.</p>
+        <!-- Showcase 1: CBOM Standard -->
+        <div class="showcase-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+            <span style="padding:0.3rem 0.8rem;background:rgba(99,102,241,0.15);border:1px solid var(--accent);color:#c7d2fe;border-radius:100px;font-size:0.6875rem;font-family:'JetBrains Mono',monospace;font-weight:600;">CycloneDX v1.6 Standard</span>
+            <span style="font-size:0.75rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace;">CBOM Engine</span>
           </div>
+          <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.35rem;font-weight:700;margin-bottom:0.75rem;">Cryptography Bill of Materials</h3>
+          <p style="color:var(--text-secondary);font-size:0.8125rem;line-height:1.6;margin-bottom:1.25rem;">
+            Exports standardized, machine-readable JSON inventories tagging exact classical bit security, NIST quantum security levels (0–5), and cryptographic OIDs for automated DevSecOps pipelines.
+          </p>
+          <div style="background:rgba(0,0,0,0.4);border:1px solid var(--glass-border);border-radius:12px;padding:1rem;font-family:'JetBrains Mono',monospace;font-size:0.6875rem;color:#a5b4fc;margin-bottom:1.5rem;overflow-x:auto;">
+            <div>"bomFormat": "CycloneDX",</div>
+            <div>"specVersion": "1.6",</div>
+            <div>"cryptoProperties": { "assetType": "algorithm", "oid": "1.2.840.113549.1.1.1" }</div>
+          </div>
+          <button onclick="showScannerView('code')" class="btn-secondary" style="width:100%;justify-content:center;padding:0.75rem;font-size:0.8125rem;">
+            <span>📁 Audit Codebase &amp; Export CBOM</span>
+          </button>
         </div>
-        <div class="showcase-card" onclick="showScannerView('url')">
-          <div class="showcase-card-inner" style="background: linear-gradient(135deg, #4c0519, #881337);"></div>
-          <div class="showcase-card-overlay"></div>
-          <div class="showcase-card-content">
-            <span class="showcase-card-tag">Dynamic Socket Probe</span>
-            <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.25rem;font-weight:600;margin-bottom:0.25rem;">Live TLS Handshake Inspector</h3>
-            <p style="color:var(--text-secondary);font-size:0.8125rem;">Non-intrusive 5-step SSL socket handshake prober assessing server certificates and key agreements.</p>
+
+        <!-- Showcase 2: Dynamic TLS Inspector -->
+        <div class="showcase-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+            <span style="padding:0.3rem 0.8rem;background:rgba(255,0,64,0.15);border:1px solid var(--critical);color:#ff8099;border-radius:100px;font-size:0.6875rem;font-family:'JetBrains Mono',monospace;font-weight:600;">5-Step Socket Handshake</span>
+            <span style="font-size:0.75rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace;">Dynamic Probe</span>
           </div>
+          <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.35rem;font-weight:700;margin-bottom:0.75rem;">Live TLS Handshake Inspector</h3>
+          <p style="color:var(--text-secondary);font-size:0.8125rem;line-height:1.6;margin-bottom:1.25rem;">
+            Non-intrusively decomposes remote HTTPS connections into Certificate signatures, Key Exchange (KEM), and Record Ciphers, assessing live vulnerability to Harvest Now, Decrypt Later (HNDL).
+          </p>
+          <div style="display:flex;justify-content:space-between;background:rgba(0,0,0,0.4);border:1px solid var(--glass-border);border-radius:12px;padding:1rem;font-family:'JetBrains Mono',monospace;font-size:0.6875rem;color:var(--text-secondary);margin-bottom:1.5rem;">
+            <span style="color:#ff8099;">1. ClientHello</span>
+            <span style="color:#ff8099;">2. ServerHello</span>
+            <span style="color:#ff8099;">3. Cert</span>
+            <span style="color:#ff8099;">4. KeyEx</span>
+            <span style="color:#00ff88;">5. Record (AES)</span>
+          </div>
+          <button onclick="showScannerView('url')" class="btn-primary" style="width:100%;justify-content:center;padding:0.75rem;font-size:0.8125rem;">
+            <span>🌐 Probe Live Website TLS</span>
+          </button>
         </div>
       </div>
     </section>
@@ -900,19 +828,6 @@
           <div class="stat-label">% Free Tier Deployable</div>
         </div>
       </div>
-    </section>
-
-    <!-- Bottom CTA -->
-    <section class="cta-section">
-      <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin-bottom: 1rem;">
-        Ready to assess your encryption?
-      </h2>
-      <p style="color: var(--text-secondary); max-width: 500px; margin: 0 auto 2rem; font-size: 0.9375rem;">
-        Open the Aegis-Q Discovery Console to run live TLS socket probes or static codebase audits in seconds.
-      </p>
-      <button onclick="showScannerView('url')" class="btn-primary" style="padding: 1rem 2.5rem; font-size: 1rem;">
-        <span>⚡ Launch Discovery Console</span>
-      </button>
     </section>
 
     <!-- Footer -->
@@ -1190,7 +1105,53 @@
     </div>
   </div>
 
-  <!-- ================= VIEW 3: AI REMEDIATION MODAL ================= -->
+  <!-- ================= VIEW 3: ASSET DETAIL / POPUP CARD MODAL ================= -->
+  <div id="asset-detail-modal" class="modal-backdrop" style="display: none;">
+    <div class="glass" style="max-width: 650px; width: 100%; display: flex; flex-direction: column; padding: 2.25rem; border-color: rgba(255,255,255,0.2); box-shadow: 0 30px 90px rgba(0,0,0,0.9); animation: modalPop 0.35s var(--expo);">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem; margin-bottom: 1.25rem;">
+        <div>
+          <span id="detail-risk-badge" style="display:inline-block;padding:0.25rem 0.75rem;border-radius:100px;font-size:0.6875rem;font-family:'JetBrains Mono',monospace;font-weight:700;margin-bottom:0.5rem;background:rgba(255,0,64,0.15);border:1px solid var(--critical);color:#ff8099;">
+            CRITICAL_SHOR
+          </span>
+          <h3 id="detail-title" style="font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; font-weight: 700; color: #fff;">
+            RSA-2048 Asymmetric Key
+          </h3>
+          <p id="detail-category" style="font-size: 0.75rem; color: var(--accent); font-family: 'JetBrains Mono', monospace; margin-top: 0.2rem;">
+            Category: Key Agreement & Encapsulation
+          </p>
+        </div>
+        <button onclick="closeAssetDetailModal()" style="background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; padding: 0.25rem;">✕</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 1.1rem; font-size: 0.8125rem; line-height: 1.6;">
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1rem;">
+          <strong style="color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 0.875rem;">Underlying Mathematics:</strong>
+          <p id="detail-math" style="color: var(--text-secondary); margin-top: 0.25rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">Integer Prime Factorization (N = p × q)</p>
+        </div>
+
+        <div style="background: rgba(255,0,64,0.04); border: 1px solid rgba(255,0,64,0.2); border-radius: 12px; padding: 1rem;">
+          <strong style="color: #ff8099; font-family: 'Space Grotesk', sans-serif; font-size: 0.875rem;">Why It Is Broken:</strong>
+          <p id="detail-why" style="color: var(--text-secondary); margin-top: 0.25rem;">Peter Shor proved in 1994 that quantum computers solve prime factorization in polynomial time O(n³).</p>
+        </div>
+
+        <div style="background: rgba(0,255,136,0.04); border: 1px solid rgba(0,255,136,0.2); border-radius: 12px; padding: 1rem;">
+          <strong style="color: #66ffb3; font-family: 'Space Grotesk', sans-serif; font-size: 0.875rem;">NIST PQC Replacement:</strong>
+          <p id="detail-replacement" style="color: #b3ffd9; font-weight: 600; font-family: 'JetBrains Mono', monospace; font-size: 0.8125rem; margin-top: 0.25rem;">NIST FIPS 203 (ML-KEM-768)</p>
+        </div>
+      </div>
+
+      <div style="border-top: 1px solid var(--glass-border); padding-top: 1.25rem; margin-top: 1.25rem; display: flex; justify-content: space-between; align-items: center;">
+        <button onclick="closeAssetDetailModal()" class="btn-secondary" style="padding: 0.55rem 1.25rem; font-size: 0.75rem;">
+          <span>Close</span>
+        </button>
+        <button id="detail-launch-btn" onclick="launchFromDetailModal()" class="btn-primary" style="padding: 0.55rem 1.25rem; font-size: 0.75rem;">
+          <span>⚡ Test In Discovery Console</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= VIEW 4: AI REMEDIATION MODAL ================= -->
   <div id="remediation-modal" class="modal-backdrop" style="display: none;">
     <div class="glass" style="max-width: 900px; width: 100%; max-height: 90vh; display: flex; flex-direction: column; padding: 2rem; border-color: rgba(255,255,255,0.15); box-shadow: 0 25px 80px rgba(0,0,0,0.8);">
       <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem; margin-bottom: 1rem;">
@@ -1235,7 +1196,7 @@
     </div>
   </div>
 
-  <!-- ================= VIEW 4: CRYPTOGRAPHY GLOSSARY MODAL ================= -->
+  <!-- ================= VIEW 5: CRYPTOGRAPHY GLOSSARY MODAL ================= -->
   <div id="glossary-modal" class="modal-backdrop" style="display: none;">
     <div class="glass" style="max-width: 850px; width: 100%; max-height: 88vh; display: flex; flex-direction: column; padding: 2rem; border-color: rgba(255,255,255,0.15); box-shadow: 0 25px 80px rgba(0,0,0,0.8);">
       <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem; margin-bottom: 1.25rem;">
@@ -1316,6 +1277,13 @@
     </div>
   </div>
 
+  <style>
+    @keyframes modalPop {
+      0% { opacity: 0; transform: scale(0.92) translateY(20px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+  </style>
+
   <script>
     // ================= VIEW SWITCHER =================
     function showLandingView() {
@@ -1354,6 +1322,48 @@
     }
     function closeGlossaryModal() {
       document.getElementById('glossary-modal').style.display = 'none';
+    }
+
+    // ================= 3D SPECTRUM CARD MODAL =================
+    let currentDetailFixture = null;
+    function openAssetDetailModal(name, category, risk, math, why, replacement, fixtureId) {
+      currentDetailFixture = fixtureId;
+      document.getElementById('detail-title').innerText = name;
+      document.getElementById('detail-category').innerText = `Category: ${category}`;
+      document.getElementById('detail-math').innerText = math;
+      document.getElementById('detail-why').innerText = why;
+      document.getElementById('detail-replacement').innerText = replacement;
+
+      const badge = document.getElementById('detail-risk-badge');
+      badge.innerText = risk;
+      if (risk.includes('SHOR')) {
+        badge.style.background = 'rgba(255,0,64,0.15)';
+        badge.style.borderColor = 'var(--critical)';
+        badge.style.color = '#ff8099';
+      } else if (risk.includes('RESISTANT')) {
+        badge.style.background = 'rgba(0,255,136,0.15)';
+        badge.style.borderColor = 'var(--safe)';
+        badge.style.color = '#66ffb3';
+      } else {
+        badge.style.background = 'rgba(255,170,0,0.15)';
+        badge.style.borderColor = 'var(--warning)';
+        badge.style.color = '#ffcc66';
+      }
+
+      document.getElementById('asset-detail-modal').style.display = 'flex';
+    }
+
+    function closeAssetDetailModal() {
+      document.getElementById('asset-detail-modal').style.display = 'none';
+    }
+
+    function launchFromDetailModal() {
+      closeAssetDetailModal();
+      if (currentDetailFixture) {
+        loadFixtureAndSwitch(currentDetailFixture, 'Tested Cryptographic Asset');
+      } else {
+        showScannerView('url');
+      }
     }
 
     // ================= STATE & SCANNER LOGIC =================
@@ -1665,17 +1675,6 @@
     gsap.ticker.lagSmoothing(0);
     gsap.registerPlugin(ScrollTrigger);
 
-    // Loader
-    const loaderTl = gsap.timeline();
-    loaderTl
-      .to('.loader', { opacity: 0, duration: 0.5, delay: 0.5, ease: 'power2.inOut' })
-      .set('.loader', { display: 'none' })
-      .from('.nav', { y: -100, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.2')
-      .from('.hero-badge', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.5')
-      .from('.hero-title', { y: 40, opacity: 0, duration: 1.0, ease: 'power4.out' }, '-=0.5')
-      .from('.hero-subtitle', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.7')
-      .from('.hero-buttons', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.5');
-
     // 3D Assembly ScrollTrigger
     const assemblyPieces = {
       'asm-center': { scattered: { x: 0, y: -300, rotateX: 45, rotateY: -30, scale: 0.6, opacity: 0 }, assembled: { x: 0, y: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1 } },
@@ -1749,11 +1748,6 @@
     });
     if (textSub) textTl.to(textSub, { y: -40, opacity: 0, filter: 'blur(10px)', duration: 0.8, ease: 'power2.in' }, 1.8);
 
-    // Scroll Animations
-    gsap.from('.threats-section .section-header', { scrollTrigger: { trigger: '.threats-section', start: 'top 80%', toggleActions: 'play none none none' }, y: 60, opacity: 0, duration: 1, ease: 'power3.out' });
-    gsap.from('.threat-card', { scrollTrigger: { trigger: '.threats-grid', start: 'top 80%', toggleActions: 'play none none none' }, y: 80, opacity: 0, duration: 0.8, stagger: 0.08, ease: 'power3.out' });
-    gsap.from('.showcase-card', { scrollTrigger: { trigger: '.showcase-grid', start: 'top 80%', toggleActions: 'play none none none' }, y: 80, opacity: 0, duration: 1, stagger: 0.12, ease: 'power3.out' });
-
     // Stats counter
     document.querySelectorAll('.stat-number').forEach(stat => {
       const target = parseInt(stat.getAttribute('data-target'));
@@ -1764,7 +1758,7 @@
       }, once: true });
     });
 
-    // Spotlight cursor effect on cards
+    // Spotlight cursor effect on threat cards
     document.querySelectorAll('.threat-card').forEach(card => {
       card.addEventListener('mousemove', (e) => {
         const rect = card.getBoundingClientRect();
